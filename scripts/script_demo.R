@@ -8,3 +8,7 @@ View(demo)
 install.packages("summarytools")
 library(summarytools)
 descr(demo)
+
+for(i in 1:12){
+  cat("2x", i, "=", 2*i, "\n")
+}
