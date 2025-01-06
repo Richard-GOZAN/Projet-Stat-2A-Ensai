@@ -37,22 +37,22 @@ descr(demo)
 
 
 ## Colonnes à visualiser
-numeric_cols <- demo %>% select(where(is.numeric))
-
-numeric_plots <- map(names(numeric_cols), ~{
-  ggplot(demo, aes(x=.data[[.x]]))+
-    geom_histogram(fill="blue", color="black")+
-    theme_minimal()+
-    labs(x=.x, y="Fréquence")
-})
+# numeric_cols <- demo %>% select(where(is.numeric))
+# 
+# numeric_plots <- map(names(numeric_cols), ~{
+#   ggplot(demo, aes(x=.data[[.x]]))+
+#     geom_histogram(fill="blue", color="black")+
+#     theme_minimal()+
+#     labs(x=.x, y="Fréquence")
+# })
 
 ## Divisons les plots en groupes de 6 et appliquons grid.arrange sur chaque groupe
 
-split_plots <- split(numeric_plots, ceiling(seq_along(numeric_plots) / 6))
-
-lapply(split_plots, function(plots) {
-  grid.arrange(grobs = plots, ncol = 2)
-})
+# split_plots <- split(numeric_plots, ceiling(seq_along(numeric_plots) / 6))
+# 
+# lapply(split_plots, function(plots) {
+#   grid.arrange(grobs = plots, ncol = 2)
+# })
 
 # Fusion des bases et création des varaiables
 
