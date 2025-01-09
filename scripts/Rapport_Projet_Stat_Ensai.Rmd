@@ -23,9 +23,19 @@ linestretch: 1.5
 
 # Présentation du contexte
 
+## Intérêt de l'étude
+
+## Cadre conceptuel de l'étude
+
+## Présentation des données
+
 # Méthodologie
 
 # Analyse des résultats
+
+## Analyse descriptive
+
+
 
 # Discussion
 
