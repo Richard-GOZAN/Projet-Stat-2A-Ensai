@@ -29,30 +29,16 @@ nettoyer_noms_colonnes <- function(data){
 demo <- nettoyer_noms_colonnes(demo)
 names(demo)
 
+## Filtrons les communes n'appartenant pas du département 95
+demo <- demo %>% filter(departement != 95)
+
+
+
 # Statistiques descriptives
 
 descr(demo)
 
-# Visualisations
 
-
-## Colonnes à visualiser
-# numeric_cols <- demo %>% select(where(is.numeric))
-# 
-# numeric_plots <- map(names(numeric_cols), ~{
-#   ggplot(demo, aes(x=.data[[.x]]))+
-#     geom_histogram(fill="blue", color="black")+
-#     theme_minimal()+
-#     labs(x=.x, y="Fréquence")
-# })
-
-## Divisons les plots en groupes de 6 et appliquons grid.arrange sur chaque groupe
-
-# split_plots <- split(numeric_plots, ceiling(seq_along(numeric_plots) / 6))
-# 
-# lapply(split_plots, function(plots) {
-#   grid.arrange(grobs = plots, ncol = 2)
-# })
 
 # Fusion des bases et création des varaiables
 
@@ -82,10 +68,7 @@ data <- data %>%
 summary(data$taux_visites)
 summary(data$taux_visites_19_ans_ou_plus)
 
-## Données pour les cartes
-selected_data <- data %>%
-  select(code, libelle, longitude, latitude, nb_visite, taux_visites, taux_visites_19_ans_ou_plus, population_municipale_2021_x, pop_19_ans_ou_plus)
 
-## Exportation
-write.csv(selected_data, "data/data_communes.csv", row.names = FALSE)
+## Exportation de la base finale 
+write.csv(data, "data/data.csv", row.names = FALSE)
 
