@@ -29,8 +29,8 @@ nettoyer_noms_colonnes <- function(data){
 demo <- nettoyer_noms_colonnes(demo)
 names(demo)
 
-## Filtrons les communes n'appartenant pas du département 95
-demo <- demo %>% filter(departement != 95)
+## Filtrons les communes n'appartenant pas du département 97
+demo <- demo %>% filter(departement != 97)
 
 
 
