@@ -6,6 +6,7 @@ library(tidyverse)
 library(summarytools)
 library(gridExtra)
 library(purrr)
+library(skimr)
 
 # Importation des données de démonstration
 
@@ -87,6 +88,7 @@ data <- data %>%
 summary(data$taux_visites)
 summary(data$taux_visites_19_ans_ou_plus)
 
+skim(data)
 
 ## Exportation de la base finale 
 write.csv(data, "data/data.csv", row.names = FALSE)
