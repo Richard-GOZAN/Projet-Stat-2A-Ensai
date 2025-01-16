@@ -31,12 +31,6 @@ demo <- nettoyer_noms_colonnes(demo)
 names(demo)
 
 
-# Statistiques descriptives
-
-descr(demo)
-
-
-
 # Fusion des bases et création des varaiables
 
 ## Importation de la base generalise
@@ -93,3 +87,14 @@ skim(data)
 ## Exportation de la base finale 
 write.csv(data, "data/data.csv", row.names = FALSE)
 
+## Statistiques descriptives sur le nombre de visite
+
+summary(data$nb_visite)
+
+ggplot(data) +
+  aes(x = nb_visite) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ggtitle(label = "Distribution du nombre de visites par commune") +
+  ylab("") +
+  xlab("")
