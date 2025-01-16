@@ -29,10 +29,6 @@ nettoyer_noms_colonnes <- function(data){
 demo <- nettoyer_noms_colonnes(demo)
 names(demo)
 
-## Filtrons les communes n'appartenant pas du département 97
-demo <- demo %>% filter(departement != 97)
-
-
 
 # Statistiques descriptives
 
@@ -44,17 +40,40 @@ descr(demo)
 
 ## Importation de la base generalise
 generalise <- read.csv("data/generalise.csv", sep=";")
+str(generalise)
+
+## Importation de la base pour les lon et lat manquantes
+donnees_manquantes <- read.csv(
+  "data/communes_manquantes_latitudes_longitudes.csv", sep=";", dec=".")
+str(donnees_manquantes)
+
+donnees_manquantes$longitude <- donnees_manquantes$longitude %>%
+  str_replace_all(",", "") %>%  # Supprime les virgules
+  as.numeric()
 
 ## Nettoyage dans les noms des colonnes
 generalise <- nettoyer_noms_colonnes(generalise)
+donnees_manquantes <- nettoyer_noms_colonnes(donnees_manquantes)
 
-## Fusion
+## Fusion des bases
 data <- demo %>% 
-  inner_join(generalise, by ="code")
+  inner_join(generalise, by ="code") %>%
+  left_join(donnees_manquantes, by = "code") %>%
+  mutate(
+    longitude = ifelse(is.na(longitude.x), longitude.y, longitude.x),
+    latitude = ifelse(is.na(latitude.x), latitude.y, latitude.x)
+  ) %>%
+  select(-longitude.x, -longitude.y, -latitude.x, -latitude.y)
+
 
 nrow(demo)
 nrow(generalise)
 nrow(data)
+
+## Filtrons les communes n'appartenant pas au département 97
+data <- data %>% filter(departement != 97)
+
+
 
 ## Création de la variable taux de visites
 data <- data %>% 
