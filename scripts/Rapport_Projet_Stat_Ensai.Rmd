@@ -201,7 +201,7 @@ library(ggplot2)
 
 # Utilisation du jeu de données mtcars
 # Variables : Chevaux-vapeur (hp) vs Miles par gallon (mpg)
-ggplot(data = data, aes(x = part_des_pers_a_ga_es_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
+ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
   geom_point(color = "blue", size = 3) +          # Points bleus
   geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
   labs(
