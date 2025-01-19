@@ -241,7 +241,7 @@ Dans cette partie, nous allons réaliser quelques statistiques descriptives sur 
 Nous allons ici, voir s'il y a un lien à priori entre le taux de consultation et certaines de nos variables explicatives. Ainsi, nous avons d'abord réalisé une analyse descriptive bivariée puis nous avons calculé la corrélation de Pearson pour évaluer le lien linéaire entre le taux de consulation et des variables telles que la population totale, la part des personnes agées (75 ans et plus), la part de quelques CSP (ouvriers et retraités).
 
 #### Taux de consultation et population totale
-```{r echo = TRUE}
+```{r}
 # Charger les bibliothèques nécessaires
 library(dplyr)
 
@@ -256,7 +256,7 @@ print(data_pop)
 En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort qu'en moyenne, plus la taille de la commune est importante plus le taux de consulations est élevé.
 
 #### Taux de consultation et population âgée
-```{r echo = TRUE}
+```{r}
 data_age <- data %>%
   mutate(grande_population_agee = ifelse(nb_de_pers_agees_de_75_ans_ou_plus_2021 > median(nb_de_pers_agees_de_75_ans_ou_plus_2021, na.rm = TRUE), "Oui", "Non")) %>%
   group_by(grande_population_agee) %>%
@@ -268,7 +268,7 @@ print(data_age)
 Les communes avec une population âgée importante (communes dont la population âgée de 75 ans ou plus est supérieure à la médiane) ont en moyenne un taux de consultations plus faible.
 
 #### Taux de consultation et CSP
-```{r echo = TRUE}
+```{r}
 # Charger les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
@@ -317,7 +317,7 @@ Pour prendre en compte l'effet de la taille des variables et rendre les comparai
 
 #### Analyse de corrélation
 
-Les résultats sont consignées dans le tableau suivant : 
+Les résultats de la corrélation de Pearson sont consignées dans le tableau suivant : 
 
 ```{r}
 library(dplyr)
@@ -374,7 +374,6 @@ ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_vis
     y = "Taux de consultation"
   ) +
   theme_minimal()
-
 ```
 
 ### Autocorrélation 
@@ -411,7 +410,6 @@ La matrice de \(W\) peut être constuit sur la base du voisinage entre les deux 
 La distance de Haversine est une mesure de la distance entre deux points sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\) et \(longitude\)). Elle est particulièrement utile pour les données géographiques projetées sur une surface sphérique, comme la Terre.
 
 #### Formule de la distance de Haversine
-
 Si l'on considère deux points (\(i\)) et (\(j\)), la distance (\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon (\(r\)) est donnée par :
 
 \[
