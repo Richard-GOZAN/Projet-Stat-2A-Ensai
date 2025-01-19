@@ -238,7 +238,86 @@ Dans cette partie, nous allons réaliser quelques statistiques descriptives sur 
 
 ### Analyse bivariée 
 
-Nous allons ici, voir s'il y a un lien à priori entre le taux de consultations et certaines de nos variables explicatives. Ainsi, nous avons calculé la corrélation de Pearson pour évaluer le lien linéaire entre le taux de consulation et des variables telles que la population totale, la part des personnes agées (75 ans et plus), la part de quelques CSP (ouvriers et retraités). Les résultats sont consignées dans le tableau suivant : 
+Nous allons ici, voir s'il y a un lien à priori entre le taux de consultation et certaines de nos variables explicatives. Ainsi, nous avons d'abord réalisé une analyse descriptive bivariée puis nous avons calculé la corrélation de Pearson pour évaluer le lien linéaire entre le taux de consulation et des variables telles que la population totale, la part des personnes agées (75 ans et plus), la part de quelques CSP (ouvriers et retraités).
+
+#### Taux de consultation et population totale
+```{r echo = TRUE}
+# Charger les bibliothèques nécessaires
+library(dplyr)
+
+data_pop <- data %>%
+  mutate(taille_commune = ntile(population_municipale_2021_x, 3)) %>%
+  group_by(taille_commune) %>%
+  summarise(consultations_moyennes = mean(taux_visites, na.rm = TRUE))
+
+# Afficher les résultats
+print(data_pop)
+```
+En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort qu'en moyenne, plus la taille de la commune est importante plus le taux de consulations est élevé.
+
+#### Taux de consultation et population âgée
+```{r echo = TRUE}
+data_age <- data %>%
+  mutate(grande_population_agee = ifelse(nb_de_pers_agees_de_75_ans_ou_plus_2021 > median(nb_de_pers_agees_de_75_ans_ou_plus_2021, na.rm = TRUE), "Oui", "Non")) %>%
+  group_by(grande_population_agee) %>%
+  summarise(consultations_moyennes = mean(taux_visites, na.rm = TRUE))
+
+# Afficher les résultats
+print(data_age)
+```
+Les communes avec une population âgée importante (communes dont la population âgée de 75 ans ou plus est supérieure à la médiane) ont en moyenne un taux de consultations plus faible.
+
+#### Taux de consultation et CSP
+```{r echo = TRUE}
+# Charger les bibliothèques nécessaires
+library(ggplot2)
+library(gridExtra)
+
+# Standardiser les variables pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables
+data_csp <- data %>%
+  mutate(across(c(taux_visites, 13:20), scale))
+
+# Créer les graphiques
+plot1 <- ggplot(data_csp, aes(x = population_de_15_ans_ou_selon_la_csp_2021_agriculteurs_exploitants, y = taux_visites)) +
+  geom_point() +
+  labs(title = "", x = "Agriculteurs", y = "Taux de visite")
+
+plot2 <- ggplot(data_csp, aes_string(x = names(data)[14], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Artisans", y = "Taux de visite")
+
+plot3 <- ggplot(data_csp, aes_string(x = names(data)[15], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Cadres", y = "Taux de visite")
+
+plot4 <- ggplot(data_csp, aes_string(x = names(data)[16], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Professions intermédiaires", y = "Taux de visite")
+
+plot5 <- ggplot(data_csp, aes_string(x = names(data)[17], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Employés", y = "Taux de visite")
+
+plot6 <- ggplot(data_csp, aes_string(x = names(data)[18], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Ouvriers", y = "Taux de visite")
+
+plot7 <- ggplot(data_csp, aes_string(x = names(data)[19], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Retraités", y = "Taux de visite")
+
+plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Sans activites", y = "Taux de visite")
+
+# Afficher les graphiques ensemble
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 4)
+```
+Pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables, nous les avons standardisées. Aucune catégorie ne semble montrer une relation linéaire évidente avec le taux de visite. Par ailleurs, pour toutes les catégories socio-professionnelles, la majorité des communes se situent dans une plage de proportions faibles, ce qui limite la variabilité observable dans les relations. Une analyse statistique supplémentaire, comme le calcul de corrélations, serait nécessaire pour confirmer ou infirmer les relations observées visuellement.
+
+#### Analyse de corrélation
+
+Les résultats sont consignées dans le tableau suivant : 
 
 ```{r}
 library(dplyr)
@@ -278,8 +357,8 @@ resultats$Significatif <- ifelse(resultats$P_value < 0.05, "Oui", "Non")
 kable(resultats, caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")
 ```
 
+Les résultats nous montrent que le taux de consultation est positivement corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la corrélation est faible. Par ailleurs, la corrélation est négative avec la part des personnes agées de plus de 75 ans. Cela dit, plus la part des plus de 75 ans augmente moins est le taux de consultations dans une commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont ceux qui ne se consultent pas assez. On peut voir cela à partir de ce graphique ci dessous.
 
-Les résultats nous montrent que le taux de consultation est positivement corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la corrélation est faible. Par ailleurs, la corrélation est négative avec la part des personnes agées de plus de 75 ans. Cela dit, plus la part des plus de 75 ans augmente moins est le taux de consultations dans une commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont ceux qui ne se consultent pas assez. On peut voir cela à partir de ce graphique ci dessous. 
 ```{r fig.align='center', fig.height=4, fig.width=4, fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
 # Charger la bibliothèque ggplot2
 library(ggplot2)
@@ -297,6 +376,7 @@ ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_vis
   theme_minimal()
 
 ```
+
 ### Autocorrélation 
 
 L’autocorrélation spatiale est une mesure essentielle pour analyser la dépendance entre des observations géographiques. Dans notre étude nos données sont des données portant sur des communes. Ainsi il peut exister une dépendance entre nos taux de consultations du fait de la proximité des communes ou de l'appartenance à un même département ou région. Ainsi nous allons mesurer cette dépendance en évaluant l'autocorrélation spatiale. Dans ce contexte, **l’indice de Moran** est largement utilisé pour quantifier cette dépendance en fournissant une mesure globale de l’autocorrélation spatiale.
@@ -331,6 +411,9 @@ La matrice de \(W\) peut être constuit sur la base du voisinage entre les deux 
 La distance de Haversine est une mesure de la distance entre deux points sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\) et \(longitude\)). Elle est particulièrement utile pour les données géographiques projetées sur une surface sphérique, comme la Terre.
 
 #### Formule de la distance de Haversine
+
+Si l'on considère deux points (\(i\)) et (\(j\)), la distance (\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon (\(r\)) est donnée par :
+
 \[
  d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
 \]
