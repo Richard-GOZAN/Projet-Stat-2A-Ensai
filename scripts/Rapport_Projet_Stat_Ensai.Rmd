@@ -4,10 +4,10 @@ caractéristiques des villes et de la spatialisation : approche par modèle mixt
 author: "Groupe 25"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    number_sections: true
-    toc: true
-    toc_depth: 3
+  pdf_document: 
+    number_sections: yes
+    toc: yes
+    keep_tex: yes
 header-includes:
   - \usepackage[french]{babel}
   - \usepackage[T1]{fontenc}
@@ -32,9 +32,9 @@ library(skimr)
 
 # Importation des données de démonstration
 
-demo <- read.csv("data/demof2.csv", sep = ";", dec=",")
-View(demo)
-str(demo)
+demo <- read.csv("../data/demof2.csv", sep = ";", dec=",")
+#View(demo)
+#str(demo)
 names(demo)[names(demo) == "Libellé"] <- "libelle_maj"
 
 ## Fonction prenant en entrée un base et nettoie les noms des colonnes
@@ -56,12 +56,12 @@ names(demo)
 # Fusion des bases et création des varaiables
 
 ## Importation de la base generalise
-generalise <- read.csv("data/generalise.csv", sep=";")
+generalise <- read.csv("../data/generalise.csv", sep=";")
 str(generalise)
 
 ## Importation de la base pour les lon et lat manquantes
 donnees_manquantes <- read.csv(
-  "data/communes_manquantes_latitudes_longitudes.csv", sep=";", dec=".")
+  "../data/communes_manquantes_latitudes_longitudes.csv", sep=";", dec=".")
 str(donnees_manquantes)
 
 donnees_manquantes$longitude <- donnees_manquantes$longitude %>%
@@ -106,8 +106,11 @@ summary(data$taux_visites_19_ans_ou_plus)
 
 skim(data)
 
+
+
+
 ## Exportation de la base finale 
-write.csv(data, "data/data.csv", row.names = FALSE)
+write.csv(data, "../data/data.csv", row.names = FALSE)
 
 ## Statistiques descriptives sur le nombre de visite
 
@@ -155,15 +158,11 @@ Nous allons ici, voir s'il y a un lien à priori entre le taux de consultations 
 library(dplyr)
 library(knitr)
 
-data$taux_visites_19_ans_ou_plus <- as.numeric(data$taux_visites_19_ans_ou_plus)
-data$population_municipale_2021_x <- as.numeric(data$population_municipale_2021_x)
-data$part_des_pers_agees_de_75_ans_ou_2021 <- as.numeric(data$part_des_pers_agees_de_75_ans_ou_2021)
-data$population_de_15_ans_ou_selon_la_csp_2021_retraites <- as.numeric(data$population_de_15_ans_ou_selon_la_csp_2021_retraites)
-data$population_de_15_ans_ou_selon_la_csp_2021_ouvriers <- as.numeric(data$population_de_15_ans_ou_selon_la_csp_2021_ouvriers)
-
 # Liste des variables à tester avec taux_de_consultation
-variables <- c("population_municipale_2021_x", "part_des_pers_agees_de_75_ans_ou_2021", 
-               "population_de_15_ans_ou_selon_la_csp_2021_retraites", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
+variables <- c("population_municipale_2021_x", "part_des_pers_a_ga_es_de_75_ans_ou_2021", 
+               "population_de_15_ans_ou_selon_la_csp_2021_retraita_s", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
+
+
 
 # Initialiser un tableau pour stocker les résultats
 resultats <- data.frame(Variable = character(), Correlation = numeric(), P_value = numeric())
@@ -194,7 +193,7 @@ library(ggplot2)
 
 # Utilisation du jeu de données mtcars
 # Variables : Chevaux-vapeur (hp) vs Miles par gallon (mpg)
-ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
+ggplot(data = data, aes(x = part_des_pers_a_ga_es_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
   geom_point(color = "blue", size = 3) +          # Points bleus
   geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
   labs(
@@ -277,16 +276,16 @@ weight_matrix <- 1 / dist_matrix
 diag(weight_matrix) <- 0  # Pas de poids pour soi-même
 
 # Créer l'objet de poids spatial
-W <- mat2listw(weight_matrix)
+#W <- mat2listw(weight_matrix)
 
 # Exemple de valeurs (X_i) à analyser
-values <- data$taux_visites_19_ans_ou_plus
+#values <- data$taux_visites_19_ans_ou_plus
 
 # Calcul de l'Indice de Moran
-moran_result <- moran.test(values, W)
+#moran_result <- moran.test(values, W)
 
 # Afficher les résultats
-print(moran_result)
+#print(moran_result)
 ```
 
 
