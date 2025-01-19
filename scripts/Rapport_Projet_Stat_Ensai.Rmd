@@ -158,9 +158,17 @@ Nous allons ici, voir s'il y a un lien à priori entre le taux de consultations 
 library(dplyr)
 library(knitr)
 
+
+conversion_en_numeric <- function(data, columns) {
+  data %>%
+    mutate(across(all_of(columns), as.numeric))
+}
 # Liste des variables à tester avec taux_de_consultation
-variables <- c("population_municipale_2021_x", "part_des_pers_a_ga_es_de_75_ans_ou_2021", 
-               "population_de_15_ans_ou_selon_la_csp_2021_retraita_s", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
+variables <- c("population_municipale_2021_x", "part_des_pers_agees_de_75_ans_ou_2021", 
+               "population_de_15_ans_ou_selon_la_csp_2021_retraites", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
+
+conversion_en_numeric(data, variables)
+
 
 
 
