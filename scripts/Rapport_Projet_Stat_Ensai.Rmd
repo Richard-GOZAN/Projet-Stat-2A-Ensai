@@ -1,23 +1,111 @@
 ---
-title: "Modélisation du nombre de consultations en médecine de ville en tenant compte des 
-caractéristiques des villes et de la spatialisation : approche par modèle mixte"
-author: "Groupe 25"
-date: "`r Sys.Date()`"
-output:
-  pdf_document: 
-    number_sections: yes
-    toc: yes
-    keep_tex: yes
 header-includes:
-  - \usepackage[french]{babel}
-  - \usepackage[T1]{fontenc}
-  - \usepackage[utf8]{inputenc}
-  - \usepackage{etoolbox} # Pour modifier le comportement de \tableofcontents
-  - \pretocmd{\tableofcontents}{\clearpage}{}{} # Ajout d'un saut de page avant le sommaire
-geometry: a4paper
-fontsize: 12pt
-linestretch: 1.5
+   \usepackage{amsmath}
+   \usepackage{geometry}
+   \usepackage{pdfpages}
+   \usepackage{fontspec}
+   \usepackage{pdfpages}
+   \usepackage{graphicx}
+   \usepackage{amsmath}
+   \usepackage{atbegshi}
+   \usepackage{fancyhdr}
+   \usepackage{tocloft}
+   \usepackage{tcolorbox}
+   \usepackage{xcolor}
+   \definecolor{bleu}{RGB}{0,0,255}
+   \usepackage{everypage}
+   \usepackage{everypage}
+   \usepackage{graphicx}
+   \usepackage{fancyhdr}
+   \pagestyle{fancy} 
+   \definecolor{mybrown}{RGB}{139,69,19}
+   \fancyhead[R]{}
+output: 
+  pdf_document:
+    toc: no
+    number_sections: true
+    latex_engine: xelatex
+urlcolor: blue
+editor_options:
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
 ---
+
+```{=tex}
+\setcounter{tocdepth}{5}                
+\renewcommand\contentsname{\begin{center}\textcolor{brown}{Sommaire}\end{center}}
+```
+
+
+```{=tex}
+\AtBeginShipout{
+  \ifnum\value{page}=1\thispagestyle{empty}\fi}
+```
+
+
+```{=tex}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{Elèves Ingénieurs}
+\fancyhead[R]{\textcolor{brown}{@Alex, Ali, Richard \& Toussaint}}
+\fancyfoot[C]{\thepage}
+\fancyfoot[L]{Mars 2025}
+\fancyfoot[R]{Projet Statistique}
+```
+```{=tex}
+\AddEverypageHook{
+  \ifnum\value{page}>1 
+    \fancyhead[L]{Elèves Ingénieurs}
+    \fancyhead[R]{\textcolor{brown}{@Alex, Ali, Richard \& Toussaint}}
+    \fancyfoot[C]{\thepage}
+    \fancyfoot[L]{Mars 2025}
+    \fancyfoot[R]{Projet Statistique}
+  \else
+    \fancyhead[L]{} 
+    \fancyhead[R]{}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{}
+  \fi
+}
+```
+
+```{=latex}
+\tableofcontents
+```
+
+\newpage
+```{=tex}
+\renewcommand\listtablename{\begin{center}\textcolor{brown}{Liste des Tableaux}\end{center}}
+\renewcommand\listfigurename{\begin{center}\textcolor{brown}{Liste des Figures}\end{center}} 
+
+\setlength{\cftfignumwidth}{3em}
+\setlength{\cfttabnumwidth}{3em}
+```
+
+```{=latex}
+\listoftables
+```
+
+\newpage
+
+```{=latex}
+\listoffigures
+```
+
+\newpage
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,   # Ne pas afficher le code source R  # Ne pas afficher les résultats des calculs
+  warning = FALSE,    # Ne pas afficher les avertissements
+  message = FALSE     # Ne pas afficher les messages
+)
+
+```
+
 
 ```{r fig.align='center', fig.height=6, fig.width=6}
 # Chargement des packages
@@ -29,6 +117,8 @@ library(summarytools)
 library(gridExtra)
 library(purrr)
 library(skimr)
+library(readr)
+library(readxl)
 
 # Importation des données de démonstration
 
@@ -50,19 +140,19 @@ nettoyer_noms_colonnes <- function(data){
 
 ## Nettoyage des colonnes de la base demo
 demo <- nettoyer_noms_colonnes(demo)
-names(demo)
+#names(demo)
 
 
 # Fusion des bases et création des varaiables
 
 ## Importation de la base generalise
 generalise <- read.csv("../data/generalise.csv", sep=";")
-str(generalise)
+#str(generalise)
 
 ## Importation de la base pour les lon et lat manquantes
 donnees_manquantes <- read.csv(
   "../data/communes_manquantes_latitudes_longitudes.csv", sep=";", dec=".")
-str(donnees_manquantes)
+#str(donnees_manquantes)
 
 donnees_manquantes$longitude <- donnees_manquantes$longitude %>%
   str_replace_all(",", "") %>%  # Supprime les virgules
@@ -83,9 +173,9 @@ data <- demo %>%
   select(-longitude.x, -longitude.y, -latitude.x, -latitude.y)
 
 
-nrow(demo)
-nrow(generalise)
-nrow(data)
+#nrow(demo)
+#nrow(generalise)
+#nrow(data)
 
 ## Filtrons les communes n'appartenant pas au département 97
 data <- data %>% filter(departement != 97)
@@ -101,10 +191,6 @@ data <- data %>%
   mutate(pop_19_ans_ou_plus = pop_15_ans_ou_plus - pop_15_19_ans,
        taux_visites_19_ans_ou_plus = nb_visite / pop_19_ans_ou_plus)
 
-summary(data$taux_visites)
-summary(data$taux_visites_19_ans_ou_plus)
-
-skim(data)
 
 
 
@@ -114,7 +200,7 @@ write.csv(data, "../data/data.csv", row.names = FALSE)
 
 ## Statistiques descriptives sur le nombre de visite
 
-summary(data$nb_visite)
+#summary(data$nb_visite)
 
 ggplot(data) +
   aes(x = nb_visite) +
@@ -167,7 +253,7 @@ conversion_en_numeric <- function(data, columns) {
 variables <- c("population_municipale_2021_x", "part_des_pers_agees_de_75_ans_ou_2021", 
                "population_de_15_ans_ou_selon_la_csp_2021_retraites", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
 
-conversion_en_numeric(data, variables)
+#conversion_en_numeric(data, variables)
 
 
 
@@ -194,7 +280,7 @@ kable(resultats, caption = "Corrélations de Pearson entre le taux de consultati
 
 
 Les résultats nous montrent que le taux de consultation est positivement corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la corrélation est faible. Par ailleurs, la corrélation est négative avec la part des personnes agées de plus de 75 ans. Cela dit, plus la part des plus de 75 ans augmente moins est le taux de consultations dans une commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont ceux qui ne se consultent pas assez. On peut voir cela à partir de ce graphique ci dessous. 
-```{r fig.align='center', fig.height=6, fig.width=6}
+```{r fig.align='center', fig.height=4, fig.width=4, fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
 # Charger la bibliothèque ggplot2
 library(ggplot2)
 
@@ -205,7 +291,6 @@ ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_vis
   geom_point(color = "blue", size = 3) +          # Points bleus
   geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
   labs(
-    title = "Relation entre taux de consultations et part des plus de 75 ans",
     x = "Part des plus de 75 ans",
     y = "Taux de consultation"
   ) +
@@ -223,13 +308,18 @@ L’indice de Moran (\(I\)) évalue la similitude des valeurs d’une variable e
 La formule mathématique de l’indice de Moran est la suivante :
 
 \[
+{\raisebox{2.5em}[0pt]{\textbf{\textcolor{brown}{Formule 1}}} \hspace{5mm}
+\boxed{
 I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
+}
+}
 \]
+
 
 Où :
 - \(n\) : Nombre total d’entités spatiales (Ici, le nombre de communes).
 - \(x_i, x_j\) : Valeurs observées de la variable pour les entités \(i\) et \(j\) (Ici le taux de consultations)
-- \(ar{x}\) : Moyenne de la variable \(x\).
+- \(\bar{x}\) : Moyenne de la variable \(x\).
 - \(w_{ij}\) : Poids spatial définissant la relation entre \(i\) et \(j\).
 
 La matrice de \(W\) peut être constuit sur la base du voisinage entre les deux communes ou soit de la distance entre les deux communes. Dans le premier cas alors \(w_{ij}\) 
@@ -277,7 +367,7 @@ coords <- data.frame(
 )
 
 # Calcul des distances de Haversine (en mètres)
-dist_matrix <- distm(coords, fun = distVincentySphere)
+dist_matrix <- distm(coords, fun = distHaversine)
 
 # Créer la matrice de poids (poids inverse de la distance)
 weight_matrix <- 1 / dist_matrix
