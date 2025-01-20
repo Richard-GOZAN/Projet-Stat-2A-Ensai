@@ -1,8 +1,8 @@
 ---
 header-includes:
+   \usepackage[french]{babel}
    \usepackage{amsmath}
    \usepackage{geometry}
-   \usepackage{pdfpages}
    \usepackage{fontspec}
    \usepackage{pdfpages}
    \usepackage{graphicx}
@@ -14,9 +14,6 @@ header-includes:
    \usepackage{xcolor}
    \definecolor{bleu}{RGB}{0,0,255}
    \usepackage{everypage}
-   \usepackage{everypage}
-   \usepackage{graphicx}
-   \usepackage{fancyhdr}
    \pagestyle{fancy} 
    \definecolor{mybrown}{RGB}{139,69,19}
    \fancyhead[R]{}
