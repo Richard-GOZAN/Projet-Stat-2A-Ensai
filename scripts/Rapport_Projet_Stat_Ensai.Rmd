@@ -1,0 +1,478 @@
+---
+header-includes:
+   \usepackage[french]{babel}
+   \usepackage{amsmath}
+   \usepackage{geometry}
+   \usepackage{fontspec}
+   \usepackage{pdfpages}
+   \usepackage{graphicx}
+   \usepackage{amsmath}
+   \usepackage{atbegshi}
+   \usepackage{fancyhdr}
+   \usepackage{tocloft}
+   \usepackage{tcolorbox}
+   \usepackage{xcolor}
+   \definecolor{bleu}{RGB}{0,0,255}
+   \usepackage{everypage}
+   \pagestyle{fancy} 
+   \definecolor{mybrown}{RGB}{139,69,19}
+   \fancyhead[R]{}
+output: 
+  pdf_document:
+    toc: no
+    number_sections: true
+    latex_engine: xelatex
+urlcolor: blue
+editor_options:
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{=tex}
+\setcounter{tocdepth}{5}                
+\renewcommand\contentsname{\begin{center}\textcolor{brown}{Sommaire}\end{center}}
+```
+
+
+```{=tex}
+\AtBeginShipout{
+  \ifnum\value{page}=1\thispagestyle{empty}\fi}
+```
+
+
+```{=tex}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{Elèves Ingénieurs}
+\fancyhead[R]{\textcolor{brown}{@Alex, Ali, Richard \& Toussaint}}
+\fancyfoot[C]{\thepage}
+\fancyfoot[L]{Mars 2025}
+\fancyfoot[R]{Projet Statistique}
+```
+```{=tex}
+\AddEverypageHook{
+  \ifnum\value{page}>1 
+    \fancyhead[L]{Elèves Ingénieurs}
+    \fancyhead[R]{\textcolor{brown}{@Alex, Ali, Richard \& Toussaint}}
+    \fancyfoot[C]{\thepage}
+    \fancyfoot[L]{Mars 2025}
+    \fancyfoot[R]{Projet Statistique}
+  \else
+    \fancyhead[L]{} 
+    \fancyhead[R]{}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{}
+  \fi
+}
+```
+
+```{=latex}
+\tableofcontents
+```
+
+\newpage
+```{=tex}
+\renewcommand\listtablename{\begin{center}\textcolor{brown}{Liste des Tableaux}\end{center}}
+\renewcommand\listfigurename{\begin{center}\textcolor{brown}{Liste des Figures}\end{center}} 
+
+\setlength{\cftfignumwidth}{3em}
+\setlength{\cfttabnumwidth}{3em}
+```
+
+```{=latex}
+\listoftables
+```
+
+\newpage
+
+```{=latex}
+\listoffigures
+```
+
+\newpage
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,   # Ne pas afficher le code source R  # Ne pas afficher les résultats des calculs
+  warning = FALSE,    # Ne pas afficher les avertissements
+  message = FALSE     # Ne pas afficher les messages
+)
+
+```
+
+
+```{r fig.align='center', fig.height=6, fig.width=6}
+# Chargement des packages
+
+library(stringi)
+library(dplyr)
+library(tidyverse)
+library(summarytools)
+library(gridExtra)
+library(purrr)
+library(skimr)
+library(readr)
+library(readxl)
+
+# Importation des données de démonstration
+
+demo <- read.csv("../data/demof2.csv", sep = ";", dec=",")
+#View(demo)
+#str(demo)
+names(demo)[names(demo) == "Libellé"] <- "libelle_maj"
+
+## Fonction prenant en entrée un base et nettoie les noms des colonnes
+
+nettoyer_noms_colonnes <- function(data){
+  names(data) <- names(data) %>%
+    stri_trans_general("Latin-ASCII") %>% # Suppression des accents
+    gsub("\\s+", "_", .) %>% # Remplacement des espaces par des underscores
+    gsub("\\.+", "_", .) %>% # Remplacement des points par des underscores
+    tolower() # Conversion en minuscules
+  return (data) 
+}
+
+## Nettoyage des colonnes de la base demo
+demo <- nettoyer_noms_colonnes(demo)
+#names(demo)
+
+
+# Fusion des bases et création des varaiables
+
+## Importation de la base generalise
+generalise <- read.csv("../data/generalise.csv", sep=";")
+#str(generalise)
+
+## Importation de la base pour les lon et lat manquantes
+donnees_manquantes <- read.csv(
+  "../data/communes_manquantes_latitudes_longitudes.csv", sep=";", dec=".")
+#str(donnees_manquantes)
+
+donnees_manquantes$longitude <- donnees_manquantes$longitude %>%
+  str_replace_all(",", "") %>%  # Supprime les virgules
+  as.numeric()
+
+## Nettoyage dans les noms des colonnes
+generalise <- nettoyer_noms_colonnes(generalise)
+donnees_manquantes <- nettoyer_noms_colonnes(donnees_manquantes)
+
+## Fusion des bases
+data <- demo %>% 
+  inner_join(generalise, by ="code") %>%
+  left_join(donnees_manquantes, by = "code") %>%
+  mutate(
+    longitude = ifelse(is.na(longitude.x), longitude.y, longitude.x),
+    latitude = ifelse(is.na(latitude.x), latitude.y, latitude.x)
+  ) %>%
+  select(-longitude.x, -longitude.y, -latitude.x, -latitude.y)
+
+
+#nrow(demo)
+#nrow(generalise)
+#nrow(data)
+
+## Filtrons les communes n'appartenant pas au département 97
+data <- data %>% filter(departement != 97)
+
+
+
+## Création de la variable taux de visites
+data <- data %>% 
+  mutate(taux_visites = nb_visite/population_municipale_2021_x)
+
+## Création de la variabe taux de visites pour les plus de 19 ans
+data <- data %>%
+  mutate(pop_19_ans_ou_plus = pop_15_ans_ou_plus - pop_15_19_ans,
+       taux_visites_19_ans_ou_plus = nb_visite / pop_19_ans_ou_plus)
+
+
+
+
+
+## Exportation de la base finale 
+write.csv(data, "../data/data.csv", row.names = FALSE)
+
+## Statistiques descriptives sur le nombre de visite
+
+#summary(data$nb_visite)
+
+ggplot(data) +
+  aes(x = nb_visite) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ggtitle(label = "Distribution du nombre de visites par commune") +
+  ylab("") +
+  xlab("")
+
+```
+
+
+# Introduction
+
+# Présentation du contexte
+
+## Intérêt de l'étude
+
+## Cadre conceptuel de l'étude
+
+## Présentation des données
+
+# Méthodologie
+
+# Analyse des résultats
+
+## Analyse descriptive
+
+
+Dans cette partie, nous allons réaliser quelques statistiques descriptives sur nos données. 
+
+
+### Analyse univariée
+
+
+### Analyse bivariée 
+
+Nous allons ici, voir s'il y a un lien à priori entre le taux de consultation et certaines de nos variables explicatives. Ainsi, nous avons d'abord réalisé une analyse descriptive bivariée puis nous avons calculé la corrélation de Pearson pour évaluer le lien linéaire entre le taux de consulation et des variables telles que la population totale, la part des personnes agées (75 ans et plus), la part de quelques CSP (ouvriers et retraités).
+
+#### Taux de consultation et population totale
+```{r}
+# Charger les bibliothèques nécessaires
+library(dplyr)
+
+data_pop <- data %>%
+  mutate(taille_commune = ntile(population_municipale_2021_x, 3)) %>%
+  group_by(taille_commune) %>%
+  summarise(consultations_moyennes = mean(taux_visites, na.rm = TRUE))
+
+# Afficher les résultats
+print(data_pop)
+```
+En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort qu'en moyenne, plus la taille de la commune est importante plus le taux de consulations est élevé.
+
+#### Taux de consultation et population âgée
+```{r}
+data_age <- data %>%
+  mutate(grande_population_agee = ifelse(nb_de_pers_agees_de_75_ans_ou_plus_2021 > median(nb_de_pers_agees_de_75_ans_ou_plus_2021, na.rm = TRUE), "Oui", "Non")) %>%
+  group_by(grande_population_agee) %>%
+  summarise(consultations_moyennes = mean(taux_visites, na.rm = TRUE))
+
+# Afficher les résultats
+print(data_age)
+```
+Les communes avec une population âgée importante (communes dont la population âgée de 75 ans ou plus est supérieure à la médiane) ont en moyenne un taux de consultations plus faible.
+
+#### Taux de consultation et CSP
+```{r}
+# Charger les bibliothèques nécessaires
+library(ggplot2)
+library(gridExtra)
+
+# Standardiser les variables pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables
+data_csp <- data %>%
+  mutate(across(c(taux_visites, 13:20), scale))
+
+# Créer les graphiques
+plot1 <- ggplot(data_csp, aes(x = population_de_15_ans_ou_selon_la_csp_2021_agriculteurs_exploitants, y = taux_visites)) +
+  geom_point() +
+  labs(title = "", x = "Agriculteurs", y = "Taux de visite")
+
+plot2 <- ggplot(data_csp, aes_string(x = names(data)[14], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Artisans", y = "Taux de visite")
+
+plot3 <- ggplot(data_csp, aes_string(x = names(data)[15], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Cadres", y = "Taux de visite")
+
+plot4 <- ggplot(data_csp, aes_string(x = names(data)[16], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Professions intermédiaires", y = "Taux de visite")
+
+plot5 <- ggplot(data_csp, aes_string(x = names(data)[17], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Employés", y = "Taux de visite")
+
+plot6 <- ggplot(data_csp, aes_string(x = names(data)[18], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Ouvriers", y = "Taux de visite")
+
+plot7 <- ggplot(data_csp, aes_string(x = names(data)[19], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Retraités", y = "Taux de visite")
+
+plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
+  geom_point() +
+  labs(title = "", x = "Sans activites", y = "Taux de visite")
+
+# Afficher les graphiques ensemble
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 4)
+```
+Pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables, nous les avons standardisées. Aucune catégorie ne semble montrer une relation linéaire évidente avec le taux de visite. Par ailleurs, pour toutes les catégories socio-professionnelles, la majorité des communes se situent dans une plage de proportions faibles, ce qui limite la variabilité observable dans les relations. Une analyse statistique supplémentaire, comme le calcul de corrélations, serait nécessaire pour confirmer ou infirmer les relations observées visuellement.
+
+#### Analyse de corrélation
+
+Les résultats de la corrélation de Pearson sont consignées dans le tableau suivant : 
+
+```{r}
+library(dplyr)
+library(knitr)
+
+
+conversion_en_numeric <- function(data, columns) {
+  data %>%
+    mutate(across(all_of(columns), as.numeric))
+}
+# Liste des variables à tester avec taux_de_consultation
+variables <- c("population_municipale_2021_x", "part_des_pers_agees_de_75_ans_ou_2021", 
+               "population_de_15_ans_ou_selon_la_csp_2021_retraites", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
+
+#conversion_en_numeric(data, variables)
+
+
+
+
+# Initialiser un tableau pour stocker les résultats
+resultats <- data.frame(Variable = character(), Correlation = numeric(), P_value = numeric())
+
+# Calculer la corrélation pour chaque variable et tester la significativité
+for (var in variables) {
+  test <- cor.test(data$taux_visites_19_ans_ou_plus, data[[var]], method = "pearson")
+  resultats <- rbind(resultats, data.frame(
+    Variable = var,
+    Correlation = test$estimate,
+    P_value = test$p.value
+  ))
+}
+
+# Format du tableau avec la significativité
+resultats$Significatif <- ifelse(resultats$P_value < 0.05, "Oui", "Non")
+
+# Afficher le tableau dans le RMarkdown
+kable(resultats, caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")
+```
+
+Les résultats nous montrent que le taux de consultation est positivement corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la corrélation est faible. Par ailleurs, la corrélation est négative avec la part des personnes agées de plus de 75 ans. Cela dit, plus la part des plus de 75 ans augmente moins est le taux de consultations dans une commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont ceux qui ne se consultent pas assez. On peut voir cela à partir de ce graphique ci dessous.
+
+```{r fig.align='center', fig.height=4, fig.width=4, fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
+# Charger la bibliothèque ggplot2
+library(ggplot2)
+
+
+# Utilisation du jeu de données mtcars
+# Variables : Chevaux-vapeur (hp) vs Miles par gallon (mpg)
+ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
+  geom_point(color = "blue", size = 3) +          # Points bleus
+  geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
+  labs(
+    x = "Part des plus de 75 ans",
+    y = "Taux de consultation"
+  ) +
+  theme_minimal()
+```
+
+### Autocorrélation 
+
+L’autocorrélation spatiale est une mesure essentielle pour analyser la dépendance entre des observations géographiques. Dans notre étude nos données sont des données portant sur des communes. Ainsi il peut exister une dépendance entre nos taux de consultations du fait de la proximité des communes ou de l'appartenance à un même département ou région. Ainsi nous allons mesurer cette dépendance en évaluant l'autocorrélation spatiale. Dans ce contexte, **l’indice de Moran** est largement utilisé pour quantifier cette dépendance en fournissant une mesure globale de l’autocorrélation spatiale.
+
+#### Définition de l’indice de Moran
+L’indice de Moran (\(I\)) évalue la similitude des valeurs d’une variable entre différentes entités géographiques (par exemple, des communes) en fonction de leur proximité spatiale. Il se base sur la matrice de poids spatiale (\(W\)), qui définit les relations entre ces entités.
+
+#### Formule de l’indice de Moran
+La formule mathématique de l’indice de Moran est la suivante :
+
+\[
+{\raisebox{2.5em}[0pt]{\textbf{\textcolor{brown}{Formule 1}}} \hspace{5mm}
+\boxed{
+I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
+}
+}
+\]
+
+
+Où :
+- \(n\) : Nombre total d’entités spatiales (Ici, le nombre de communes).
+- \(x_i, x_j\) : Valeurs observées de la variable pour les entités \(i\) et \(j\) (Ici le taux de consultations)
+- \(\bar{x}\) : Moyenne de la variable \(x\).
+- \(w_{ij}\) : Poids spatial définissant la relation entre \(i\) et \(j\).
+
+La matrice de \(W\) peut être constuit sur la base du voisinage entre les deux communes ou soit de la distance entre les deux communes. Dans le premier cas alors \(w_{ij}\) 
+\(w_{ij} = 1\) si \(i\) et \(j\) sont voisins et \(w_{ij} = 0\) sinon. Dans le second cas \(w_{ij} = d_{ij}\). Nous allons dans notre cas utiliser une matrice de poids basée sur la distance, notamment celle d'Haversine. 
+
+#### Matrice de poids basée sur la distance de Haversine
+
+##### Définition de la distance de Haversine
+La distance de Haversine est une mesure de la distance entre deux points sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\) et \(longitude\)). Elle est particulièrement utile pour les données géographiques projetées sur une surface sphérique, comme la Terre.
+
+#### Formule de la distance de Haversine
+Si l'on considère deux points (\(i\)) et (\(j\)), la distance (\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon (\(r\)) est donnée par :
+
+\[
+ d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
+\]
+
+Où :
+- \(r\) : Rayon de la Terre (environ 6371 km).
+- \(\phi_i, \phi_j\) : Latitudes des points \(i\) et \(j\) (en radians).
+- \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en radians).
+
+#### Construction de la matrice de poids
+
+Pour construire la matrice de poids, nous avons alors suivi ces étapes. *
+
+1. Calculer les distances de Haversine entre chaque paire d’entités.
+2. Définir un seuil de distance maximale (\(d_{max}\)) :
+   - Si \(d_{ij} < d_{max}\), \(w_{ij} = \frac{1}{d_{ij}}\).
+   - Sinon, \(w_{ij} = 0\).
+3. Normaliser les poids pour que chaque ligne de la matrice ait une somme égale à 1 :
+\[
+ w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
+\]
+
+```{r}
+# Charger les bibliothèques nécessaires
+#install.packages("spdep")
+#install.packages("geosphere")
+library(spdep)
+library(geosphere)
+
+#  (latitude, longitude)
+coords <- data.frame(
+  lat = data$latitude,  
+  lon = data$longitude
+)
+
+# Calcul des distances de Haversine (en mètres)
+dist_matrix <- distm(coords, fun = distHaversine)
+
+# Créer la matrice de poids (poids inverse de la distance)
+weight_matrix <- 1 / dist_matrix
+diag(weight_matrix) <- 0  # Pas de poids pour soi-même
+
+# Créer l'objet de poids spatial
+#W <- mat2listw(weight_matrix)
+
+# Exemple de valeurs (X_i) à analyser
+#values <- data$taux_visites_19_ans_ou_plus
+
+# Calcul de l'Indice de Moran
+#moran_result <- moran.test(values, W)
+
+# Afficher les résultats
+#print(moran_result)
+```
+
+
+Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à 
+
+
+
+# Discussion
+
+# Conclusion
+
+# Références bibliographiques
+
+# Annexes
