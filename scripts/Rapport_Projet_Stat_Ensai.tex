@@ -156,6 +156,8 @@ l'étude}\label{cadre-conceptuel-de-luxe9tude}
 \subsection{Présentation des
 données}\label{pruxe9sentation-des-donnuxe9es}
 
+Les données que nous avons utilisées nous proviennent de \ldots{}
+
 \section{Méthodologie}\label{muxe9thodologie}
 
 \subsection{Motivation}\label{motivation}
@@ -295,7 +297,19 @@ lumière la diversité des pratiques et des charges de travail parmi les
 médecins généralistes, avec potentiellement quelques cas atypiques
 présentant un volume de consultations exceptionnellement élevé.
 
-\begin{center}\includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-4-1} \end{center}
+Le nombre de visites pouvant potentiellement être influencé par la
+taille de la commune et donc par sa population, nous avons éliminer cet
+effet en calculant le taux de consultations qui n'est autre que le
+nombre de consultations moyennes par personnes.
+
+\begin{figure}
+
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-4-1} 
+
+}
+
+\caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-4}
+\end{figure}
 
 \subsubsection{Analyse bivariée}\label{analyse-bivariuxe9e}
 
@@ -335,7 +349,14 @@ taille de la commune est importante plus le taux de consulations est
 ## 2 Oui                                      1.41
 \end{verbatim}
 
-\begin{center}\includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-7-1} \end{center}
+\begin{figure}
+
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-7-1} 
+
+}
+
+\caption{Relation entre taux de consultations et part des plus de 75 ans}\label{fig:unnamed-chunk-7}
+\end{figure}
 
 Les communes avec une population âgée importante (communes dont la
 population âgée de 75 ans ou plus est supérieure à la médiane) ont en
@@ -344,7 +365,14 @@ moyenne un taux de consultations plus faible.
 \paragraph{Taux de consultation et
 CSP}\label{taux-de-consultation-et-csp}
 
-\begin{center}\includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-8-1} \end{center}
+\begin{figure}
+
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-8-1} 
+
+}
+
+\caption{Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle}\label{fig:unnamed-chunk-8}
+\end{figure}
 
 Aucune catégorie ne semble montrer une relation linéaire évidente avec
 le taux de visite. Par ailleurs, pour toutes les catégories
@@ -486,10 +514,23 @@ Si l'on considère deux points (\(i\)) et (\(j\)), la distance
  d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
 \]
 
-Où : - \(r\) : Rayon de la Terre (environ 6371 km). - \(\phi_i, \phi_j\)
-: Latitudes des points \(i\) et \(j\) (en radians). -
-\(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en
-radians).
+Où : - \(r\) : Rayon de la Terre (environ 6371 km).
+
+\begin{itemize}
+\item
+  \(\phi_i, \phi_j\) : Latitudes des points \(i\) et \(j\) (en radians).
+\item
+  \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en
+  radians). Après calcul nous avons ces statistiques sur nos distances.
+\end{itemize}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##     0.0   312.8   515.7   531.6   688.7  7589.3
+\end{verbatim}
+
+Une visualtion de la densité de nos distance nous donne ceci.
+\includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-11-1.pdf}
 
 \paragraph{Construction de la matrice de
 poids}\label{construction-de-la-matrice-de-poids}
@@ -519,7 +560,27 @@ Pour construire la matrice de poids, nous avons alors suivi ces étapes.
   \]
 \end{enumerate}
 
+\begin{longtable}[]{@{}lr@{}}
+\caption{Résultats du test de Moran}\tabularnewline
+\toprule\noalign{}
+& x \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+& x \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Moran I statistic & 0.1275832 \\
+Expectation & -0.0003056 \\
+Variance & 0.0000029 \\
+\end{longtable}
+
 Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
+0.1275832. Le test nous a permi d'obtenir une p-value de 0. Ce qui
+permet de conclure qu'il y a effectivement une autocorrélation positive
+et significative entre les communes selon leur taux de consultations.
 
 \section{Discussion}\label{discussion}
 

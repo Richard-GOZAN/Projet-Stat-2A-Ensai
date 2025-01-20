@@ -221,6 +221,9 @@ write.csv(data, "../data/data.csv", row.names = FALSE)
 
 ## Présentation des données
 
+
+Les données que nous avons utilisées nous proviennent de ...
+
 # Méthodologie
 
 ## Motivation
@@ -310,16 +313,33 @@ summary(data$nb_visite)
 
 L'analyse des statistiques descriptives sur le nombre de consultations annuelles de médecin généraliste entre 2018 et 2022 révèle une distribution fortement asymétrique à droite, avec une grande dispersion des données. La moyenne de 19130 consultations, nettement supérieure à la médiane de 9127, indique la présence de valeurs extrêmes tirant la distribution vers le haut. Cette asymétrie est confirmée par l'écart considérable entre le minimum de 1037 et le maximum de 765833 consultations par an.
 
-La moitié des médecins généralistes effectuent entre 5993 et 17290 consultations annuellement, ce qui suggère une variabilité importante dans la charge de travail. La médiane de 9127 consultations par an, équivalant à environ 25 consultations par jour ouvrable, semble plus représentative de l'activité typique d'un médecin généraliste que la moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en lumière la diversité des pratiques et des charges de travail parmi les médecins généralistes, avec potentiellement quelques cas atypiques présentant un volume de consultations exceptionnellement élevé.
+La moitié des médecins généralistes effectuent entre 5993 et 17290 consultations annuellement, ce qui suggère une variabilité importante dans la charge de travail. La médiane de 9127 consultations par an, équivalant à environ 25 consultations par jour ouvrable, semble plus représentative de l'activité typique d'un médecin généraliste que la moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en lumière la diversité des pratiques et des charges de travail parmi les médecins généralistes, avec potentiellement quelques cas atypiques présentant un volume de consultations exceptionnellement élevé. 
 
-```{r, fig.align='center'}
-ggplot(data) +
+Le nombre de visites pouvant potentiellement être influencé par la taille de la commune et donc par sa population, nous avons éliminer cet effet en calculant le taux de consultations qui n'est autre que le nombre de consultations moyennes par personnes. 
+
+```{r, fig.align='center', fig.cap= "Répartition du nombre et du taux de consultations"}
+library(ggplot2)
+library(patchwork)
+
+# Premier graphique pour nb_visite
+plot1 <- ggplot(data) +
   aes(x = nb_visite) +
   geom_histogram(bins = 30L, fill = "gray") +
   theme_minimal() +
-  ggtitle(label = "Distribution du nombre de visites par commune") +
-  ylab("") +
+  ylab("Nombre de consultations") +
   xlab("")
+
+# Deuxième graphique pour taux_visites_19_ans_ou_plus
+plot2 <- ggplot(data) +
+  aes(x = taux_visites_19_ans_ou_plus) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ylab("Taux de consultations") +
+  xlab("")
+
+# Combinaison des deux graphiques
+plot1 + plot2
+
 ```
 
 
@@ -329,6 +349,7 @@ ggplot(data) +
 Nous allons ici, voir s'il y a un lien à priori entre le taux de consultation et certaines de nos variables explicatives. Ainsi, nous avons d'abord réalisé une analyse descriptive bivariée puis nous avons calculé la corrélation de Pearson pour évaluer le lien linéaire entre le taux de consulation et des variables telles que la population totale, la part des personnes agées (75 ans et plus), la part de quelques CSP (ouvriers et retraités).
 
 #### Taux de consultation et population totale
+
 ```{r}
 # Charger les bibliothèques nécessaires
 library(dplyr)
@@ -357,18 +378,15 @@ print(data_age)
 
 
 
-```{r, fig.align='center'}
+```{r, fig.align='center', fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
 # Charger la bibliothèque ggplot2
 library(ggplot2)
 
 
-# Utilisation du jeu de données mtcars
-# Variables : Chevaux-vapeur (hp) vs Miles par gallon (mpg)
 ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
   geom_point(color = "blue", size = 3) +          # Points bleus
   geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
   labs(
-    title = "Relation entre taux de consultations et part des plus de 75 ans",
     x = "Part des plus de 75 ans",
     y = "Taux de consultation"
   ) +
@@ -379,7 +397,8 @@ ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_vis
 Les communes avec une population âgée importante (communes dont la population âgée de 75 ans ou plus est supérieure à la médiane) ont en moyenne un taux de consultations plus faible.
 
 #### Taux de consultation et CSP
-```{r, fig.align='center'}
+
+```{r, fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle"}
 # Charger les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
@@ -515,8 +534,61 @@ Si l'on considère deux points (\(i\)) et (\(j\)), la distance (\(d_{ij}\)) entr
 
 Où :
 - \(r\) : Rayon de la Terre (environ 6371 km).
+
 - \(\phi_i, \phi_j\) : Latitudes des points \(i\) et \(j\) (en radians).
+
 - \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en radians).
+Après calcul nous avons ces statistiques sur nos distances. 
+
+```{r}
+# Charger les bibliothèques nécessaires
+
+#  (latitude, longitude)
+library(spdep)     # Pour les fonctions de pondération spatiale et test de Moran
+library(geosphere) # Pour les calculs de distances géodésiques
+
+# Vérification que les colonnes latitude et longitude existent dans `data`
+if (!("latitude" %in% names(data)) || !("longitude" %in% names(data))) {
+  stop("Les colonnes 'latitude' et 'longitude' doivent exister dans la base de données.")
+}
+
+# Vérification des valeurs manquantes dans les coordonnées
+if (anyNA(data$latitude) || anyNA(data$longitude)) {
+  stop("Les colonnes 'latitude' et 'longitude' ne doivent pas contenir de valeurs manquantes.")
+}
+
+# Création de la matrice des coordonnées
+coords <- data.frame(
+  lat = data$latitude,
+  lon = data$longitude
+)
+
+# Calcul des distances géodésiques (en mètres) avec la méthode de Vincenty
+dist_matrix <- distm(coords, fun = distVincentySphere)/1000
+
+# Gérer les distances nulles ou infinies
+if (any(diag(dist_matrix) != 0)) {
+  diag(dist_matrix) <- 0  # Auto-distance définie comme 0
+}
+if (any(is.infinite(dist_matrix))) {
+  stop("La matrice des distances contient des valeurs infinies, vérifiez les coordonnées.")
+}
+
+# Résumé statistique de toutes les distances
+distance_values <- as.vector(dist_matrix)
+summary(distance_values)
+```
+Une visualtion de la densité de nos distance nous donne ceci. 
+```{r fig.cap="Densité des distances"}
+dist_df <- data.frame(Distance = as.vector(dist_matrix))
+# Tracer la densité
+ggplot(dist_df, aes(x = Distance)) +
+  geom_density(fill = "blue", alpha = 0.4) +
+  theme_minimal() +
+  labs(x = "Distance", y = "Densité")
+
+```
+
 
 #### Construction de la matrice de poids
 
@@ -532,36 +604,36 @@ Pour construire la matrice de poids, nous avons alors suivi ces étapes. *
 \]
 
 ```{r}
-# Charger les bibliothèques nécessaires
-
-#  (latitude, longitude)
-coords <- data.frame(
-  lat = data$latitude,  
-  lon = data$longitude
-)
-
-# Calcul des distances de Haversine (en mètres)
-dist_matrix <- distm(coords, fun = distVincentySphere)
-
-# Créer la matrice de poids (poids inverse de la distance)
+# Créer la matrice de poids (inverse des distances)
 weight_matrix <- 1 / dist_matrix
-diag(weight_matrix) <- 0  # Pas de poids pour soi-même
+diag(weight_matrix) <- 0  # Aucun poids pour soi-même
 
-# Créer l'objet de poids spatial
-#W <- mat2listw(weight_matrix)
+# Gérer les cas où les distances sont nulles ou infinies
+weight_matrix[is.infinite(weight_matrix)] <- 0
 
-# Exemple de valeurs (X_i) à analyser
+# Créer l'objet spatial de pondération
+W <- mat2listw(weight_matrix, style = "W")
+
+# Vérifier que la variable à analyser existe et ne contient pas de NA
+if (!("taux_visites_19_ans_ou_plus" %in% names(data))) {
+  stop("La colonne 'taux_visites_19_ans_ou_plus' doit exister dans la base de données.")
+}
 values <- data$taux_visites_19_ans_ou_plus
 
-# Calcul de l'Indice de Moran
-#moran_result <- moran.test(values, W)
+if (anyNA(values)) {
+  stop("La colonne 'taux_visites_19_ans_ou_plus' ne doit pas contenir de valeurs manquantes.")
+}
+
+# Calcul de l'indice de Moran
+moran_result <- moran.test(values, W, zero.policy = TRUE)
 
 # Afficher les résultats
-#print(moran_result)
+kable(moran_result[["estimate"]], caption = "Résultats du test de Moran")
+
 ```
 
 
-Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à 
+Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à `r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a permi d'obtenir une p-value de `r moran_result[["p.value"]]`. Ce qui permet de conclure qu'il y a effectivement une autocorrélation positive et significative entre les communes selon leur taux de consultations. 
 
 
 
