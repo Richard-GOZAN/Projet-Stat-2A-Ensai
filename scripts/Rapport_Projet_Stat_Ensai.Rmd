@@ -1,8 +1,8 @@
 ---
 header-includes:
-   \usepackage[french]{babel}
    \usepackage{amsmath}
    \usepackage{geometry}
+   \usepackage{pdfpages}
    \usepackage{fontspec}
    \usepackage{pdfpages}
    \usepackage{graphicx}
@@ -14,14 +14,21 @@ header-includes:
    \usepackage{xcolor}
    \definecolor{bleu}{RGB}{0,0,255}
    \usepackage{everypage}
+   \usepackage{everypage}
+   \usepackage{graphicx}
+   \usepackage{fancyhdr}
    \pagestyle{fancy} 
    \definecolor{mybrown}{RGB}{139,69,19}
    \fancyhead[R]{}
 output: 
-  pdf_document:
-    toc: no
+  pdf_document: 
     number_sections: true
     latex_engine: xelatex
+    fig_height: 4
+    fig_width: 5
+    fig_caption: true
+    keep_tex: true
+lang: fr
 urlcolor: blue
 editor_options:
   chunk_output_type: console
@@ -94,29 +101,31 @@ editor_options:
 
 \newpage
 
-```{r setup, include=FALSE, warning=FALSE}
+```{r setup, include=FALSE, fig.align='center'}
 knitr::opts_chunk$set(
-  echo = FALSE,   # Ne pas afficher le code source R  # Ne pas afficher les résultats des calculs
-  warning = FALSE,    # Ne pas afficher les avertissements
-  message = FALSE     # Ne pas afficher les messages
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
 )
-
 ```
 
-
-```{r fig.align='center', fig.height=6, fig.width=6}
+```{r}
 # Chargement des packages
-
 library(stringi)
 library(dplyr)
+library(knitr)
 library(tidyverse)
 library(summarytools)
 library(gridExtra)
 library(purrr)
 library(skimr)
-library(readr)
-library(readxl)
+library(spdep)
+library(geosphere)
+```
 
+
+
+```{r }
 # Importation des données de démonstration
 
 demo <- read.csv("../data/demof2.csv", sep = ";", dec=",")
@@ -188,24 +197,16 @@ data <- data %>%
   mutate(pop_19_ans_ou_plus = pop_15_ans_ou_plus - pop_15_19_ans,
        taux_visites_19_ans_ou_plus = nb_visite / pop_19_ans_ou_plus)
 
+#summary(data$taux_visites)
+#summary(data$taux_visites_19_ans_ou_plus)
+
+#skim(data)
 
 
 
 
 ## Exportation de la base finale 
 write.csv(data, "../data/data.csv", row.names = FALSE)
-
-## Statistiques descriptives sur le nombre de visite
-
-#summary(data$nb_visite)
-
-ggplot(data) +
-  aes(x = nb_visite) +
-  geom_histogram(bins = 30L, fill = "gray") +
-  theme_minimal() +
-  ggtitle(label = "Distribution du nombre de visites par commune") +
-  ylab("") +
-  xlab("")
 
 ```
 
@@ -222,6 +223,74 @@ ggplot(data) +
 
 # Méthodologie
 
+## Motivation
+Les modèles linéaires généralisés à effets mixtes (GLMM) combinent :  
+
+- Les caractéristiques des modèles linéaires généralisés (GLM) pour modéliser des variables non-normalement distribuées.  
+
+- Les propriétés des modèles à effets mixtes pour gérer des données groupées ou hiérarchiques.  
+
+## Modèles Linéaires Généralisés
+Un GLM relie le prédicteur linéaire $\eta$ à la moyenne $\mu$ de la réponse à travers une fonction de lien $g$ :  
+$$ g(\mu) = \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i $$  
+Les distributions possibles incluent :  
+
+- **Normale** : Régression linéaire classique, avec lien identité.  
+
+- **Binomiale** : Régression logistique pour données binaires, avec lien logit.  
+
+- **Poisson** : Régression de Poisson pour données de comptage, avec lien logarithmique.  
+
+### Régression Logistique
+Modélise une réponse binaire ($y \sim B(n, p)$), où $p$ est la probabilité de succès :  
+$$ P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y} $$  
+La probabilité $p$ est reliée au prédicteur par la fonction logistique :  
+$$ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i. $$  
+Le log-vraisemblance est exprimé comme :  
+$$ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. $$  
+
+### Régression de Poisson
+Utilisée pour modéliser des données de comptage ($y \sim Pois(\lambda)$), où $\lambda$ est la moyenne et la variance :  
+$$ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} $$  
+Le lien logarithmique assure $\lambda > 0$ :  
+$$ \log{\lambda} = \beta_0 + \sum_{i=1}^m \beta_i x_i $$  
+L'espérance est $E[y] = \lambda$.  
+
+## Modèles Linéaires Mixtes
+Ces modèles ajoutent des termes d'effets aléatoires $\mathbf{Z} \mathbf{u}$ au prédicteur linéaire :  
+$$ \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u} + \boldsymbol{\varepsilon}, $$  
+avec :  
+
+- $\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})$, les effets aléatoires.  
+
+- $\boldsymbol{\varepsilon} \sim N(\mathbf{0}, \mathbf{R})$, les résidus.  
+
+La matrice de covariance totale est :  
+$$ \mathrm{Var}(\mathbf{y}) = \mathbf{Z} \mathbf{G} \mathbf{Z}^T + \mathbf{R}. $$  
+Les paramètres sont estimés par maximum de vraisemblance (ML) ou par vraisemblance restreinte (REML).  
+
+## Modèles Linéaires Généralisés à Effets Mixtes (GLMM)
+Un GLMM étend les GLM en intégrant des effets aléatoires :  
+$$ g(\mu) = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u}, $$  
+où :  
+- $g(\cdot)$ est la fonction de lien.  
+- $\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})$ est le vecteur d'effets aléatoires.  
+
+Les paramètres sont estimés via des méthodes comme :  
+- Approximations Laplaciennes.  
+- Quadrature gaussienne adaptative.  
+- Méthodes MCMC (chaînes de Markov Monte Carlo).  
+
+## Prédictions et Simulations
+Les GLMM permettent deux types de prédictions :  
+- **Conditionnelles** : Basées sur les effets aléatoires spécifiques ($\mathbf{u}$).  
+- **Marginales** : En intégrant sur les effets aléatoires.  
+
+Les simulations utilisent des approches paramétriques pour évaluer la variabilité et tester les hypothèses. Une approche courante est le bootstrap paramétrique :  
+1. Générer des données simulées basées sur les paramètres estimés.  
+2. Réajuster le modèle pour chaque jeu de données simulé.  
+3. Analyser la distribution des estimations obtenues.  
+
 # Analyse des résultats
 
 ## Analyse descriptive
@@ -231,6 +300,28 @@ Dans cette partie, nous allons réaliser quelques statistiques descriptives sur 
 
 
 ### Analyse univariée
+
+```{r }
+## Statistiques descriptives sur le nombre de visite
+
+summary(data$nb_visite)
+
+```
+
+L'analyse des statistiques descriptives sur le nombre de consultations annuelles de médecin généraliste entre 2018 et 2022 révèle une distribution fortement asymétrique à droite, avec une grande dispersion des données. La moyenne de 19130 consultations, nettement supérieure à la médiane de 9127, indique la présence de valeurs extrêmes tirant la distribution vers le haut. Cette asymétrie est confirmée par l'écart considérable entre le minimum de 1037 et le maximum de 765833 consultations par an.
+
+La moitié des médecins généralistes effectuent entre 5993 et 17290 consultations annuellement, ce qui suggère une variabilité importante dans la charge de travail. La médiane de 9127 consultations par an, équivalant à environ 25 consultations par jour ouvrable, semble plus représentative de l'activité typique d'un médecin généraliste que la moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en lumière la diversité des pratiques et des charges de travail parmi les médecins généralistes, avec potentiellement quelques cas atypiques présentant un volume de consultations exceptionnellement élevé.
+
+```{r, fig.align='center'}
+ggplot(data) +
+  aes(x = nb_visite) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ggtitle(label = "Distribution du nombre de visites par commune") +
+  ylab("") +
+  xlab("")
+```
+
 
 
 ### Analyse bivariée 
@@ -252,6 +343,7 @@ print(data_pop)
 ```
 En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort qu'en moyenne, plus la taille de la commune est importante plus le taux de consulations est élevé.
 
+
 #### Taux de consultation et population âgée
 ```{r}
 data_age <- data %>%
@@ -262,76 +354,98 @@ data_age <- data %>%
 # Afficher les résultats
 print(data_age)
 ```
+
+
+
+```{r, fig.align='center'}
+# Charger la bibliothèque ggplot2
+library(ggplot2)
+
+
+# Utilisation du jeu de données mtcars
+# Variables : Chevaux-vapeur (hp) vs Miles par gallon (mpg)
+ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
+  geom_point(color = "blue", size = 3) +          # Points bleus
+  geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
+  labs(
+    title = "Relation entre taux de consultations et part des plus de 75 ans",
+    x = "Part des plus de 75 ans",
+    y = "Taux de consultation"
+  ) +
+  theme_minimal()
+
+```
+
 Les communes avec une population âgée importante (communes dont la population âgée de 75 ans ou plus est supérieure à la médiane) ont en moyenne un taux de consultations plus faible.
 
 #### Taux de consultation et CSP
-```{r}
+```{r, fig.align='center'}
 # Charger les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
 
 # Standardiser les variables pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables
-data_csp <- data %>%
-  mutate(across(c(taux_visites, 13:20), scale))
+#data_csp <- data %>%
+  #mutate(across(c(taux_visites, 13:20), scale))
+
+data_csp <- data
 
 # Créer les graphiques
 plot1 <- ggplot(data_csp, aes(x = population_de_15_ans_ou_selon_la_csp_2021_agriculteurs_exploitants, y = taux_visites)) +
   geom_point() +
-  labs(title = "", x = "Agriculteurs", y = "Taux de visite")
+  labs(title = "", x = "Agriculteurs", y = "Taux de visites")
 
 plot2 <- ggplot(data_csp, aes_string(x = names(data)[14], y = "taux_visites")) +
   geom_point() +
-  labs(title = "", x = "Artisans", y = "Taux de visite")
+  labs(title = "", x = "Artisans", y = "Taux de visites")
 
 plot3 <- ggplot(data_csp, aes_string(x = names(data)[15], y = "taux_visites")) +
   geom_point() +
-  labs(title = "", x = "Cadres", y = "Taux de visite")
+  labs(title = "", x = "Cadres", y = "Taux de visites")
 
 plot4 <- ggplot(data_csp, aes_string(x = names(data)[16], y = "taux_visites")) +
   geom_point() +
-  labs(title = "", x = "Professions intermédiaires", y = "Taux de visite")
+  labs(title = "", x = "Professions intermédiaires", y = "Taux de visites")
 
 plot5 <- ggplot(data_csp, aes_string(x = names(data)[17], y = "taux_visites")) +
   geom_point() +
-  labs(title = "", x = "Employés", y = "Taux de visite")
+  labs(title = "", x = "Employés", y = "Taux de visites")
 
 plot6 <- ggplot(data_csp, aes_string(x = names(data)[18], y = "taux_visites")) +
   geom_point() +
-  labs(title = "", x = "Ouvriers", y = "Taux de visite")
+  labs(title = "", x = "Ouvriers", y = "Taux de visites")
 
 plot7 <- ggplot(data_csp, aes_string(x = names(data)[19], y = "taux_visites")) +
   geom_point() +
-  labs(title = "", x = "Retraités", y = "Taux de visite")
+  labs(title = "", x = "Retraités", y = "Taux de visites")
 
 plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
   geom_point() +
-  labs(title = "", x = "Sans activites", y = "Taux de visite")
+  labs(title = "", x = "Sans activites", y = "Taux de visites")
 
 # Afficher les graphiques ensemble
-grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 4)
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 2)
 ```
-Pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables, nous les avons standardisées. Aucune catégorie ne semble montrer une relation linéaire évidente avec le taux de visite. Par ailleurs, pour toutes les catégories socio-professionnelles, la majorité des communes se situent dans une plage de proportions faibles, ce qui limite la variabilité observable dans les relations. Une analyse statistique supplémentaire, comme le calcul de corrélations, serait nécessaire pour confirmer ou infirmer les relations observées visuellement.
+Aucune catégorie ne semble montrer une relation linéaire évidente avec le taux de visite. Par ailleurs, pour toutes les catégories socio-professionnelles, la majorité des communes se situent dans une plage de proportions faibles, ce qui limite la variabilité observable dans les relations. Une analyse statistique supplémentaire, comme le calcul de corrélations, serait nécessaire pour confirmer ou infirmer les relations observées visuellement.
+
 
 #### Analyse de corrélation
 
-Les résultats de la corrélation de Pearson sont consignées dans le tableau suivant : 
+Les résultats de la corrélation de Pearson sont consignées dans le tableau suivant :
+
 
 ```{r}
-library(dplyr)
-library(knitr)
-
-
+# Fonction de conversion
 conversion_en_numeric <- function(data, columns) {
-  data %>%
+  resultat <- data %>%
     mutate(across(all_of(columns), as.numeric))
+  return (resultat)
 }
 # Liste des variables à tester avec taux_de_consultation
 variables <- c("population_municipale_2021_x", "part_des_pers_agees_de_75_ans_ou_2021", 
                "population_de_15_ans_ou_selon_la_csp_2021_retraites", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
 
-#conversion_en_numeric(data, variables)
-
-
+data <- conversion_en_numeric(data, variables)
 
 
 # Initialiser un tableau pour stocker les résultats
@@ -354,24 +468,11 @@ resultats$Significatif <- ifelse(resultats$P_value < 0.05, "Oui", "Non")
 kable(resultats, caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")
 ```
 
-Les résultats nous montrent que le taux de consultation est positivement corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la corrélation est faible. Par ailleurs, la corrélation est négative avec la part des personnes agées de plus de 75 ans. Cela dit, plus la part des plus de 75 ans augmente moins est le taux de consultations dans une commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont ceux qui ne se consultent pas assez. On peut voir cela à partir de ce graphique ci dessous.
 
-```{r fig.align='center', fig.height=4, fig.width=4, fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
-# Charger la bibliothèque ggplot2
-library(ggplot2)
+Les résultats nous montrent que le taux de consultation est positivement corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la corrélation est faible. Par ailleurs, la corrélation est négative avec la part des personnes agées de plus de 75 ans. Cela dit, plus la part des plus de 75 ans augmente moins est le taux de consultations dans une commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont ceux qui ne se consultent pas assez. 
 
 
-# Utilisation du jeu de données mtcars
-# Variables : Chevaux-vapeur (hp) vs Miles par gallon (mpg)
-ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
-  geom_point(color = "blue", size = 3) +          # Points bleus
-  geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
-  labs(
-    x = "Part des plus de 75 ans",
-    y = "Taux de consultation"
-  ) +
-  theme_minimal()
-```
+
 
 ### Autocorrélation 
 
@@ -384,18 +485,17 @@ L’indice de Moran (\(I\)) évalue la similitude des valeurs d’une variable e
 La formule mathématique de l’indice de Moran est la suivante :
 
 \[
-{\raisebox{2.5em}[0pt]{\textbf{\textcolor{brown}{Formule 1}}} \hspace{5mm}
-\boxed{
 I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
-}
-}
 \]
 
-
 Où :
+
 - \(n\) : Nombre total d’entités spatiales (Ici, le nombre de communes).
+
 - \(x_i, x_j\) : Valeurs observées de la variable pour les entités \(i\) et \(j\) (Ici le taux de consultations)
+
 - \(\bar{x}\) : Moyenne de la variable \(x\).
+
 - \(w_{ij}\) : Poids spatial définissant la relation entre \(i\) et \(j\).
 
 La matrice de \(W\) peut être constuit sur la base du voisinage entre les deux communes ou soit de la distance entre les deux communes. Dans le premier cas alors \(w_{ij}\) 
@@ -433,10 +533,6 @@ Pour construire la matrice de poids, nous avons alors suivi ces étapes. *
 
 ```{r}
 # Charger les bibliothèques nécessaires
-#install.packages("spdep")
-#install.packages("geosphere")
-library(spdep)
-library(geosphere)
 
 #  (latitude, longitude)
 coords <- data.frame(
@@ -445,7 +541,7 @@ coords <- data.frame(
 )
 
 # Calcul des distances de Haversine (en mètres)
-dist_matrix <- distm(coords, fun = distHaversine)
+dist_matrix <- distm(coords, fun = distVincentySphere)
 
 # Créer la matrice de poids (poids inverse de la distance)
 weight_matrix <- 1 / dist_matrix
@@ -455,7 +551,7 @@ diag(weight_matrix) <- 0  # Pas de poids pour soi-même
 #W <- mat2listw(weight_matrix)
 
 # Exemple de valeurs (X_i) à analyser
-#values <- data$taux_visites_19_ans_ou_plus
+values <- data$taux_visites_19_ans_ou_plus
 
 # Calcul de l'Indice de Moran
 #moran_result <- moran.test(values, W)
@@ -476,3 +572,27 @@ Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
 # Références bibliographiques
 
 # Annexes
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../cartes/nombre_de_consulatations}
+	\caption{Carte du nombre de consultations par commune}
+	\label{fig:figure}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../cartes/taux_de_consultations}
+	\caption{Carte du taux de consultations par commune}
+	\label{fig:figure}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../cartes/taux_de_consultations_plus_19_ans}
+	\caption{Carte du taux de consultations par commune pour les plus de 19 ans}
+	\label{fig:figure}
+\end{figure}
+
+
