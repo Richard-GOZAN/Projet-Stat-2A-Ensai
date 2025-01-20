@@ -78,7 +78,7 @@
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
-\usepackage{bookmark}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
@@ -144,23 +144,30 @@
 
 \newpage
 
-\section{Introduction}\label{introduction}
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
 
-\section{Présentation du contexte}\label{pruxe9sentation-du-contexte}
+\hypertarget{pruxe9sentation-du-contexte}{%
+\section{Présentation du contexte}\label{pruxe9sentation-du-contexte}}
 
-\subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}
+\hypertarget{intuxe9ruxeat-de-luxe9tude}{%
+\subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}}
 
+\hypertarget{cadre-conceptuel-de-luxe9tude}{%
 \subsection{Cadre conceptuel de
-l'étude}\label{cadre-conceptuel-de-luxe9tude}
+l'étude}\label{cadre-conceptuel-de-luxe9tude}}
 
+\hypertarget{pruxe9sentation-des-donnuxe9es}{%
 \subsection{Présentation des
-données}\label{pruxe9sentation-des-donnuxe9es}
+données}\label{pruxe9sentation-des-donnuxe9es}}
 
 Les données que nous avons utilisées nous proviennent de \ldots{}
 
-\section{Méthodologie}\label{muxe9thodologie}
+\hypertarget{muxe9thodologie}{%
+\section{Méthodologie}\label{muxe9thodologie}}
 
-\subsection{Motivation}\label{motivation}
+\hypertarget{motivation}{%
+\subsection{Motivation}\label{motivation}}
 
 Les modèles linéaires généralisés à effets mixtes (GLMM) combinent :
 
@@ -173,8 +180,9 @@ Les modèles linéaires généralisés à effets mixtes (GLMM) combinent :
   groupées ou hiérarchiques.
 \end{itemize}
 
+\hypertarget{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s}{%
 \subsection{Modèles Linéaires
-Généralisés}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s}
+Généralisés}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s}}
 
 Un GLM relie le prédicteur linéaire \(\eta\) à la moyenne \(\mu\) de la
 réponse à travers une fonction de lien \(g\) :\\
@@ -192,7 +200,8 @@ Les distributions possibles incluent :
   avec lien logarithmique.
 \end{itemize}
 
-\subsubsection{Régression Logistique}\label{ruxe9gression-logistique}
+\hypertarget{ruxe9gression-logistique}{%
+\subsubsection{Régression Logistique}\label{ruxe9gression-logistique}}
 
 Modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la
 probabilité de succès :\\
@@ -203,7 +212,8 @@ La probabilité \(p\) est reliée au prédicteur par la fonction logistique
 Le log-vraisemblance est exprimé comme :\\
 \[ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. \]
 
-\subsubsection{Régression de Poisson}\label{ruxe9gression-de-poisson}
+\hypertarget{ruxe9gression-de-poisson}{%
+\subsubsection{Régression de Poisson}\label{ruxe9gression-de-poisson}}
 
 Utilisée pour modéliser des données de comptage
 (\(y \sim Pois(\lambda)\)), où \(\lambda\) est la moyenne et la variance
@@ -213,8 +223,9 @@ Le lien logarithmique assure \(\lambda > 0\) :\\
 \[ \log{\lambda} = \beta_0 + \sum_{i=1}^m \beta_i x_i \]\\
 L'espérance est \(E[y] = \lambda\).
 
+\hypertarget{moduxe8les-linuxe9aires-mixtes}{%
 \subsection{Modèles Linéaires
-Mixtes}\label{moduxe8les-linuxe9aires-mixtes}
+Mixtes}\label{moduxe8les-linuxe9aires-mixtes}}
 
 Ces modèles ajoutent des termes d'effets aléatoires
 \(\mathbf{Z} \mathbf{u}\) au prédicteur linéaire :\\
@@ -234,8 +245,9 @@ La matrice de covariance totale est :\\
 Les paramètres sont estimés par maximum de vraisemblance (ML) ou par
 vraisemblance restreinte (REML).
 
+\hypertarget{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s-uxe0-effets-mixtes-glmm}{%
 \subsection{Modèles Linéaires Généralisés à Effets Mixtes
-(GLMM)}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s-uxe0-effets-mixtes-glmm}
+(GLMM)}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s-uxe0-effets-mixtes-glmm}}
 
 Un GLMM étend les GLM en intégrant des effets aléatoires :\\
 \[ g(\mu) = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u}, \]\\
@@ -249,8 +261,9 @@ Les paramètres sont estimés via des méthodes comme :\\
 - Quadrature gaussienne adaptative.\\
 - Méthodes MCMC (chaînes de Markov Monte Carlo).
 
+\hypertarget{pruxe9dictions-et-simulations}{%
 \subsection{Prédictions et
-Simulations}\label{pruxe9dictions-et-simulations}
+Simulations}\label{pruxe9dictions-et-simulations}}
 
 Les GLMM permettent deux types de prédictions :\\
 - \textbf{Conditionnelles} : Basées sur les effets aléatoires
@@ -264,14 +277,17 @@ bootstrap paramétrique :\\
 2. Réajuster le modèle pour chaque jeu de données simulé.\\
 3. Analyser la distribution des estimations obtenues.
 
-\section{Analyse des résultats}\label{analyse-des-ruxe9sultats}
+\hypertarget{analyse-des-ruxe9sultats}{%
+\section{Analyse des résultats}\label{analyse-des-ruxe9sultats}}
 
-\subsection{Analyse descriptive}\label{analyse-descriptive}
+\hypertarget{analyse-descriptive}{%
+\subsection{Analyse descriptive}\label{analyse-descriptive}}
 
 Dans cette partie, nous allons réaliser quelques statistiques
 descriptives sur nos données.
 
-\subsubsection{Analyse univariée}\label{analyse-univariuxe9e}
+\hypertarget{analyse-univariuxe9e}{%
+\subsubsection{Analyse univariée}\label{analyse-univariuxe9e}}
 
 \begin{verbatim}
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -311,7 +327,8 @@ nombre de consultations moyennes par personnes.
 \caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-4}
 \end{figure}
 
-\subsubsection{Analyse bivariée}\label{analyse-bivariuxe9e}
+\hypertarget{analyse-bivariuxe9e}{%
+\subsubsection{Analyse bivariée}\label{analyse-bivariuxe9e}}
 
 Nous allons ici, voir s'il y a un lien à priori entre le taux de
 consultation et certaines de nos variables explicatives. Ainsi, nous
@@ -321,33 +338,52 @@ taux de consulation et des variables telles que la population totale, la
 part des personnes agées (75 ans et plus), la part de quelques CSP
 (ouvriers et retraités).
 
+\hypertarget{taux-de-consultation-et-population-totale}{%
 \paragraph{Taux de consultation et population
-totale}\label{taux-de-consultation-et-population-totale}
+totale}\label{taux-de-consultation-et-population-totale}}
 
-\begin{verbatim}
-## # A tibble: 3 x 2
-##   taille_commune consultations_moyennes
-##            <int>                  <dbl>
-## 1              1                   1.38
-## 2              2                   1.46
-## 3              3                   1.53
-\end{verbatim}
+\begin{longtable}[]{@{}lr@{}}
+\caption{Taux de consultations selon la taille de la
+commune}\tabularnewline
+\toprule\noalign{}
+taille\_commune & Taux de consulations \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+taille\_commune & Taux de consulations \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Grande (\textgreater{} 8974) & 1.526810 \\
+Moyenne (4849 - 8974) & 1.456356 \\
+Petite (\textless= 4848) & 1.383861 \\
+\end{longtable}
 
 En divisant les communes en trois groupes égaux (ou presque égaux) en
 fonction de la population totale, il ressort qu'en moyenne, plus la
 taille de la commune est importante plus le taux de consulations est
 élevé.
 
+\hypertarget{taux-de-consultation-et-population-uxe2guxe9e}{%
 \paragraph{Taux de consultation et population
-âgée}\label{taux-de-consultation-et-population-uxe2guxe9e}
+âgée}\label{taux-de-consultation-et-population-uxe2guxe9e}}
 
-\begin{verbatim}
-## # A tibble: 2 x 2
-##   grande_population_agee consultations_moyennes
-##   <chr>                                   <dbl>
-## 1 Non                                      1.50
-## 2 Oui                                      1.41
-\end{verbatim}
+\begin{longtable}[]{@{}lr@{}}
+\caption{Taux de consultations selon la population âgée}\tabularnewline
+\toprule\noalign{}
+population\_agee\_importante & consultations\_moyennes \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+population\_agee\_importante & consultations\_moyennes \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Non (\textless= 670) & 1.501111 \\
+Oui (\textgreater{} 670) & 1.410213 \\
+\end{longtable}
 
 \begin{figure}
 
@@ -362,8 +398,9 @@ Les communes avec une population âgée importante (communes dont la
 population âgée de 75 ans ou plus est supérieure à la médiane) ont en
 moyenne un taux de consultations plus faible.
 
+\hypertarget{taux-de-consultation-et-csp}{%
 \paragraph{Taux de consultation et
-CSP}\label{taux-de-consultation-et-csp}
+CSP}\label{taux-de-consultation-et-csp}}
 
 \begin{figure}
 
@@ -382,7 +419,8 @@ dans les relations. Une analyse statistique supplémentaire, comme le
 calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
 relations observées visuellement.
 
-\paragraph{Analyse de corrélation}\label{analyse-de-corruxe9lation}
+\hypertarget{analyse-de-corruxe9lation}{%
+\paragraph{Analyse de corrélation}\label{analyse-de-corruxe9lation}}
 
 Les résultats de la corrélation de Pearson sont consignées dans le
 tableau suivant :
@@ -440,7 +478,8 @@ des plus de 75 ans augmente moins est le taux de consultations dans une
 commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
 ceux qui ne se consultent pas assez.
 
-\subsubsection{Autocorrélation}\label{autocorruxe9lation}
+\hypertarget{autocorruxe9lation}{%
+\subsubsection{Autocorrélation}\label{autocorruxe9lation}}
 
 L'autocorrélation spatiale est une mesure essentielle pour analyser la
 dépendance entre des observations géographiques. Dans notre étude nos
@@ -452,8 +491,9 @@ spatiale. Dans ce contexte, \textbf{l'indice de Moran} est largement
 utilisé pour quantifier cette dépendance en fournissant une mesure
 globale de l'autocorrélation spatiale.
 
+\hypertarget{duxe9finition-de-lindice-de-moran}{%
 \paragraph{Définition de l'indice de
-Moran}\label{duxe9finition-de-lindice-de-moran}
+Moran}\label{duxe9finition-de-lindice-de-moran}}
 
 L'indice de Moran (\(I\)) évalue la similitude des valeurs d'une
 variable entre différentes entités géographiques (par exemple, des
@@ -461,8 +501,9 @@ communes) en fonction de leur proximité spatiale. Il se base sur la
 matrice de poids spatiale (\(W\)), qui définit les relations entre ces
 entités.
 
+\hypertarget{formule-de-lindice-de-moran}{%
 \paragraph{Formule de l'indice de
-Moran}\label{formule-de-lindice-de-moran}
+Moran}\label{formule-de-lindice-de-moran}}
 
 La formule mathématique de l'indice de Moran est la suivante :
 
@@ -492,19 +533,22 @@ voisins et \(w_{ij} = 0\) sinon. Dans le second cas \(w_{ij} = d_{ij}\).
 Nous allons dans notre cas utiliser une matrice de poids basée sur la
 distance, notamment celle d'Haversine.
 
+\hypertarget{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}{%
 \paragraph{Matrice de poids basée sur la distance de
-Haversine}\label{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}
+Haversine}\label{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}}
 
+\hypertarget{duxe9finition-de-la-distance-de-haversine}{%
 \subparagraph{Définition de la distance de
-Haversine}\label{duxe9finition-de-la-distance-de-haversine}
+Haversine}\label{duxe9finition-de-la-distance-de-haversine}}
 
 La distance de Haversine est une mesure de la distance entre deux points
 sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\)
 et \(longitude\)). Elle est particulièrement utile pour les données
 géographiques projetées sur une surface sphérique, comme la Terre.
 
+\hypertarget{formule-de-la-distance-de-haversine}{%
 \paragraph{Formule de la distance de
-Haversine}\label{formule-de-la-distance-de-haversine}
+Haversine}\label{formule-de-la-distance-de-haversine}}
 
 Si l'on considère deux points (\(i\)) et (\(j\)), la distance
 (\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon
@@ -532,8 +576,9 @@ Où : - \(r\) : Rayon de la Terre (environ 6371 km).
 Une visualtion de la densité de nos distance nous donne ceci.
 \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-11-1.pdf}
 
+\hypertarget{construction-de-la-matrice-de-poids}{%
 \paragraph{Construction de la matrice de
-poids}\label{construction-de-la-matrice-de-poids}
+poids}\label{construction-de-la-matrice-de-poids}}
 
 Pour construire la matrice de poids, nous avons alors suivi ces étapes.
 *
@@ -582,14 +627,18 @@ Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
 permet de conclure qu'il y a effectivement une autocorrélation positive
 et significative entre les communes selon leur taux de consultations.
 
-\section{Discussion}\label{discussion}
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
 
-\section{Conclusion}\label{conclusion}
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
 
+\hypertarget{ruxe9fuxe9rences-bibliographiques}{%
 \section{Références
-bibliographiques}\label{ruxe9fuxe9rences-bibliographiques}
+bibliographiques}\label{ruxe9fuxe9rences-bibliographiques}}
 
-\section{Annexes}\label{annexes}
+\hypertarget{annexes}{%
+\section{Annexes}\label{annexes}}
 
 \begin{figure}
     \centering
