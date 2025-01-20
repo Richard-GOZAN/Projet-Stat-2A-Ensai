@@ -4,5 +4,6 @@
 .Ruserdata
 .Rprofile
 data/shapefiles/
+scripts/Rapport_Projet_Stat_Ensai.log
 *.log
 Rapport_Projet_Stat_Ensai_files/
