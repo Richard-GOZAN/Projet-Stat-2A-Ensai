@@ -29,6 +29,7 @@ output:
     fig_caption: true
     keep_tex: true
 lang: fr
+bibliography: references.bib
 urlcolor: blue
 editor_options:
   chunk_output_type: console
@@ -36,19 +37,10 @@ editor_options:
     wrap: 72
 ---
 
-```{=tex}
 \setcounter{tocdepth}{5}                
 \renewcommand\contentsname{\begin{center}\textcolor{brown}{Sommaire}\end{center}}
-```
-
-
-```{=tex}
 \AtBeginShipout{
   \ifnum\value{page}=1\thispagestyle{empty}\fi}
-```
-
-
-```{=tex}
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -58,8 +50,6 @@ editor_options:
 \fancyfoot[C]{\thepage}
 \fancyfoot[L]{Mars 2025}
 \fancyfoot[R]{Projet Statistique}
-```
-```{=tex}
 \AddEverypageHook{
   \ifnum\value{page}>1 
     \fancyhead[L]{Elèves Ingénieurs}
@@ -74,21 +64,17 @@ editor_options:
     \fancyfoot[R]{}
   \fi
 }
-```
-
 ```{=latex}
 \tableofcontents
 ```
 
 \newpage
-```{=tex}
+
 \renewcommand\listtablename{\begin{center}\textcolor{brown}{Liste des Tableaux}\end{center}}
 \renewcommand\listfigurename{\begin{center}\textcolor{brown}{Liste des Figures}\end{center}} 
 
 \setlength{\cftfignumwidth}{3em}
 \setlength{\cfttabnumwidth}{3em}
-```
-
 ```{=latex}
 \listoftables
 ```
@@ -122,8 +108,6 @@ library(skimr)
 library(spdep)
 library(geosphere)
 ```
-
-
 
 ```{r }
 # Importation des données de démonstration
@@ -210,7 +194,6 @@ write.csv(data, "../data/data.csv", row.names = FALSE)
 
 ```
 
-
 # Introduction
 
 # Présentation du contexte
@@ -219,88 +202,227 @@ write.csv(data, "../data/data.csv", row.names = FALSE)
 
 ## Cadre conceptuel de l'étude
 
-## Présentation des données
+Dans cette partie, nous allons définir certainses notions clés qui apparaissent dans notre étude entre autres, le nombre de visites, le nombre de visites espérés ainsi que le taux de visite. 
 
+1. Nombre de visites espérés
+
+Le nombre de visite espérés, terme qui apparaitra dans notre modélisation est le nombre de visite qu'il y aurait eu dans chaque commune si le taux de visite était le même dans dans ces dernières. En d'autres terme si $r$ est le taux moyen de visite alors, le nombre de visite escompté noté $\mu$ est calculé par :
+
+$$ \mu_i = r * P_i$$
+où $P_i$ est le nombre d'habitants dans la commune $i$
+
+## Revue de littérature
+
+La modélisation des visites dans les hôpitaux est cruciale pour
+comprendre les dynamiques de la santé publique et pour optimiser la
+gestion des ressources médicales. Dans ce contexte, les modèles de
+régression de type Poisson généraux, en particulier les modèles mixtes
+généralisés (GLMM), sont souvent utilisés pour gérer les données de
+comptage, en tenant compte des spécificités démographiques et
+géographiques des agglomérations, ici définies par les communes.
+
+Les recherches antérieures, comme celles de Mohebbi et al. (2011),
+montrent l'importance d'intégrer des effets spatiaux dans les modèles de
+comptage, surtout lorsqu'on évalue des phénomènes tels que le cancer
+œsophagien (EC) dans des provinces spécifiques. Leur étude souligne
+comment la non-prise en compte de l'autocorrélation spatiale peut
+conduire à une estimation biaisée des effets des variables
+socio-économiques sur l'incidence des maladies. Ce phénomène pourrait
+également s'appliquer à la modélisation des visites à l'hôpital, où
+certains facteurs ouent un rôle significatif.
+
+Selon l'article, trois structures d'autocorrélation peuvent être
+appliquées dans le cadre de la régression Poisson lorsqu'on traite des
+données de comptage. Ces modèles comprennent : 
+
+1. **Modèle Poisson avec effets aléatoires non spatiaux** : Bien qu'utiles, ces modèles négligent
+l'autocorrélation spatiale, ce qui peut conduire à une sous-estimation
+des erreurs standard. 
+
+2. **Modèle avec effets aléatoires spatiaux basés sur la distance** : Ce modèle prend en compte l'influence des
+agglomérations voisines, mais peut ne pas capturer efficacement
+l'hétérogénéité locale. 
+
+3. **Modèle avec effets aléatoires de type voisinage** : Utilisant la structure conditionnelle autorégressive (CAR),
+ce modèle est le plus adapté pour les données spatiales en intégrant les
+interactions entre les communes. Pour notre étude, le modèle avec effets
+aléatoires de type voisinage est recommandé pour la modélisation du
+nombre de visites à l'hôpital en France, car il permet de mieux prendre
+en compte l'effet de proximité entre communes.
+
+L'application des principes issus de l'article de Mohebbi et al. peut
+enrichir notre étude sur la fréquentation des hôpitaux en France. En
+intégrant des effets aléatoires spatiaux adaptés à la structure des
+données, nous pouvons réaliser des estimations plus précises et utiles
+pour la planification hospitalière.
+
+En ce qui concerne les facteurs explicatifs du nombre de visite dans les
+hopitaux, plusieurs études se sont penchées sur ce sujet. De nombreuses
+études ont montré que le nombre de consultations médicales est influencé
+par divers facteurs sociodémographiques, allant des caractéristiques
+individuelles aux contextes socio-économiques et territoriaux.
+
+1.  Influence de l’âge et du sexe
+
+L’âge constitue un déterminant majeur du recours aux soins. Les
+personnes âgées, en particulier celles de 65 à 79 ans, consultent plus
+fréquemment en raison de la prévalence accrue de maladies chroniques et
+du suivi médical nécessaire à leur prise en charge [@statcan2022]. En revanche, la population jeune et en bonne santé présente
+une utilisation plus sporadique des services médicaux. Le sexe est
+également un facteur différenciant important. De manière générale, les
+femmes consultent plus fréquemment que les hommes. Cette différence est
+attribuée aux besoins spécifiques en santé reproductive, mais aussi à
+une plus grande propension à rechercher des soins préventifs [@bag2024]. En revanche, les hommes,
+notamment dans les catégories socio-professionnelles les plus actives,
+ont tendance à sous-utiliser les services de soins, ce qui peut
+entraîner des diagnostics plus tardifs et des complications médicales
+accrues.
+
+2.  Impact du statut socio-économique et du niveau d’éducation
+
+Le revenu et la précarité économique influencent considérablement
+l’accès aux soins. Les individus à revenu élevé bénéficient généralement
+d’un meilleur accès aux consultations médicales, notamment grâce à une
+plus grande couverture sociale et des assurances complémentaires leur
+permettant de réduire les coûts associés aux soins [@bvs2023]. À l’inverse, les personnes en situation de précarité
+rencontrent des obstacles financiers, administratifs et culturels qui
+limitent leur recours aux soins, malgré des besoins souvent accrus en
+raison de conditions de vie plus précaires. Le niveau d’éducation joue
+un rôle clé dans la fréquentation des services de santé. Une instruction
+plus élevée est associée à une meilleure connaissance des risques
+sanitaires et à une adoption plus proactive des comportements de
+prévention, ce qui entraîne un recours plus fréquent aux soins médicaux
+[@bvs2023]. En revanche, un faible niveau d’éducation est
+souvent corrélé à un moindre suivi médical et à une utilisation plus
+tardive des services de soins, notamment en cas de complications.
+
+3.  Influence du contexte familial et de l’environnement social
+
+L’état matrimonial influence également la fréquence des consultations
+médicales. Les personnes mariées ou vivant en couple consultent
+davantage, bénéficiant du soutien d’un conjoint qui peut inciter à
+prendre soin de sa santé et à consulter régulièrement un médecin
+[@statcan2022]. Par ailleurs, l’accès à un médecin
+traitant ou de famille constitue un déterminant important. Les patients
+disposant d’un suivi médical régulier sont plus enclins à effectuer des
+consultations préventives et à être orientés rapidement vers des
+spécialistes si nécessaire [@statcan2022]. 
+
+4. Perception de l’état de santé et accès géographique aux soins 
+
+La perception de la santé est un facteur déterminant du recours aux soins.
+Les individus qui considèrent leur état de santé comme excellent ou très
+bon consultent rarement, tandis que ceux qui ont une perception négative
+de leur état de santé ont tendance à multiplier les visites médicales
+[@statcan2022]. Enfin, les inégalités spatiales dans
+l’accès aux soins modulent également la fréquence des consultations. En
+milieu urbain, la densité médicale plus élevée facilite l’accès aux
+services de soins, tandis qu’en zones rurales ou médicalement
+sous-dotées, les délais d’attente et les distances à parcourir
+constituent des freins majeurs [@irdes2020].
+
+## Présentation des données
 
 Les données que nous avons utilisées nous proviennent de ...
 
 # Méthodologie
 
 ## Motivation
-Les modèles linéaires généralisés à effets mixtes (GLMM) combinent :  
 
-- Les caractéristiques des modèles linéaires généralisés (GLM) pour modéliser des variables non-normalement distribuées.  
+Les modèles linéaires généralisés à effets mixtes (GLMM) combinent :
 
-- Les propriétés des modèles à effets mixtes pour gérer des données groupées ou hiérarchiques.  
+-   Les caractéristiques des modèles linéaires généralisés (GLM) pour
+    modéliser des variables non-normalement distribuées.
+
+-   Les propriétés des modèles à effets mixtes pour gérer des données
+    groupées ou hiérarchiques.
 
 ## Modèles Linéaires Généralisés
-Un GLM relie le prédicteur linéaire $\eta$ à la moyenne $\mu$ de la réponse à travers une fonction de lien $g$ :  
-$$ g(\mu) = \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i $$  
-Les distributions possibles incluent :  
 
-- **Normale** : Régression linéaire classique, avec lien identité.  
+Un GLM relie le prédicteur linéaire $\eta$ à la moyenne $\mu$ de la
+réponse à travers une fonction de lien $g$ :\
+$$ g(\mu) = \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i $$\
+Les distributions possibles incluent :
 
-- **Binomiale** : Régression logistique pour données binaires, avec lien logit.  
+-   **Normale** : Régression linéaire classique, avec lien identité.
 
-- **Poisson** : Régression de Poisson pour données de comptage, avec lien logarithmique.  
+-   **Binomiale** : Régression logistique pour données binaires, avec
+    lien logit.
+
+-   **Poisson** : Régression de Poisson pour données de comptage, avec
+    lien logarithmique.
 
 ### Régression Logistique
-Modélise une réponse binaire ($y \sim B(n, p)$), où $p$ est la probabilité de succès :  
-$$ P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y} $$  
-La probabilité $p$ est reliée au prédicteur par la fonction logistique :  
-$$ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i. $$  
-Le log-vraisemblance est exprimé comme :  
-$$ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. $$  
+
+Modélise une réponse binaire ($y \sim B(n, p)$), où $p$ est la
+probabilité de succès :\
+$$ P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y} $$\
+La probabilité $p$ est reliée au prédicteur par la fonction logistique
+:\
+$$ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i. $$\
+Le log-vraisemblance est exprimé comme :\
+$$ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. $$
 
 ### Régression de Poisson
-Utilisée pour modéliser des données de comptage ($y \sim Pois(\lambda)$), où $\lambda$ est la moyenne et la variance :  
-$$ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} $$  
-Le lien logarithmique assure $\lambda > 0$ :  
-$$ \log{\lambda} = \beta_0 + \sum_{i=1}^m \beta_i x_i $$  
-L'espérance est $E[y] = \lambda$.  
+
+Utilisée pour modéliser des données de comptage
+($y \sim Pois(\lambda)$), où $\lambda$ est la moyenne et la variance :\
+$$ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} $$\
+Le lien logarithmique assure $\lambda > 0$ :\
+$$ \log{\lambda} = \beta_0 + \sum_{i=1}^m \beta_i x_i $$\
+L'espérance est $E[y] = \lambda$.
 
 ## Modèles Linéaires Mixtes
-Ces modèles ajoutent des termes d'effets aléatoires $\mathbf{Z} \mathbf{u}$ au prédicteur linéaire :  
-$$ \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u} + \boldsymbol{\varepsilon}, $$  
-avec :  
 
-- $\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})$, les effets aléatoires.  
+Ces modèles ajoutent des termes d'effets aléatoires
+$\mathbf{Z} \mathbf{u}$ au prédicteur linéaire :\
+$$ \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u} + \boldsymbol{\varepsilon}, $$\
+avec :
 
-- $\boldsymbol{\varepsilon} \sim N(\mathbf{0}, \mathbf{R})$, les résidus.  
+-   $\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})$, les effets aléatoires.
 
-La matrice de covariance totale est :  
-$$ \mathrm{Var}(\mathbf{y}) = \mathbf{Z} \mathbf{G} \mathbf{Z}^T + \mathbf{R}. $$  
-Les paramètres sont estimés par maximum de vraisemblance (ML) ou par vraisemblance restreinte (REML).  
+-   $\boldsymbol{\varepsilon} \sim N(\mathbf{0}, \mathbf{R})$, les
+    résidus.
+
+La matrice de covariance totale est :\
+$$ \mathrm{Var}(\mathbf{y}) = \mathbf{Z} \mathbf{G} \mathbf{Z}^T + \mathbf{R}. $$\
+Les paramètres sont estimés par maximum de vraisemblance (ML) ou par
+vraisemblance restreinte (REML).
 
 ## Modèles Linéaires Généralisés à Effets Mixtes (GLMM)
-Un GLMM étend les GLM en intégrant des effets aléatoires :  
-$$ g(\mu) = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u}, $$  
-où :  
-- $g(\cdot)$ est la fonction de lien.  
-- $\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})$ est le vecteur d'effets aléatoires.  
 
-Les paramètres sont estimés via des méthodes comme :  
-- Approximations Laplaciennes.  
-- Quadrature gaussienne adaptative.  
-- Méthodes MCMC (chaînes de Markov Monte Carlo).  
+Un GLMM étend les GLM en intégrant des effets aléatoires :\
+$$ g(\mu) = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u}, $$\
+où :\
+- $g(\cdot)$ est la fonction de lien.\
+- $\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})$ est le vecteur d'effets
+aléatoires.
+
+Les paramètres sont estimés via des méthodes comme :\
+- Approximations Laplaciennes.\
+- Quadrature gaussienne adaptative.\
+- Méthodes MCMC (chaînes de Markov Monte Carlo).
 
 ## Prédictions et Simulations
-Les GLMM permettent deux types de prédictions :  
-- **Conditionnelles** : Basées sur les effets aléatoires spécifiques ($\mathbf{u}$).  
-- **Marginales** : En intégrant sur les effets aléatoires.  
 
-Les simulations utilisent des approches paramétriques pour évaluer la variabilité et tester les hypothèses. Une approche courante est le bootstrap paramétrique :  
-1. Générer des données simulées basées sur les paramètres estimés.  
-2. Réajuster le modèle pour chaque jeu de données simulé.  
-3. Analyser la distribution des estimations obtenues.  
+Les GLMM permettent deux types de prédictions :\
+- **Conditionnelles** : Basées sur les effets aléatoires spécifiques
+($\mathbf{u}$).\
+- **Marginales** : En intégrant sur les effets aléatoires.
+
+Les simulations utilisent des approches paramétriques pour évaluer la
+variabilité et tester les hypothèses. Une approche courante est le
+bootstrap paramétrique :\
+1. Générer des données simulées basées sur les paramètres estimés.\
+2. Réajuster le modèle pour chaque jeu de données simulé.\
+3. Analyser la distribution des estimations obtenues.
 
 # Analyse des résultats
 
 ## Analyse descriptive
 
-
-Dans cette partie, nous allons réaliser quelques statistiques descriptives sur nos données. 
-
+Dans cette partie, nous allons réaliser quelques statistiques
+descriptives sur nos données.
 
 ### Analyse univariée
 
@@ -311,11 +433,29 @@ summary(data$nb_visite)
 
 ```
 
-L'analyse des statistiques descriptives sur le nombre de consultations annuelles de médecin généraliste entre 2018 et 2022 révèle une distribution fortement asymétrique à droite, avec une grande dispersion des données. La moyenne de 19130 consultations, nettement supérieure à la médiane de 9127, indique la présence de valeurs extrêmes tirant la distribution vers le haut. Cette asymétrie est confirmée par l'écart considérable entre le minimum de 1037 et le maximum de 765833 consultations par an.
+L'analyse des statistiques descriptives sur le nombre de consultations
+annuelles de médecin généraliste entre 2018 et 2022 révèle une
+distribution fortement asymétrique à droite, avec une grande dispersion
+des données. La moyenne de 19130 consultations, nettement supérieure à
+la médiane de 9127, indique la présence de valeurs extrêmes tirant la
+distribution vers le haut. Cette asymétrie est confirmée par l'écart
+considérable entre le minimum de 1037 et le maximum de 765833
+consultations par an.
 
-La moitié des médecins généralistes effectuent entre 5993 et 17290 consultations annuellement, ce qui suggère une variabilité importante dans la charge de travail. La médiane de 9127 consultations par an, équivalant à environ 25 consultations par jour ouvrable, semble plus représentative de l'activité typique d'un médecin généraliste que la moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en lumière la diversité des pratiques et des charges de travail parmi les médecins généralistes, avec potentiellement quelques cas atypiques présentant un volume de consultations exceptionnellement élevé. 
+La moitié des médecins généralistes effectuent entre 5993 et 17290
+consultations annuellement, ce qui suggère une variabilité importante
+dans la charge de travail. La médiane de 9127 consultations par an,
+équivalant à environ 25 consultations par jour ouvrable, semble plus
+représentative de l'activité typique d'un médecin généraliste que la
+moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
+lumière la diversité des pratiques et des charges de travail parmi les
+médecins généralistes, avec potentiellement quelques cas atypiques
+présentant un volume de consultations exceptionnellement élevé.
 
-Le nombre de visites pouvant potentiellement être influencé par la taille de la commune et donc par sa population, nous avons éliminer cet effet en calculant le taux de consultations qui n'est autre que le nombre de consultations moyennes par personnes. 
+Le nombre de visites pouvant potentiellement être influencé par la
+taille de la commune et donc par sa population, nous avons éliminer cet
+effet en calculant le taux de consultations qui n'est autre que le
+nombre de consultations moyennes par personnes.
 
 ```{r, fig.align='center', fig.cap= "Répartition du nombre et du taux de consultations"}
 library(ggplot2)
@@ -342,11 +482,15 @@ plot1 + plot2
 
 ```
 
+### Analyse bivariée
 
-
-### Analyse bivariée 
-
-Nous allons ici, voir s'il y a un lien à priori entre le taux de consultation et certaines de nos variables explicatives. Ainsi, nous avons d'abord réalisé une analyse descriptive bivariée puis nous avons calculé la corrélation de Pearson pour évaluer le lien linéaire entre le taux de consulation et des variables telles que la population totale, la part des personnes agées (75 ans et plus), la part de quelques CSP (ouvriers et retraités).
+Nous allons ici, voir s'il y a un lien à priori entre le taux de
+consultation et certaines de nos variables explicatives. Ainsi, nous
+avons d'abord réalisé une analyse descriptive bivariée puis nous avons
+calculé la corrélation de Pearson pour évaluer le lien linéaire entre le
+taux de consulation et des variables telles que la population totale, la
+part des personnes agées (75 ans et plus), la part de quelques CSP
+(ouvriers et retraités).
 
 #### Taux de consultation et population totale
 
@@ -367,10 +511,14 @@ data_pop <- data %>%
 # Affichage des résultats dans le RMarkdown
 kable(data_pop, caption = "Taux de consultations selon la taille de la commune")
 ```
-En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort qu'en moyenne, plus la taille de la commune est importante plus le taux de consulations est élevé.
 
+En divisant les communes en trois groupes égaux (ou presque égaux) en
+fonction de la population totale, il ressort qu'en moyenne, plus la
+taille de la commune est importante plus le taux de consulations est
+élevé.
 
 #### Taux de consultation et population âgée
+
 ```{r}
 # Calcul de la médiane
 mediane <- median(data$nb_de_pers_agees_de_75_ans_ou_plus_2021, na.rm = TRUE)
@@ -400,7 +548,9 @@ ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_vis
 
 ```
 
-Les communes avec une population âgée importante (communes dont la population âgée de 75 ans ou plus est supérieure à la médiane) ont en moyenne un taux de consultations plus faible.
+Les communes avec une population âgée importante (communes dont la
+population âgée de 75 ans ou plus est supérieure à la médiane) ont en
+moyenne un taux de consultations plus faible.
 
 #### Taux de consultation et CSP
 
@@ -451,13 +601,19 @@ plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
 # Affichage des graphiques ensemble
 grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 2)
 ```
-Aucune catégorie ne semble montrer une relation linéaire évidente avec le taux de visite. Par ailleurs, pour toutes les catégories socio-professionnelles, la majorité des communes se situent dans une plage de proportions faibles, ce qui limite la variabilité observable dans les relations. Une analyse statistique supplémentaire, comme le calcul de corrélations, serait nécessaire pour confirmer ou infirmer les relations observées visuellement.
 
+Aucune catégorie ne semble montrer une relation linéaire évidente avec
+le taux de visite. Par ailleurs, pour toutes les catégories
+socio-professionnelles, la majorité des communes se situent dans une
+plage de proportions faibles, ce qui limite la variabilité observable
+dans les relations. Une analyse statistique supplémentaire, comme le
+calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
+relations observées visuellement.
 
 #### Analyse de corrélation
 
-Les résultats de la corrélation de Pearson sont consignées dans le tableau suivant :
-
+Les résultats de la corrélation de Pearson sont consignées dans le
+tableau suivant :
 
 ```{r}
 # Fonction de conversion
@@ -493,58 +649,85 @@ resultats$Significatif <- ifelse(resultats$P_value < 0.05, "Oui", "Non")
 kable(resultats, caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")
 ```
 
+Les résultats nous montrent que le taux de consultation est positivement
+corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la
+corrélation est faible. Par ailleurs, la corrélation est négative avec
+la part des personnes agées de plus de 75 ans. Cela dit, plus la part
+des plus de 75 ans augmente moins est le taux de consultations dans une
+commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
+ceux qui ne se consultent pas assez.
 
-Les résultats nous montrent que le taux de consultation est positivement corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la corrélation est faible. Par ailleurs, la corrélation est négative avec la part des personnes agées de plus de 75 ans. Cela dit, plus la part des plus de 75 ans augmente moins est le taux de consultations dans une commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont ceux qui ne se consultent pas assez. 
+### Autocorrélation
 
-
-
-
-### Autocorrélation 
-
-L’autocorrélation spatiale est une mesure essentielle pour analyser la dépendance entre des observations géographiques. Dans notre étude nos données sont des données portant sur des communes. Ainsi il peut exister une dépendance entre nos taux de consultations du fait de la proximité des communes ou de l'appartenance à un même département ou région. Ainsi nous allons mesurer cette dépendance en évaluant l'autocorrélation spatiale. Dans ce contexte, **l’indice de Moran** est largement utilisé pour quantifier cette dépendance en fournissant une mesure globale de l’autocorrélation spatiale.
+L’autocorrélation spatiale est une mesure essentielle pour analyser la
+dépendance entre des observations géographiques. Dans notre étude nos
+données sont des données portant sur des communes. Ainsi il peut exister
+une dépendance entre nos taux de consultations du fait de la proximité
+des communes ou de l'appartenance à un même département ou région. Ainsi
+nous allons mesurer cette dépendance en évaluant l'autocorrélation
+spatiale. Dans ce contexte, **l’indice de Moran** est largement utilisé
+pour quantifier cette dépendance en fournissant une mesure globale de
+l’autocorrélation spatiale.
 
 #### Définition de l’indice de Moran
-L’indice de Moran (\(I\)) évalue la similitude des valeurs d’une variable entre différentes entités géographiques (par exemple, des communes) en fonction de leur proximité spatiale. Il se base sur la matrice de poids spatiale (\(W\)), qui définit les relations entre ces entités.
+
+L’indice de Moran ($I$) évalue la similitude des valeurs d’une variable
+entre différentes entités géographiques (par exemple, des communes) en
+fonction de leur proximité spatiale. Il se base sur la matrice de poids
+spatiale ($W$), qui définit les relations entre ces entités.
 
 #### Formule de l’indice de Moran
+
 La formule mathématique de l’indice de Moran est la suivante :
 
-\[
+$$
 I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
-\]
+$$
 
 Où :
 
-- \(n\) : Nombre total d’entités spatiales (Ici, le nombre de communes).
+-   $n$ : Nombre total d’entités spatiales (Ici, le nombre de communes).
 
-- \(x_i, x_j\) : Valeurs observées de la variable pour les entités \(i\) et \(j\) (Ici le taux de consultations)
+-   $x_i, x_j$ : Valeurs observées de la variable pour les entités $i$
+    et $j$ (Ici le taux de consultations)
 
-- \(\bar{x}\) : Moyenne de la variable \(x\).
+-   $\bar{x}$ : Moyenne de la variable $x$.
 
-- \(w_{ij}\) : Poids spatial définissant la relation entre \(i\) et \(j\).
+-   $w_{ij}$ : Poids spatial définissant la relation entre $i$ et $j$.
 
-La matrice de \(W\) peut être constuit sur la base du voisinage entre les deux communes ou soit de la distance entre les deux communes. Dans le premier cas alors \(w_{ij}\) 
-\(w_{ij} = 1\) si \(i\) et \(j\) sont voisins et \(w_{ij} = 0\) sinon. Dans le second cas \(w_{ij} = d_{ij}\). Nous allons dans notre cas utiliser une matrice de poids basée sur la distance, notamment celle d'Haversine. 
+La matrice de $W$ peut être constuit sur la base du voisinage entre les
+deux communes ou soit de la distance entre les deux communes. Dans le
+premier cas alors $w_{ij}$ $w_{ij} = 1$ si $i$ et $j$ sont voisins et
+$w_{ij} = 0$ sinon. Dans le second cas $w_{ij} = d_{ij}$. Nous allons
+dans notre cas utiliser une matrice de poids basée sur la distance,
+notamment celle d'Haversine.
 
 #### Matrice de poids basée sur la distance de Haversine
 
 ##### Définition de la distance de Haversine
-La distance de Haversine est une mesure de la distance entre deux points sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\) et \(longitude\)). Elle est particulièrement utile pour les données géographiques projetées sur une surface sphérique, comme la Terre.
+
+La distance de Haversine est une mesure de la distance entre deux points
+sur une sphère, basée sur leurs coordonnées géographiques ($latitude$ et
+$longitude$). Elle est particulièrement utile pour les données
+géographiques projetées sur une surface sphérique, comme la Terre.
 
 #### Formule de la distance de Haversine
-Si l'on considère deux points (\(i\)) et (\(j\)), la distance (\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon (\(r\)) est donnée par :
 
-\[
+Si l'on considère deux points ($i$) et ($j$), la distance ($d_{ij}$)
+entre ces deux points sur la surface d'une sphère de rayon ($r$) est
+donnée par :
+
+$$
  d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
-\]
+$$
 
-Où :
-- \(r\) : Rayon de la Terre (environ 6371 km).
+Où : - $r$ : Rayon de la Terre (environ 6371 km).
 
-- \(\phi_i, \phi_j\) : Latitudes des points \(i\) et \(j\) (en radians).
+-   $\phi_i, \phi_j$ : Latitudes des points $i$ et $j$ (en radians).
 
-- \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en radians).
-Après calcul nous avons ces statistiques sur nos distances. 
+-   $\lambda_i, \lambda_j$ : Longitudes des points $i$ et $j$ (en
+    radians). Après calcul nous avons ces statistiques sur nos
+    distances.
 
 ```{r}
 # Charger les bibliothèques nécessaires
@@ -585,7 +768,7 @@ distance_values <- as.vector(dist_matrix)
 summary(distance_values)
 ```
 
-Une visualtion de la densité de nos distance nous donne ceci. 
+Une visualtion de la densité de nos distance nous donne ceci.
 
 ```{r fig.cap="Densité des distances", fig.align='center'}
 dist_df <- data.frame(Distance = as.vector(dist_matrix))
@@ -597,19 +780,19 @@ ggplot(dist_df, aes(x = Distance)) +
 
 ```
 
-
 #### Construction de la matrice de poids
 
-Pour construire la matrice de poids, nous avons alors suivi ces étapes. *
+Pour construire la matrice de poids, nous avons alors suivi ces étapes.
+\*
 
-1. Calculer les distances de Haversine entre chaque paire d’entités.
-2. Définir un seuil de distance maximale (\(d_{max}\)) :
-   - Si \(d_{ij} < d_{max}\), \(w_{ij} = \frac{1}{d_{ij}}\).
-   - Sinon, \(w_{ij} = 0\).
-3. Normaliser les poids pour que chaque ligne de la matrice ait une somme égale à 1 :
-\[
- w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
-\]
+1.  Calculer les distances de Haversine entre chaque paire d’entités.
+2.  Définir un seuil de distance maximale ($d_{max}$) :
+    -   Si $d_{ij} < d_{max}$, $w_{ij} = \frac{1}{d_{ij}}$.
+    -   Sinon, $w_{ij} = 0$.
+3.  Normaliser les poids pour que chaque ligne de la matrice ait une
+    somme égale à 1 : $$
+     w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
+    $$
 
 ```{r}
 # Créer la matrice de poids (inverse des distances)
@@ -640,9 +823,11 @@ kable(moran_result[["estimate"]], caption = "Résultats du test de Moran")
 
 ```
 
-
-Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à `r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a permi d'obtenir une p-value de `r moran_result[["p.value"]]`. Ce qui permet de conclure qu'il y a effectivement une autocorrélation positive et significative entre les communes selon leur taux de consultations. 
-
+Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
+`r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a
+permi d'obtenir une p-value de `r moran_result[["p.value"]]`. Ce qui
+permet de conclure qu'il y a effectivement une autocorrélation positive
+et significative entre les communes selon leur taux de consultations.
 
 
 # Discussion
@@ -651,28 +836,24 @@ Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à `r mora
 
 # Références bibliographiques
 
+
 # Annexes
 
-
 \begin{figure}
-	\centering
-	\includegraphics[width=1\linewidth]{../cartes/nombre_de_consulatations}
-	\caption{Carte du nombre de consultations par commune}
-	\label{fig:figure}
+    \centering
+    \includegraphics[width=1\linewidth]{../cartes/nombre_de_consulatations}
+    \caption{Carte du nombre de consultations par commune}
+    \label{fig:figure}
 \end{figure}
-
 \begin{figure}
-	\centering
-	\includegraphics[width=1\linewidth]{../cartes/taux_de_consultations}
-	\caption{Carte du taux de consultations par commune}
-	\label{fig:figure}
+    \centering
+    \includegraphics[width=1\linewidth]{../cartes/taux_de_consultations}
+    \caption{Carte du taux de consultations par commune}
+    \label{fig:figure}
 \end{figure}
-
 \begin{figure}
-	\centering
-	\includegraphics[width=1\linewidth]{../cartes/taux_de_consultations_plus_19_ans}
-	\caption{Carte du taux de consultations par commune pour les plus de 19 ans}
-	\label{fig:figure}
+    \centering
+    \includegraphics[width=1\linewidth]{../cartes/taux_de_consultations_plus_19_ans}
+    \caption{Carte du taux de consultations par commune pour les plus de 19 ans}
+    \label{fig:figure}
 \end{figure}
-
-
