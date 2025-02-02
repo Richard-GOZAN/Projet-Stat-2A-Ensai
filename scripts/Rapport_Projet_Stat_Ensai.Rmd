@@ -584,8 +584,10 @@ if (any(is.infinite(dist_matrix))) {
 distance_values <- as.vector(dist_matrix)
 summary(distance_values)
 ```
+
 Une visualtion de la densité de nos distance nous donne ceci. 
-```{r fig.cap="Densité des distances"}
+
+```{r fig.cap="Densité des distances", fig.align='center'}
 dist_df <- data.frame(Distance = as.vector(dist_matrix))
 # Tracer la densité
 ggplot(dist_df, aes(x = Distance)) +
