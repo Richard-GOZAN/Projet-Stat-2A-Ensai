@@ -211,6 +211,12 @@ Le nombre de visite espérés, terme qui apparaitra dans notre modélisation est
 $$ \mu_i = r * P_i$$
 où $P_i$ est le nombre d'habitants dans la commune $i$
 
+2. Taux de visite
+
+Le taux de visite n'est rien d'autre que le nombre moyen de visite dans chaque commune. IL est calculé en divisant le nombre de visite par la population de la commune en question. En d'autres termes, il s'agit du nombre de visites que chaque habitant de la commune a effectué en moyenne. 
+
+$$\tau_i = \frac{n_i}{P_i}$$
+où $\tau_i$ et $\n_i$ sont respectivement le taux et le nombre de visite de la commune $i$. 
 ## Revue de littérature
 
 La modélisation des visites dans les hôpitaux est cruciale pour
@@ -610,6 +616,8 @@ dans les relations. Une analyse statistique supplémentaire, comme le
 calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
 relations observées visuellement.
 
+(Voirt aussi le taux avec les enfants et aussi suivant le sexe si possibel comparer voir entre garcon et femmes qui se consultent le plus en matière de poiuyrcentage. )
+
 #### Analyse de corrélation
 
 Les résultats de la corrélation de Pearson sont consignées dans le
@@ -768,7 +776,7 @@ distance_values <- as.vector(dist_matrix)
 summary(distance_values)
 ```
 
-Une visualtion de la densité de nos distance nous donne ceci.
+Une visualtion de la densité de nos distance nous donne ceci, indiquant une forte asymétrie à gauche de la distribution. En d'autres termes,les communes étudiées sont assez rapprochées les unes des autres pour la plupart. 
 
 ```{r fig.cap="Densité des distances", fig.align='center'}
 dist_df <- data.frame(Distance = as.vector(dist_matrix))
