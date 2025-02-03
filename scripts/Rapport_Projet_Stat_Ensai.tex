@@ -176,6 +176,46 @@
 
 \section{Introduction}\label{introduction}
 
+La répartition géographique des besoins en soins de santé est un enjeu
+majeur pour les politiques publiques, notamment en ce qui concerne
+l'accès aux services de médecine de ville. Les inégalités territoriales
+dans l'offre et la demande de soins peuvent entraîner des disparités
+significatives en matière de santé, affectant particulièrement les
+populations vivant dans des zones sous-dotées en professionnels de
+santé. Comprendre ces dynamiques spatiales et socio-démographiques est
+essentiel pour identifier les zones prioritaires et orienter les
+décisions en matière d'allocation des ressources.
+
+Dans ce contexte, ce travail propose une modélisation du nombre de
+consultations en médecine de ville à l'échelle communale, en tenant
+compte des caractéristiques démographiques, socio-économiques et
+spatiales des communes. L'objectif est double : d'une part, analyser les
+facteurs influençant la demande de soins, et d'autre part, identifier
+les zones susceptibles de dépasser un seuil critique de ``désert
+médical''. Pour ce faire, nous nous appuierons sur une base de données
+riche et variée, comprenant des informations issues du Système National
+des Données de Santé (SNDS) pour la période 2018-2022, ainsi que des
+indicateurs socio-démographiques et géographiques.
+
+Notre approche méthodologique repose sur une combinaison de techniques
+statistiques et spatiales. Nous commencerons par une analyse descriptive
+et cartographique des données pour visualiser les tendances et les
+disparités territoriales. Ensuite, nous utiliserons des modèles de
+régression de Poisson pour modéliser le nombre de consultations
+annuelles, en tenant compte des effets fixes (caractéristiques des
+communes) et des effets aléatoires (variations spatiales). Enfin, une
+régression logistique binaire sera employée pour évaluer la probabilité
+qu'une commune dépasse un seuil prédéfini de ``désert médical''.
+
+Ce travail s'inscrit dans une perspective à la fois académique et
+opérationnelle. Sur le plan académique, il contribue à l'étude des
+inégalités territoriales en santé en proposant une méthodologie robuste
+pour l'analyse spatiale des données de soins. Sur le plan opérationnel,
+il fournit des outils pour identifier les zones prioritaires et soutenir
+la prise de décision en matière de politiques de santé publique.
+
+\newpage
+
 \section{Présentation du contexte}\label{pruxe9sentation-du-contexte}
 
 \subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}
@@ -202,6 +242,23 @@ visite escompté noté \(\mu\) est calculé par :
 
 \[ \mu_i = r * P_i\] où \(P_i\) est le nombre d'habitants dans la
 commune \(i\)
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Taux de visite
+\end{enumerate}
+
+Le taux de visite n'est rien d'autre que le nombre moyen de visite dans
+chaque commune. IL est calculé en divisant le nombre de visite par la
+population de la commune en question. En d'autres termes, il s'agit du
+nombre de visites que chaque habitant de la commune a effectué en
+moyenne.
+
+\[\tau_i = \frac{n_i}{P_i}\] où \(\tau_i\) et \(n_i\) sont
+respectivement le taux et le nombre de visite de la commune \(i\).
 
 \subsection{Revue de littérature}\label{revue-de-littuxe9rature}
 
@@ -458,6 +515,22 @@ bootstrap paramétrique :\\
 
 \subsection{Analyse descriptive}\label{analyse-descriptive}
 
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Description de la population d'étude
+\end{enumerate}
+
+\begin{figure}
+
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-3-1} 
+
+}
+
+\caption{Pyramide des âges}\label{fig:unnamed-chunk-3}
+\end{figure}
+
 Dans cette partie, nous allons réaliser quelques statistiques
 descriptives sur nos données.
 
@@ -467,6 +540,13 @@ descriptives sur nos données.
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##    1037    5993    9127   19130   17290  765833
 \end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Taux et Nombre de visites
+\end{enumerate}
 
 L'analyse des statistiques descriptives sur le nombre de consultations
 annuelles de médecin généraliste entre 2018 et 2022 révèle une
@@ -492,13 +572,23 @@ taille de la commune et donc par sa population, nous avons éliminer cet
 effet en calculant le taux de consultations qui n'est autre que le
 nombre de consultations moyennes par personnes.
 
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Taux de mortalité et de Natalité
+\end{enumerate}
+
+\includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-5-1.pdf}
+
 \begin{figure}
 
-{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-4-1} 
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-6-1} 
 
 }
 
-\caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-4}
+\caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-6}
 \end{figure}
 
 \subsubsection{Analyse bivariée}\label{analyse-bivariuxe9e}
@@ -558,11 +648,11 @@ Oui (\textgreater{} 670) & 1.410213 \\
 
 \begin{figure}
 
-{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-7-1} 
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-9-1} 
 
 }
 
-\caption{Relation entre taux de consultations et part des plus de 75 ans}\label{fig:unnamed-chunk-7}
+\caption{Relation entre taux de consultations et part des plus de 75 ans}\label{fig:unnamed-chunk-9}
 \end{figure}
 
 Les communes avec une population âgée importante (communes dont la
@@ -574,11 +664,11 @@ CSP}\label{taux-de-consultation-et-csp}
 
 \begin{figure}
 
-{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-8-1} 
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-10-1} 
 
 }
 
-\caption{Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle}\label{fig:unnamed-chunk-8}
+\caption{Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle}\label{fig:unnamed-chunk-10}
 \end{figure}
 
 Aucune catégorie ne semble montrer une relation linéaire évidente avec
@@ -588,6 +678,10 @@ plage de proportions faibles, ce qui limite la variabilité observable
 dans les relations. Une analyse statistique supplémentaire, comme le
 calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
 relations observées visuellement.
+
+(Voirt aussi le taux avec les enfants et aussi suivant le sexe si
+possibel comparer voir entre garcon et femmes qui se consultent le plus
+en matière de poiuyrcentage. )
 
 \paragraph{Analyse de corrélation}\label{analyse-de-corruxe9lation}
 
@@ -646,6 +740,30 @@ la part des personnes agées de plus de 75 ans. Cela dit, plus la part
 des plus de 75 ans augmente moins est le taux de consultations dans une
 commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
 ceux qui ne se consultent pas assez.
+
+\begin{verbatim}
+##                                              nb_visite 
+##                                              1.0000000 
+##                taux_de_natalite_annuel_moyen_2015_2021 
+##                                              0.3565851 
+## part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021 
+##                                              0.2750018 
+##         part_des_familles_avec_1_enf_de_de_25_ans_2021 
+##                                              0.2197063 
+##               taux_de_mortalite_annuel_moyen_2015_2021 
+##                                             -0.1640389 
+##           part_des_familles_sans_enf_de_de_25_ans_2021 
+##                                             -0.2173127
+\end{verbatim}
+
+\begin{figure}
+
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-12-1} 
+
+}
+
+\caption{Corrélations entre le nombre de visite et les autres variables}\label{fig:unnamed-chunk-12}
+\end{figure}
 
 \subsubsection{Autocorrélation}\label{autocorruxe9lation}
 
@@ -736,15 +854,18 @@ Où : - \(r\) : Rayon de la Terre (environ 6371 km).
 ##     0.0   312.8   515.7   531.6   688.7  7589.3
 \end{verbatim}
 
-Une visualtion de la densité de nos distance nous donne ceci.
+Une visualtion de la densité de nos distance nous donne ceci, indiquant
+une forte asymétrie à gauche de la distribution. En d'autres termes,les
+communes étudiées sont assez rapprochées les unes des autres pour la
+plupart.
 
 \begin{figure}
 
-{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-11-1} 
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-14-1} 
 
 }
 
-\caption{Densité des distances}\label{fig:unnamed-chunk-11}
+\caption{Densité des distances}\label{fig:unnamed-chunk-14}
 \end{figure}
 
 \paragraph{Construction de la matrice de
