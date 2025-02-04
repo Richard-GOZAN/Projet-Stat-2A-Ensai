@@ -174,7 +174,7 @@
 
 \newpage
 
-\section{Introduction}\label{introduction}
+\section{\texorpdfstring{\textcolor{brown} {Introduction}}{}}\label{section}
 
 La répartition géographique des besoins en soins de santé est un enjeu
 majeur pour les politiques publiques, notamment en ce qui concerne
@@ -216,7 +216,7 @@ la prise de décision en matière de politiques de santé publique.
 
 \newpage
 
-\section{Présentation du contexte}\label{pruxe9sentation-du-contexte}
+\section{\texorpdfstring{\textcolor{brown} {Présentation du contexte}}{}}\label{section-1}
 
 \subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}
 
@@ -240,8 +240,11 @@ commune si le taux de visite était le même dans dans ces dernières. En
 d'autres terme si \(r\) est le taux moyen de visite alors, le nombre de
 visite escompté noté \(\mu\) est calculé par :
 
-\[ \mu_i = r * P_i\] où \(P_i\) est le nombre d'habitants dans la
-commune \(i\)
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
+$$ \mu_i = r * P_i$$
+\end{tcolorbox}
+
+où \(P_i\) est le nombre d'habitants dans la commune \(i\)
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -257,8 +260,12 @@ population de la commune en question. En d'autres termes, il s'agit du
 nombre de visites que chaque habitant de la commune a effectué en
 moyenne.
 
-\[\tau_i = \frac{n_i}{P_i}\] où \(\tau_i\) et \(n_i\) sont
-respectivement le taux et le nombre de visite de la commune \(i\).
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
+$$\tau_i = \frac{n_i}{P_i}$$
+\end{tcolorbox}
+
+où \(\tau_i\) et \(n_i\) sont respectivement le taux et le nombre de
+visite de la commune \(i\).
 
 \subsection{Revue de littérature}\label{revue-de-littuxe9rature}
 
@@ -400,12 +407,14 @@ soins, tandis qu'en zones rurales ou médicalement sous-dotées, les
 délais d'attente et les distances à parcourir constituent des freins
 majeurs (Irdes 2020).
 
+\newpage
+
+\section{\texorpdfstring{\textcolor{brown} {Méthodologie}}{}}\label{section-2}
+
 \subsection{Présentation des
 données}\label{pruxe9sentation-des-donnuxe9es}
 
 Les données que nous avons utilisées nous proviennent de \ldots{}
-
-\section{Méthodologie}\label{muxe9thodologie}
 
 \subsection{Motivation}\label{motivation}
 
@@ -448,7 +457,10 @@ La probabilité \(p\) est reliée au prédicteur par la fonction logistique
 :\\
 \[ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i. \]\\
 Le log-vraisemblance est exprimé comme :\\
-\[ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. \]
+
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
+$$ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. $$
+\end{tcolorbox}
 
 \subsubsection{Régression de Poisson}\label{ruxe9gression-de-poisson}
 
@@ -511,7 +523,7 @@ bootstrap paramétrique :\\
 2. Réajuster le modèle pour chaque jeu de données simulé.\\
 3. Analyser la distribution des estimations obtenues.
 
-\section{Analyse des résultats}\label{analyse-des-ruxe9sultats}
+\section{\texorpdfstring{\textcolor{brown} {Analyse des résultats}}{}}\label{section-3}
 
 \subsection{Analyse descriptive}\label{analyse-descriptive}
 
@@ -521,6 +533,12 @@ bootstrap paramétrique :\\
 \item
   Description de la population d'étude
 \end{enumerate}
+
+Notre population d'étude est une population assez homogène en matière
+d'âge. Cependant plus on dépasse les 75 ans et moins on rencontre de
+personnes. D'autres part notre popuplation est fortement masculine avec
+une forte proportion des hommes quelle que soit la tranche d'âge à
+l'exception des tranches du troisième âge.
 
 \begin{figure}
 
@@ -535,11 +553,6 @@ Dans cette partie, nous allons réaliser quelques statistiques
 descriptives sur nos données.
 
 \subsubsection{Analyse univariée}\label{analyse-univariuxe9e}
-
-\begin{verbatim}
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    1037    5993    9127   19130   17290  765833
-\end{verbatim}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -580,7 +593,22 @@ nombre de consultations moyennes par personnes.
   Taux de mortalité et de Natalité
 \end{enumerate}
 
-\includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-5-1.pdf}
+Dans les commmunes étudiées, le taux de natalité et de mortalité sont un
+peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en
+ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On
+remarque une corrélation négative entre ces deux taux. Néanmoins cette
+corrélation n'a à priori aucun sens. Par ailleurs, l'observation des
+distribution permet de constater que la natalité est nde façon générale
+élevée par rapport à la mortalité dans les communes étudiées.
+
+\begin{figure}
+
+{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-5-1} 
+
+}
+
+\caption{Taux de Natalité et Taux de Mortalité}\label{fig:unnamed-chunk-5}
+\end{figure}
 
 \begin{figure}
 
@@ -603,6 +631,8 @@ part des personnes agées (75 ans et plus), la part de quelques CSP
 
 \paragraph{Taux de consultation et population
 totale}\label{taux-de-consultation-et-population-totale}
+
+\(\\\)
 
 \begin{longtable}[]{@{}lr@{}}
 \caption{Taux de consultations selon la taille de la
@@ -662,14 +692,7 @@ moyenne un taux de consultations plus faible.
 \paragraph{Taux de consultation et
 CSP}\label{taux-de-consultation-et-csp}
 
-\begin{figure}
-
-{\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-10-1} 
-
-}
-
-\caption{Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle}\label{fig:unnamed-chunk-10}
-\end{figure}
+\(\\\)
 
 Aucune catégorie ne semble montrer une relation linéaire évidente avec
 le taux de visite. Par ailleurs, pour toutes les catégories
@@ -679,11 +702,9 @@ dans les relations. Une analyse statistique supplémentaire, comme le
 calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
 relations observées visuellement.
 
-(Voirt aussi le taux avec les enfants et aussi suivant le sexe si
-possibel comparer voir entre garcon et femmes qui se consultent le plus
-en matière de poiuyrcentage. )
-
 \paragraph{Analyse de corrélation}\label{analyse-de-corruxe9lation}
+
+\(\\\)
 
 Les résultats de la corrélation de Pearson sont consignées dans le
 tableau suivant :
@@ -741,28 +762,13 @@ des plus de 75 ans augmente moins est le taux de consultations dans une
 commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
 ceux qui ne se consultent pas assez.
 
-\begin{verbatim}
-##                                              nb_visite 
-##                                              1.0000000 
-##                taux_de_natalite_annuel_moyen_2015_2021 
-##                                              0.3565851 
-## part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021 
-##                                              0.2750018 
-##         part_des_familles_avec_1_enf_de_de_25_ans_2021 
-##                                              0.2197063 
-##               taux_de_mortalite_annuel_moyen_2015_2021 
-##                                             -0.1640389 
-##           part_des_familles_sans_enf_de_de_25_ans_2021 
-##                                             -0.2173127
-\end{verbatim}
-
 \begin{figure}
 
 {\centering \includegraphics{Rapport_Projet_Stat_Ensai_files/figure-latex/unnamed-chunk-12-1} 
 
 }
 
-\caption{Corrélations entre le nombre de visite et les autres variables}\label{fig:unnamed-chunk-12}
+\caption{Corrélations entre le nombre de visite et quelques variables}\label{fig:unnamed-chunk-12}
 \end{figure}
 
 \subsubsection{Autocorrélation}\label{autocorruxe9lation}
@@ -780,7 +786,7 @@ globale de l'autocorrélation spatiale.
 \paragraph{Définition de l'indice de
 Moran}\label{duxe9finition-de-lindice-de-moran}
 
-L'indice de Moran (\(I\)) évalue la similitude des valeurs d'une
+\(\\\) L'indice de Moran (\(I\)) évalue la similitude des valeurs d'une
 variable entre différentes entités géographiques (par exemple, des
 communes) en fonction de leur proximité spatiale. Il se base sur la
 matrice de poids spatiale (\(W\)), qui définit les relations entre ces
@@ -789,11 +795,13 @@ entités.
 \paragraph{Formule de l'indice de
 Moran}\label{formule-de-lindice-de-moran}
 
-La formule mathématique de l'indice de Moran est la suivante :
+\(\\\) La formule mathématique de l'indice de Moran est la suivante :
 
-\[
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
+$$
 I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
-\]
+$$
+\end{tcolorbox}
 
 Où :
 
@@ -820,8 +828,10 @@ distance, notamment celle d'Haversine.
 \paragraph{Matrice de poids basée sur la distance de
 Haversine}\label{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}
 
-\subparagraph{Définition de la distance de
+\paragraph{Définition de la distance de
 Haversine}\label{duxe9finition-de-la-distance-de-haversine}
+
+\(\\\)
 
 La distance de Haversine est une mesure de la distance entre deux points
 sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\)
@@ -831,13 +841,17 @@ géographiques projetées sur une surface sphérique, comme la Terre.
 \paragraph{Formule de la distance de
 Haversine}\label{formule-de-la-distance-de-haversine}
 
+\(\\\)
+
 Si l'on considère deux points (\(i\)) et (\(j\)), la distance
 (\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon
 (\(r\)) est donnée par :
 
-\[
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
+$$
  d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
-\]
+$$
+\end{tcolorbox}
 
 Où : - \(r\) : Rayon de la Terre (environ 6371 km).
 
@@ -848,11 +862,6 @@ Où : - \(r\) : Rayon de la Terre (environ 6371 km).
   \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en
   radians). Après calcul nous avons ces statistiques sur nos distances.
 \end{itemize}
-
-\begin{verbatim}
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##     0.0   312.8   515.7   531.6   688.7  7589.3
-\end{verbatim}
 
 Une visualtion de la densité de nos distance nous donne ceci, indiquant
 une forte asymétrie à gauche de la distribution. En d'autres termes,les
@@ -871,8 +880,9 @@ plupart.
 \paragraph{Construction de la matrice de
 poids}\label{construction-de-la-matrice-de-poids}
 
-Pour construire la matrice de poids, nous avons alors suivi ces étapes.
-*
+\hfill\break
+Pour construire la matrice de poids, nous avons alors suivi ces
+étapes.\\
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}

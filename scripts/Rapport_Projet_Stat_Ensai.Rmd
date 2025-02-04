@@ -194,7 +194,7 @@ write.csv(data, "../data/data.csv", row.names = FALSE)
 
 ```
 
-# Introduction
+# \textcolor{brown} {Introduction}
 
 La répartition géographique des besoins en soins de santé est un enjeu majeur pour les politiques publiques, notamment en ce qui concerne l'accès aux services de médecine de ville. Les inégalités territoriales dans l'offre et la demande de soins peuvent entraîner des disparités significatives en matière de santé, affectant particulièrement les populations vivant dans des zones sous-dotées en professionnels de santé. Comprendre ces dynamiques spatiales et socio-démographiques est essentiel pour identifier les zones prioritaires et orienter les décisions en matière d'allocation des ressources.
 
@@ -208,7 +208,7 @@ Ce travail s'inscrit dans une perspective à la fois académique et opérationne
 \newpage
 
 
-# Présentation du contexte
+# \textcolor{brown} {Présentation du contexte}
 
 ## Intérêt de l'étude
 
@@ -220,14 +220,20 @@ Dans cette partie, nous allons définir certainses notions clés qui apparaissen
 
 Le nombre de visite espérés, terme qui apparaitra dans notre modélisation est le nombre de visite qu'il y aurait eu dans chaque commune si le taux de visite était le même dans dans ces dernières. En d'autres terme si $r$ est le taux moyen de visite alors, le nombre de visite escompté noté $\mu$ est calculé par :
 
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
 $$ \mu_i = r * P_i$$
+\end{tcolorbox}
+
+
 où $P_i$ est le nombre d'habitants dans la commune $i$
 
 2. Taux de visite
 
 Le taux de visite n'est rien d'autre que le nombre moyen de visite dans chaque commune. IL est calculé en divisant le nombre de visite par la population de la commune en question. En d'autres termes, il s'agit du nombre de visites que chaque habitant de la commune a effectué en moyenne. 
 
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
 $$\tau_i = \frac{n_i}{P_i}$$
+\end{tcolorbox}
 où $\tau_i$ et $n_i$ sont respectivement le taux et le nombre de visite de la commune $i$. 
 
 
@@ -342,11 +348,17 @@ services de soins, tandis qu’en zones rurales ou médicalement
 sous-dotées, les délais d’attente et les distances à parcourir
 constituent des freins majeurs [@irdes2020].
 
+
+\newpage
+
+
+
+# \textcolor{brown} {Méthodologie}
+
 ## Présentation des données
 
 Les données que nous avons utilisées nous proviennent de ...
 
-# Méthodologie
 
 ## Motivation
 
@@ -382,7 +394,10 @@ La probabilité $p$ est reliée au prédicteur par la fonction logistique
 :\
 $$ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i. $$\
 Le log-vraisemblance est exprimé comme :\
+
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
 $$ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. $$
+\end{tcolorbox}
 
 ### Régression de Poisson
 
@@ -438,12 +453,14 @@ bootstrap paramétrique :\
 2. Réajuster le modèle pour chaque jeu de données simulé.\
 3. Analyser la distribution des estimations obtenues.
 
-# Analyse des résultats
+# \textcolor{brown} {Analyse des résultats}
 
 ## Analyse descriptive
 
 1. Description de la population d'étude 
 
+
+Notre population d'étude est une population assez homogène en matière d'âge. Cependant plus on dépasse les 75 ans et moins on rencontre de personnes. D'autres part notre popuplation est fortement masculine avec une forte proportion des hommes quelle que soit la tranche d'âge à l'exception des tranches du troisième âge. 
 ```{r , fig.align='center', fig.cap= "Pyramide des âges"}
 library(ggplot2)
 library(dplyr)
@@ -496,7 +513,7 @@ descriptives sur nos données.
 ```{r }
 ## Statistiques descriptives sur le nombre de visite
 
-summary(data$nb_visite)
+#summary(data$nb_visite)
 
 ```
 
@@ -528,7 +545,8 @@ nombre de consultations moyennes par personnes.
 
 2. Taux de mortalité et de Natalité
 
-```{r}
+Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distribution permet de constater que la natalité est nde façon générale élevée par rapport à la mortalité dans les communes étudiées. 
+```{r fig.align='center', fig.cap= "Taux de Natalité et Taux de Mortalité"}
 # 📌 Vérification et conversion des variables avant de tracer
 # Vérification et conversion du taux de mortalité
 if (class(df$taux_de_mortalite_annuel_moyen_2015_2021) != "numeric") {
@@ -620,7 +638,7 @@ part des personnes agées (75 ans et plus), la part de quelques CSP
 (ouvriers et retraités).
 
 #### Taux de consultation et population totale
-
+$\\$
 ```{r}
 # Calcul des quantiles
 quantiles <- quantile(data$population_municipale_2021_x, probs = c(1/3, 2/3), na.rm = TRUE)
@@ -680,8 +698,8 @@ population âgée de 75 ans ou plus est supérieure à la médiane) ont en
 moyenne un taux de consultations plus faible.
 
 #### Taux de consultation et CSP
-
-```{r, fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle"}
+$\\$
+```{r eval=FALSE, fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle", include=FALSE}
 # Chargement les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
@@ -729,6 +747,7 @@ plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
 grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 2)
 ```
 
+
 Aucune catégorie ne semble montrer une relation linéaire évidente avec
 le taux de visite. Par ailleurs, pour toutes les catégories
 socio-professionnelles, la majorité des communes se situent dans une
@@ -737,9 +756,9 @@ dans les relations. Une analyse statistique supplémentaire, comme le
 calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
 relations observées visuellement.
 
-(Voirt aussi le taux avec les enfants et aussi suivant le sexe si possibel comparer voir entre garcon et femmes qui se consultent le plus en matière de poiuyrcentage. )
-
 #### Analyse de corrélation
+
+$\\$
 
 Les résultats de la corrélation de Pearson sont consignées dans le
 tableau suivant :
@@ -786,34 +805,49 @@ des plus de 75 ans augmente moins est le taux de consultations dans une
 commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
 ceux qui ne se consultent pas assez.
 
-```{r, fig.align='center', fig.cap= "Corrélations entre le nombre de visite et les autres variables"}
+```{r, fig.align='center', fig.cap= "Corrélations entre le nombre de visite et quelques variables"}
 # Sélectionner uniquement les variables d'intérêt
-variables_analyse <- c("taux_de_mortalite_annuel_moyen_2015_2021", 
-                       "taux_de_natalite_annuel_moyen_2015_2021", 
-                       "part_des_familles_sans_enf_de_de_25_ans_2021", 
-                       "part_des_familles_avec_1_enf_de_de_25_ans_2021", 
-                       "part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021", 
-                       "nb_visite")
+# 📌 Définition des noms lisibles pour les variables
+nom_variables <- c(
+  "taux_de_mortalite_annuel_moyen_2015_2021" = "Mortalité",
+  "taux_de_natalite_annuel_moyen_2015_2021" = "Natalité",
+  "part_des_familles_sans_enf_de_de_25_ans_2021" = "Sans enfants",
+  "part_des_familles_avec_1_enf_de_de_25_ans_2021" = "Un enfant",
+  "part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021" = "Trois enfants",
+  "nb_visite" = "Nombre de visites"
+)
+
+# 📌 Sélectionner les variables d'analyse
+variables_analyse <- names(nom_variables)
 
 df_analyse <- df[variables_analyse]
-# Convertir toutes les colonnes en numérique
+
+# 📌 Convertir toutes les colonnes en numérique
 df_analyse <- df_analyse %>% mutate(across(everything(), as.numeric))
 
-# Vérifier les valeurs manquantes et les gérer si besoin
+# 📌 Supprimer les valeurs manquantes
 df_analyse <- na.omit(df_analyse)  
 
-# Calculer les corrélations entre nb_visite et les autres variables
+# 📌 Calculer les corrélations
 cor_matrix <- cor(df_analyse, use="complete.obs")
 
-# Trier les corrélations par ordre décroissant
-cor_target <- sort(cor_matrix["nb_visite",], decreasing=TRUE)
+# 📌 Trier les corrélations par ordre décroissant
+cor_target <- sort(cor_matrix["nb_visite", ], decreasing=TRUE)
 
-# Afficher le top des corrélations
-print(cor_target)
+# 📌 Remplacer les noms de variables par des noms plus lisibles
+cor_data <- data.frame(
+  Variable = names(cor_target),
+  Correlation = cor_target
+)
 
-# Visualiser les corrélations sous forme de barplot
-ggplot(data = data.frame(Variable = names(cor_target), Correlation = cor_target), 
-       aes(x = reorder(Variable, Correlation), y = Correlation, fill = Correlation)) +
+# 📌 Appliquer les nouveaux noms
+cor_data$Variable <- nom_variables[cor_data$Variable]
+
+# 📌 Exclure "Nombre de visites" du graphique
+cor_data <- cor_data[cor_data$Variable != "Nombre de visites", ]
+
+# 📌 Afficher le barplot des corrélations
+ggplot(cor_data, aes(x = reorder(Variable, Correlation), y = Correlation, fill = Correlation)) +
   geom_bar(stat="identity") +
   coord_flip() +
   scale_fill_gradient2(low="blue", mid="white", high="red", midpoint=0) +
@@ -821,6 +855,7 @@ ggplot(data = data.frame(Variable = names(cor_target), Correlation = cor_target)
        x="Variables",
        y="Coefficient de corrélation") +
   theme_minimal()
+
 ```
 
 
@@ -837,19 +872,21 @@ pour quantifier cette dépendance en fournissant une mesure globale de
 l’autocorrélation spatiale.
 
 #### Définition de l’indice de Moran
-
+$\\$
 L’indice de Moran ($I$) évalue la similitude des valeurs d’une variable
 entre différentes entités géographiques (par exemple, des communes) en
 fonction de leur proximité spatiale. Il se base sur la matrice de poids
 spatiale ($W$), qui définit les relations entre ces entités.
 
 #### Formule de l’indice de Moran
-
+$\\$
 La formule mathématique de l’indice de Moran est la suivante :
 
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
 $$
 I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
 $$
+\end{tcolorbox}
 
 Où :
 
@@ -871,22 +908,29 @@ notamment celle d'Haversine.
 
 #### Matrice de poids basée sur la distance de Haversine
 
-##### Définition de la distance de Haversine
+#### Définition de la distance de Haversine
+
+$\\$
 
 La distance de Haversine est une mesure de la distance entre deux points
 sur une sphère, basée sur leurs coordonnées géographiques ($latitude$ et
 $longitude$). Elle est particulièrement utile pour les données
 géographiques projetées sur une surface sphérique, comme la Terre.
 
+
 #### Formule de la distance de Haversine
+
+$\\$
 
 Si l'on considère deux points ($i$) et ($j$), la distance ($d_{ij}$)
 entre ces deux points sur la surface d'une sphère de rayon ($r$) est
 donnée par :
 
+\begin{tcolorbox}[colback=mybrown!10!white, colframe=mybrown!80!black, boxrule=0.5mm]
 $$
  d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
 $$
+\end{tcolorbox}
 
 Où : - $r$ : Rayon de la Terre (environ 6371 km).
 
@@ -932,7 +976,7 @@ if (any(is.infinite(dist_matrix))) {
 
 # Résumé statistique de toutes les distances
 distance_values <- as.vector(dist_matrix)
-summary(distance_values)
+#summary(distance_values)
 ```
 
 Une visualtion de la densité de nos distance nous donne ceci, indiquant une forte asymétrie à gauche de la distribution. En d'autres termes,les communes étudiées sont assez rapprochées les unes des autres pour la plupart. 
@@ -949,8 +993,9 @@ ggplot(dist_df, aes(x = Distance)) +
 
 #### Construction de la matrice de poids
 
+\
 Pour construire la matrice de poids, nous avons alors suivi ces étapes.
-\*
+\
 
 1.  Calculer les distances de Haversine entre chaque paire d’entités.
 2.  Définir un seuil de distance maximale ($d_{max}$) :
