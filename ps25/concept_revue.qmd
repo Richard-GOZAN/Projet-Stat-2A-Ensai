@@ -1,0 +1,139 @@
+# Présentation du contexte
+
+## Intérêt de l'étude
+
+## Cadre conceptuel de l'étude
+
+Dans cette partie, nous allons définir certainses notions clés qui apparaissent dans notre étude entre autres, le nombre de visites, le nombre de visites espérés ainsi que le taux de visite. 
+
+1. Nombre de visites espérés
+
+Le nombre de visite espérés, terme qui apparaitra dans notre modélisation est le nombre de visite qu'il y aurait eu dans chaque commune si le taux de visite était le même dans dans ces dernières. En d'autres terme si $r$ est le taux moyen de visite alors, le nombre de visite escompté noté $\mu$ est calculé par :
+
+
+$$ \mu_i = r * P_i$$
+
+
+
+où $P_i$ est le nombre d'habitants dans la commune $i$
+
+2. Taux de visite
+
+Le taux de visite n'est rien d'autre que le nombre moyen de visite dans chaque commune. IL est calculé en divisant le nombre de visite par la population de la commune en question. En d'autres termes, il s'agit du nombre de visites que chaque habitant de la commune a effectué en moyenne. 
+
+$$\tau_i = \frac{n_i}{P_i}$$
+
+où $\tau_i$ et $n_i$ sont respectivement le taux et le nombre de visite de la commune $i$. 
+
+
+
+## Revue de littérature
+
+La modélisation des visites dans les hôpitaux est cruciale pour
+comprendre les dynamiques de la santé publique et pour optimiser la
+gestion des ressources médicales. Dans ce contexte, les modèles de
+régression de type Poisson généraux, en particulier les modèles mixtes
+généralisés (GLMM), sont souvent utilisés pour gérer les données de
+comptage, en tenant compte des spécificités démographiques et
+géographiques des agglomérations, ici définies par les communes.
+
+Les recherches antérieures, comme celles de Mohebbi et al. (2011),
+montrent l'importance d'intégrer des effets spatiaux dans les modèles de
+comptage, surtout lorsqu'on évalue des phénomènes tels que le cancer
+œsophagien (EC) dans des provinces spécifiques. Leur étude souligne
+comment la non-prise en compte de l'autocorrélation spatiale peut
+conduire à une estimation biaisée des effets des variables
+socio-économiques sur l'incidence des maladies. Ce phénomène pourrait
+également s'appliquer à la modélisation des visites à l'hôpital, où
+certains facteurs ouent un rôle significatif.
+
+Selon l'article, trois structures d'autocorrélation peuvent être
+appliquées dans le cadre de la régression Poisson lorsqu'on traite des
+données de comptage. Ces modèles comprennent : 
+
+1. **Modèle Poisson avec effets aléatoires non spatiaux** : Bien qu'utiles, ces modèles négligent
+l'autocorrélation spatiale, ce qui peut conduire à une sous-estimation
+des erreurs standard. 
+
+2. **Modèle avec effets aléatoires spatiaux basés sur la distance** : Ce modèle prend en compte l'influence des
+agglomérations voisines, mais peut ne pas capturer efficacement
+l'hétérogénéité locale. 
+
+3. **Modèle avec effets aléatoires de type voisinage** : Utilisant la structure conditionnelle autorégressive (CAR),
+ce modèle est le plus adapté pour les données spatiales en intégrant les
+interactions entre les communes. Pour notre étude, le modèle avec effets
+aléatoires de type voisinage est recommandé pour la modélisation du
+nombre de visites à l'hôpital en France, car il permet de mieux prendre
+en compte l'effet de proximité entre communes.
+
+L'application des principes issus de l'article de Mohebbi et al. peut
+enrichir notre étude sur la fréquentation des hôpitaux en France. En
+intégrant des effets aléatoires spatiaux adaptés à la structure des
+données, nous pouvons réaliser des estimations plus précises et utiles
+pour la planification hospitalière.
+
+En ce qui concerne les facteurs explicatifs du nombre de visite dans les
+hopitaux, plusieurs études se sont penchées sur ce sujet. De nombreuses
+études ont montré que le nombre de consultations médicales est influencé
+par divers facteurs sociodémographiques, allant des caractéristiques
+individuelles aux contextes socio-économiques et territoriaux.
+
+1.  Influence de l’âge et du sexe
+
+L’âge constitue un déterminant majeur du recours aux soins. Les
+personnes âgées, en particulier celles de 65 à 79 ans, consultent plus
+fréquemment en raison de la prévalence accrue de maladies chroniques et
+du suivi médical nécessaire à leur prise en charge [@statcan2022]. En revanche, la population jeune et en bonne santé présente
+une utilisation plus sporadique des services médicaux. Le sexe est
+également un facteur différenciant important. De manière générale, les
+femmes consultent plus fréquemment que les hommes. Cette différence est
+attribuée aux besoins spécifiques en santé reproductive, mais aussi à
+une plus grande propension à rechercher des soins préventifs [@bag2024]. En revanche, les hommes,
+notamment dans les catégories socio-professionnelles les plus actives,
+ont tendance à sous-utiliser les services de soins, ce qui peut
+entraîner des diagnostics plus tardifs et des complications médicales
+accrues.
+
+2.  Impact du statut socio-économique et du niveau d’éducation
+
+Le revenu et la précarité économique influencent considérablement
+l’accès aux soins. Les individus à revenu élevé bénéficient généralement
+d’un meilleur accès aux consultations médicales, notamment grâce à une
+plus grande couverture sociale et des assurances complémentaires leur
+permettant de réduire les coûts associés aux soins [@bvs2023]. À l’inverse, les personnes en situation de précarité
+rencontrent des obstacles financiers, administratifs et culturels qui
+limitent leur recours aux soins, malgré des besoins souvent accrus en
+raison de conditions de vie plus précaires. Le niveau d’éducation joue
+un rôle clé dans la fréquentation des services de santé. Une instruction
+plus élevée est associée à une meilleure connaissance des risques
+sanitaires et à une adoption plus proactive des comportements de
+prévention, ce qui entraîne un recours plus fréquent aux soins médicaux
+[@bvs2023]. En revanche, un faible niveau d’éducation est
+souvent corrélé à un moindre suivi médical et à une utilisation plus
+tardive des services de soins, notamment en cas de complications.
+
+3.  Influence du contexte familial et de l’environnement social
+
+L’état matrimonial influence également la fréquence des consultations
+médicales. Les personnes mariées ou vivant en couple consultent
+davantage, bénéficiant du soutien d’un conjoint qui peut inciter à
+prendre soin de sa santé et à consulter régulièrement un médecin
+[@statcan2022]. Par ailleurs, l’accès à un médecin
+traitant ou de famille constitue un déterminant important. Les patients
+disposant d’un suivi médical régulier sont plus enclins à effectuer des
+consultations préventives et à être orientés rapidement vers des
+spécialistes si nécessaire [@statcan2022]. 
+
+4. Perception de l’état de santé et accès géographique aux soins 
+
+La perception de la santé est un facteur déterminant du recours aux soins.
+Les individus qui considèrent leur état de santé comme excellent ou très
+bon consultent rarement, tandis que ceux qui ont une perception négative
+de leur état de santé ont tendance à multiplier les visites médicales
+[@statcan2022]. Enfin, les inégalités spatiales dans
+l’accès aux soins modulent également la fréquence des consultations. En
+milieu urbain, la densité médicale plus élevée facilite l’accès aux
+services de soins, tandis qu’en zones rurales ou médicalement
+sous-dotées, les délais d’attente et les distances à parcourir
+constituent des freins majeurs [@irdes2020].
+

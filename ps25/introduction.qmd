@@ -1,9 +1,10 @@
----
-title: "Introduction"
----
+
 # Introduction
 
-vdfjhlsqkhdkhv:lsb fjkvnbwdnkdfhbwdfbvjdfjdf
+La répartition géographique des besoins en soins de santé est un enjeu majeur pour les politiques publiques, notamment en ce qui concerne l'accès aux services de médecine de ville. Les inégalités territoriales dans l'offre et la demande de soins peuvent entraîner des disparités significatives en matière de santé, affectant particulièrement les populations vivant dans des zones sous-dotées en professionnels de santé. Comprendre ces dynamiques spatiales et socio-démographiques est essentiel pour identifier les zones prioritaires et orienter les décisions en matière d'allocation des ressources.
 
-## oisgysouyorz
-iighizrgzrogzr
+Dans ce contexte, ce travail propose une modélisation du nombre de consultations en médecine de ville à l'échelle communale, en tenant compte des caractéristiques démographiques, socio-économiques et spatiales des communes. L'objectif est double : d'une part, analyser les facteurs influençant la demande de soins, et d'autre part, identifier les zones susceptibles de dépasser un seuil critique de "désert médical". Pour ce faire, nous nous appuierons sur une base de données riche et variée, comprenant des informations issues du Système National des Données de Santé (SNDS) pour la période 2018-2022, ainsi que des indicateurs socio-démographiques et géographiques.
+
+Notre approche méthodologique repose sur une combinaison de techniques statistiques et spatiales. Nous commencerons par une analyse descriptive et cartographique des données pour visualiser les tendances et les disparités territoriales. Ensuite, nous utiliserons des modèles de régression de Poisson pour modéliser le nombre de consultations annuelles, en tenant compte des effets fixes (caractéristiques des communes) et des effets aléatoires (variations spatiales). Enfin, une régression logistique binaire sera employée pour évaluer la probabilité qu'une commune dépasse un seuil prédéfini de "désert médical".
+
+Ce travail s'inscrit dans une perspective à la fois académique et opérationnelle. Sur le plan académique, il contribue à l'étude des inégalités territoriales en santé en proposant une méthodologie robuste pour l'analyse spatiale des données de soins. Sur le plan opérationnel, il fournit des outils pour identifier les zones prioritaires et soutenir la prise de décision en matière de politiques de santé publique.

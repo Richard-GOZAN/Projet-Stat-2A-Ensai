@@ -1,17 +1,16 @@
 project:
   type: book
 book:
-  title: "Modélisation du nombre de consultations en médecine de ville en tenant compte des 
-caractéristiques des villes et de la spatialisation : approche par modèle mixte"
-  author: "Groupe 25"
-  date: "Janvier 2025"
   chapters:
     - index.qmd
     - introduction.qmd
+    - concept_revue.qmd
     - methodologie.qmd
     - analyse_descriptive.qmd
     - modelisation.qmd
     - conclusion.qmd
+    - bibliographie.qmd
+  downloads: [pdf, epub] 
 
 bibliography: references.bib
 
@@ -20,11 +19,5 @@ format:
     toc: true
     toc-depth: 2
     number-sections: true
-    number-depth: 3
+    number-depth: 4
     keep-tex: true
-    bibliography: mabiblio.bib
-    cite-method: natbib
-  docx: default
-
-
-

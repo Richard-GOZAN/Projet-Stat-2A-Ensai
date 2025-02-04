@@ -1,0 +1,948 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrreprt}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{3}
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{bookmark}{}{\usepackage{bookmark}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Modélisation du nombre de consultations en médecine de ville en tenant compte des caractéristiques des villes et de la spatialisation : approche par modèle mixte},
+  pdfauthor={Groupe 25},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Modélisation du nombre de consultations en médecine de ville en
+tenant compte des caractéristiques des villes et de la spatialisation :
+approche par modèle mixte}
+\author{Groupe 25}
+\date{2025-01-01}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table of contents}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+
+\bookmarksetup{startatroot}
+
+\chapter{}\label{section}
+
+\bookmarksetup{startatroot}
+
+\chapter{\texorpdfstring{\textcolor{brown} {Introduction=""}}{}}\label{section-1}
+
+La répartition géographique des besoins en soins de santé est un enjeu
+majeur pour les politiques publiques, notamment en ce qui concerne
+l'accès aux services de médecine de ville. Les inégalités territoriales
+dans l'offre et la demande de soins peuvent entraîner des disparités
+significatives en matière de santé, affectant particulièrement les
+populations vivant dans des zones sous-dotées en professionnels de
+santé. Comprendre ces dynamiques spatiales et socio-démographiques est
+essentiel pour identifier les zones prioritaires et orienter les
+décisions en matière d'allocation des ressources.
+
+Dans ce contexte, ce travail propose une modélisation du nombre de
+consultations en médecine de ville à l'échelle communale, en tenant
+compte des caractéristiques démographiques, socio-économiques et
+spatiales des communes. L'objectif est double : d'une part, analyser les
+facteurs influençant la demande de soins, et d'autre part, identifier
+les zones susceptibles de dépasser un seuil critique de ``désert
+médical''. Pour ce faire, nous nous appuierons sur une base de données
+riche et variée, comprenant des informations issues du Système National
+des Données de Santé (SNDS) pour la période 2018-2022, ainsi que des
+indicateurs socio-démographiques et géographiques.
+
+Notre approche méthodologique repose sur une combinaison de techniques
+statistiques et spatiales. Nous commencerons par une analyse descriptive
+et cartographique des données pour visualiser les tendances et les
+disparités territoriales. Ensuite, nous utiliserons des modèles de
+régression de Poisson pour modéliser le nombre de consultations
+annuelles, en tenant compte des effets fixes (caractéristiques des
+communes) et des effets aléatoires (variations spatiales). Enfin, une
+régression logistique binaire sera employée pour évaluer la probabilité
+qu'une commune dépasse un seuil prédéfini de ``désert médical''.
+
+Ce travail s'inscrit dans une perspective à la fois académique et
+opérationnelle. Sur le plan académique, il contribue à l'étude des
+inégalités territoriales en santé en proposant une méthodologie robuste
+pour l'analyse spatiale des données de soins. Sur le plan opérationnel,
+il fournit des outils pour identifier les zones prioritaires et soutenir
+la prise de décision en matière de politiques de santé publique.
+
+\bookmarksetup{startatroot}
+
+\chapter{\texorpdfstring{\textcolor{brown} {Présentation="" du="" contexte=""}}{}}\label{section-2}
+
+\section{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}
+
+\section{Cadre conceptuel de
+l'étude}\label{cadre-conceptuel-de-luxe9tude}
+
+Dans cette partie, nous allons définir certainses notions clés qui
+apparaissent dans notre étude entre autres, le nombre de visites, le
+nombre de visites espérés ainsi que le taux de visite.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Nombre de visites espérés
+\end{enumerate}
+
+Le nombre de visite espérés, terme qui apparaitra dans notre
+modélisation est le nombre de visite qu'il y aurait eu dans chaque
+commune si le taux de visite était le même dans dans ces dernières. En
+d'autres terme si \(r\) est le taux moyen de visite alors, le nombre de
+visite escompté noté \(\mu\) est calculé par :
+
+\[ \mu_i = r * P_i\]
+
+où \(P_i\) est le nombre d'habitants dans la commune \(i\)
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Taux de visite
+\end{enumerate}
+
+Le taux de visite n'est rien d'autre que le nombre moyen de visite dans
+chaque commune. IL est calculé en divisant le nombre de visite par la
+population de la commune en question. En d'autres termes, il s'agit du
+nombre de visites que chaque habitant de la commune a effectué en
+moyenne.
+
+\[\tau_i = \frac{n_i}{P_i}\]
+
+où \(\tau_i\) et \(n_i\) sont respectivement le taux et le nombre de
+visite de la commune \(i\).
+
+\section{Revue de littérature}\label{revue-de-littuxe9rature}
+
+La modélisation des visites dans les hôpitaux est cruciale pour
+comprendre les dynamiques de la santé publique et pour optimiser la
+gestion des ressources médicales. Dans ce contexte, les modèles de
+régression de type Poisson généraux, en particulier les modèles mixtes
+généralisés (GLMM), sont souvent utilisés pour gérer les données de
+comptage, en tenant compte des spécificités démographiques et
+géographiques des agglomérations, ici définies par les communes.
+
+Les recherches antérieures, comme celles de Mohebbi et al.~(2011),
+montrent l'importance d'intégrer des effets spatiaux dans les modèles de
+comptage, surtout lorsqu'on évalue des phénomènes tels que le cancer
+œsophagien (EC) dans des provinces spécifiques. Leur étude souligne
+comment la non-prise en compte de l'autocorrélation spatiale peut
+conduire à une estimation biaisée des effets des variables
+socio-économiques sur l'incidence des maladies. Ce phénomène pourrait
+également s'appliquer à la modélisation des visites à l'hôpital, où
+certains facteurs ouent un rôle significatif.
+
+Selon l'article, trois structures d'autocorrélation peuvent être
+appliquées dans le cadre de la régression Poisson lorsqu'on traite des
+données de comptage. Ces modèles comprennent :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Modèle Poisson avec effets aléatoires non spatiaux} : Bien
+  qu'utiles, ces modèles négligent l'autocorrélation spatiale, ce qui
+  peut conduire à une sous-estimation des erreurs standard.
+\item
+  \textbf{Modèle avec effets aléatoires spatiaux basés sur la distance}
+  : Ce modèle prend en compte l'influence des agglomérations voisines,
+  mais peut ne pas capturer efficacement l'hétérogénéité locale.
+\item
+  \textbf{Modèle avec effets aléatoires de type voisinage} : Utilisant
+  la structure conditionnelle autorégressive (CAR), ce modèle est le
+  plus adapté pour les données spatiales en intégrant les interactions
+  entre les communes. Pour notre étude, le modèle avec effets aléatoires
+  de type voisinage est recommandé pour la modélisation du nombre de
+  visites à l'hôpital en France, car il permet de mieux prendre en
+  compte l'effet de proximité entre communes.
+\end{enumerate}
+
+L'application des principes issus de l'article de Mohebbi et al.~peut
+enrichir notre étude sur la fréquentation des hôpitaux en France. En
+intégrant des effets aléatoires spatiaux adaptés à la structure des
+données, nous pouvons réaliser des estimations plus précises et utiles
+pour la planification hospitalière.
+
+En ce qui concerne les facteurs explicatifs du nombre de visite dans les
+hopitaux, plusieurs études se sont penchées sur ce sujet. De nombreuses
+études ont montré que le nombre de consultations médicales est influencé
+par divers facteurs sociodémographiques, allant des caractéristiques
+individuelles aux contextes socio-économiques et territoriaux.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Influence de l'âge et du sexe
+\end{enumerate}
+
+L'âge constitue un déterminant majeur du recours aux soins. Les
+personnes âgées, en particulier celles de 65 à 79 ans, consultent plus
+fréquemment en raison de la prévalence accrue de maladies chroniques et
+du suivi médical nécessaire à leur prise en charge \citep{statcan2022}.
+En revanche, la population jeune et en bonne santé présente une
+utilisation plus sporadique des services médicaux. Le sexe est également
+un facteur différenciant important. De manière générale, les femmes
+consultent plus fréquemment que les hommes. Cette différence est
+attribuée aux besoins spécifiques en santé reproductive, mais aussi à
+une plus grande propension à rechercher des soins préventifs
+\citep{bag2024}. En revanche, les hommes, notamment dans les catégories
+socio-professionnelles les plus actives, ont tendance à sous-utiliser
+les services de soins, ce qui peut entraîner des diagnostics plus
+tardifs et des complications médicales accrues.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Impact du statut socio-économique et du niveau d'éducation
+\end{enumerate}
+
+Le revenu et la précarité économique influencent considérablement
+l'accès aux soins. Les individus à revenu élevé bénéficient généralement
+d'un meilleur accès aux consultations médicales, notamment grâce à une
+plus grande couverture sociale et des assurances complémentaires leur
+permettant de réduire les coûts associés aux soins \citep{bvs2023}. À
+l'inverse, les personnes en situation de précarité rencontrent des
+obstacles financiers, administratifs et culturels qui limitent leur
+recours aux soins, malgré des besoins souvent accrus en raison de
+conditions de vie plus précaires. Le niveau d'éducation joue un rôle clé
+dans la fréquentation des services de santé. Une instruction plus élevée
+est associée à une meilleure connaissance des risques sanitaires et à
+une adoption plus proactive des comportements de prévention, ce qui
+entraîne un recours plus fréquent aux soins médicaux \citep{bvs2023}. En
+revanche, un faible niveau d'éducation est souvent corrélé à un moindre
+suivi médical et à une utilisation plus tardive des services de soins,
+notamment en cas de complications.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Influence du contexte familial et de l'environnement social
+\end{enumerate}
+
+L'état matrimonial influence également la fréquence des consultations
+médicales. Les personnes mariées ou vivant en couple consultent
+davantage, bénéficiant du soutien d'un conjoint qui peut inciter à
+prendre soin de sa santé et à consulter régulièrement un médecin
+\citep{statcan2022}. Par ailleurs, l'accès à un médecin traitant ou de
+famille constitue un déterminant important. Les patients disposant d'un
+suivi médical régulier sont plus enclins à effectuer des consultations
+préventives et à être orientés rapidement vers des spécialistes si
+nécessaire \citep{statcan2022}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Perception de l'état de santé et accès géographique aux soins
+\end{enumerate}
+
+La perception de la santé est un facteur déterminant du recours aux
+soins. Les individus qui considèrent leur état de santé comme excellent
+ou très bon consultent rarement, tandis que ceux qui ont une perception
+négative de leur état de santé ont tendance à multiplier les visites
+médicales \citep{statcan2022}. Enfin, les inégalités spatiales dans
+l'accès aux soins modulent également la fréquence des consultations. En
+milieu urbain, la densité médicale plus élevée facilite l'accès aux
+services de soins, tandis qu'en zones rurales ou médicalement
+sous-dotées, les délais d'attente et les distances à parcourir
+constituent des freins majeurs \citep{irdes2020}.
+
+\bookmarksetup{startatroot}
+
+\chapter{\texorpdfstring{\textcolor{brown} {Méthodologie=""}}{}}\label{section-3}
+
+\section{Présentation des données}\label{pruxe9sentation-des-donnuxe9es}
+
+Les données que nous avons utilisées nous proviennent de \ldots{}
+
+\section{Motivation}\label{motivation}
+
+Les modèles linéaires généralisés à effets mixtes (GLMM) combinent :
+
+\begin{itemize}
+\item
+  Les caractéristiques des modèles linéaires généralisés (GLM) pour
+  modéliser des variables non-normalement distribuées.
+\item
+  Les propriétés des modèles à effets mixtes pour gérer des données
+  groupées ou hiérarchiques.
+\end{itemize}
+
+\section{Modèles Linéaires
+Généralisés}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s}
+
+Un GLM relie le prédicteur linéaire \(\eta\) à la moyenne \(\mu\) de la
+réponse à travers une fonction de lien \(g\) :\\
+\[ g(\mu) = \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i \]\\
+Les distributions possibles incluent :
+
+\begin{itemize}
+\item
+  \textbf{Normale} : Régression linéaire classique, avec lien identité.
+\item
+  \textbf{Binomiale} : Régression logistique pour données binaires, avec
+  lien logit.
+\item
+  \textbf{Poisson} : Régression de Poisson pour données de comptage,
+  avec lien logarithmique.
+\end{itemize}
+
+\subsection{Régression Logistique}\label{ruxe9gression-logistique}
+
+Modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la
+probabilité de succès :\\
+\[ P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y} \]\\
+La probabilité \(p\) est reliée au prédicteur par la fonction logistique
+:\\
+\[ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i. \]\\
+Le log-vraisemblance est exprimé comme :\\
+
+\[ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right]. \]
+
+\subsection{Régression de Poisson}\label{ruxe9gression-de-poisson}
+
+Utilisée pour modéliser des données de comptage
+(\(y \sim Pois(\lambda)\)), où \(\lambda\) est la moyenne et la variance
+:\\
+\[ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} \]\\
+Le lien logarithmique assure \(\lambda > 0\) :\\
+\[ \log{\lambda} = \beta_0 + \sum_{i=1}^m \beta_i x_i \]\\
+L'espérance est \(E[y] = \lambda\).
+
+\section{Modèles Linéaires Mixtes}\label{moduxe8les-linuxe9aires-mixtes}
+
+Ces modèles ajoutent des termes d'effets aléatoires
+\(\mathbf{Z} \mathbf{u}\) au prédicteur linéaire :\\
+\[ \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u} + \boldsymbol{\varepsilon}, \]\\
+avec :
+
+\begin{itemize}
+\item
+  \(\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})\), les effets aléatoires.
+\item
+  \(\boldsymbol{\varepsilon} \sim N(\mathbf{0}, \mathbf{R})\), les
+  résidus.
+\end{itemize}
+
+La matrice de covariance totale est :\\
+\[ \mathrm{Var}(\mathbf{y}) = \mathbf{Z} \mathbf{G} \mathbf{Z}^T + \mathbf{R}. \]\\
+Les paramètres sont estimés par maximum de vraisemblance (ML) ou par
+vraisemblance restreinte (REML).
+
+\section{Modèles Linéaires Généralisés à Effets Mixtes
+(GLMM)}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s-uxe0-effets-mixtes-glmm}
+
+Un GLMM étend les GLM en intégrant des effets aléatoires :\\
+\[ g(\mu) = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u}, \]\\
+où :\\
+- \(g(\cdot)\) est la fonction de lien.\\
+- \(\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})\) est le vecteur d'effets
+aléatoires.
+
+Les paramètres sont estimés via des méthodes comme :\\
+- Approximations Laplaciennes.\\
+- Quadrature gaussienne adaptative.\\
+- Méthodes MCMC (chaînes de Markov Monte Carlo).
+
+\section{Prédictions et
+Simulations}\label{pruxe9dictions-et-simulations}
+
+Les GLMM permettent deux types de prédictions :\\
+- \textbf{Conditionnelles} : Basées sur les effets aléatoires
+spécifiques (\(\mathbf{u}\)).\\
+- \textbf{Marginales} : En intégrant sur les effets aléatoires.
+
+Les simulations utilisent des approches paramétriques pour évaluer la
+variabilité et tester les hypothèses. Une approche courante est le
+bootstrap paramétrique :\\
+1. Générer des données simulées basées sur les paramètres estimés.\\
+2. Réajuster le modèle pour chaque jeu de données simulé.\\
+3. Analyser la distribution des estimations obtenues.
+
+\bookmarksetup{startatroot}
+
+\chapter{\texorpdfstring{\textcolor{brown} {Analyse="" des="" résultats=""}}{}}\label{section-4}
+
+\section{Analyse descriptive}\label{analyse-descriptive}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Description de la population d'étude
+\end{enumerate}
+
+Notre population d'étude est une population assez homogène en matière
+d'âge. Cependant plus on dépasse les 75 ans et moins on rencontre de
+personnes. D'autres part notre popuplation est fortement masculine avec
+une forte proportion des hommes quelle que soit la tranche d'âge à
+l'exception des tranches du troisième âge.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{analyse_descriptive_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\caption{Pyramide des âges}
+
+\end{figure}%
+
+Dans cette partie, nous allons réaliser quelques statistiques
+descriptives sur nos données.
+
+\subsection{Analyse univariée}\label{analyse-univariuxe9e}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Taux et Nombre de visites
+\end{enumerate}
+
+L'analyse des statistiques descriptives sur le nombre de consultations
+annuelles de médecin généraliste entre 2018 et 2022 révèle une
+distribution fortement asymétrique à droite, avec une grande dispersion
+des données. La moyenne de 19130 consultations, nettement supérieure à
+la médiane de 9127, indique la présence de valeurs extrêmes tirant la
+distribution vers le haut. Cette asymétrie est confirmée par l'écart
+considérable entre le minimum de 1037 et le maximum de 765833
+consultations par an.
+
+La moitié des médecins généralistes effectuent entre 5993 et 17290
+consultations annuellement, ce qui suggère une variabilité importante
+dans la charge de travail. La médiane de 9127 consultations par an,
+équivalant à environ 25 consultations par jour ouvrable, semble plus
+représentative de l'activité typique d'un médecin généraliste que la
+moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
+lumière la diversité des pratiques et des charges de travail parmi les
+médecins généralistes, avec potentiellement quelques cas atypiques
+présentant un volume de consultations exceptionnellement élevé.
+
+Le nombre de visites pouvant potentiellement être influencé par la
+taille de la commune et donc par sa population, nous avons éliminer cet
+effet en calculant le taux de consultations qui n'est autre que le
+nombre de consultations moyennes par personnes.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Taux de mortalité et de Natalité
+\end{enumerate}
+
+Dans les commmunes étudiées, le taux de natalité et de mortalité sont un
+peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en
+ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On
+remarque une corrélation négative entre ces deux taux. Néanmoins cette
+corrélation n'a à priori aucun sens. Par ailleurs, l'observation des
+distribution permet de constater que la natalité est nde façon générale
+élevée par rapport à la mortalité dans les communes étudiées.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{analyse_descriptive_files/figure-pdf/unnamed-chunk-5-1.pdf}
+
+}
+
+\caption{Taux de Natalité et Taux de Mortalité}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+{\centering \includegraphics{analyse_descriptive_files/figure-pdf/unnamed-chunk-6-1.pdf}
+
+}
+
+\caption{Répartition du nombre et du taux de consultations}
+
+\end{figure}%
+
+\subsection{Analyse bivariée}\label{analyse-bivariuxe9e}
+
+Nous allons ici, voir s'il y a un lien à priori entre le taux de
+consultation et certaines de nos variables explicatives. Ainsi, nous
+avons d'abord réalisé une analyse descriptive bivariée puis nous avons
+calculé la corrélation de Pearson pour évaluer le lien linéaire entre le
+taux de consulation et des variables telles que la population totale, la
+part des personnes agées (75 ans et plus), la part de quelques CSP
+(ouvriers et retraités).
+
+\subsubsection{Taux de consultation et population
+totale}\label{taux-de-consultation-et-population-totale}
+
+\(\\\)
+
+\begin{longtable}[]{@{}lr@{}}
+\caption{Taux de consultations selon la taille de la
+commune}\tabularnewline
+\toprule\noalign{}
+taille\_commune & Taux de consulations \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+taille\_commune & Taux de consulations \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Grande (\textgreater{} 8974) & 1.526810 \\
+Moyenne (4849 - 8974) & 1.456356 \\
+Petite (\textless= 4848) & 1.383861 \\
+\end{longtable}
+
+En divisant les communes en trois groupes égaux (ou presque égaux) en
+fonction de la population totale, il ressort qu'en moyenne, plus la
+taille de la commune est importante plus le taux de consulations est
+élevé.
+
+\subsubsection{Taux de consultation et population
+âgée}\label{taux-de-consultation-et-population-uxe2guxe9e}
+
+\begin{longtable}[]{@{}lr@{}}
+\caption{Taux de consultations selon la population âgée}\tabularnewline
+\toprule\noalign{}
+population\_agee\_importante & consultations\_moyennes \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+population\_agee\_importante & consultations\_moyennes \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Non (\textless= 670) & 1.501111 \\
+Oui (\textgreater{} 670) & 1.410213 \\
+\end{longtable}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{analyse_descriptive_files/figure-pdf/unnamed-chunk-9-1.pdf}
+
+}
+
+\caption{Relation entre taux de consultations et part des plus de 75
+ans}
+
+\end{figure}%
+
+Les communes avec une population âgée importante (communes dont la
+population âgée de 75 ans ou plus est supérieure à la médiane) ont en
+moyenne un taux de consultations plus faible.
+
+\subsubsection{Taux de consultation et
+CSP}\label{taux-de-consultation-et-csp}
+
+\(\\\)
+
+Aucune catégorie ne semble montrer une relation linéaire évidente avec
+le taux de visite. Par ailleurs, pour toutes les catégories
+socio-professionnelles, la majorité des communes se situent dans une
+plage de proportions faibles, ce qui limite la variabilité observable
+dans les relations. Une analyse statistique supplémentaire, comme le
+calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
+relations observées visuellement.
+
+\subsubsection{Analyse de corrélation}\label{analyse-de-corruxe9lation}
+
+\(\\\)
+
+Les résultats de la corrélation de Pearson sont consignées dans le
+tableau suivant :
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0543}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.5652}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1304}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1087}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1413}}@{}}
+\caption{Corrélations de Pearson entre le taux de consultation et les
+autres variables}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Variable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Correlation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+P\_value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Significatif
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Variable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Correlation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+P\_value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Significatif
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+cor & population\_municipale\_2021\_x & 0.0765022 & 0.0000118 & Oui \\
+cor1 & part\_des\_pers\_agees\_de\_75\_ans\_ou\_2021 & -0.6258560 &
+0.0000000 & Oui \\
+cor2 & population\_de\_15\_ans\_ou\_selon\_la\_csp\_2021\_retraites &
+-0.0285517 & 0.1024362 & Non \\
+cor3 & population\_de\_15\_ans\_ou\_selon\_la\_csp\_2021\_ouvriers &
+0.1077559 & 0.0000000 & Oui \\
+\end{longtable}
+
+Les résultats nous montrent que le taux de consultation est positivement
+corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la
+corrélation est faible. Par ailleurs, la corrélation est négative avec
+la part des personnes agées de plus de 75 ans. Cela dit, plus la part
+des plus de 75 ans augmente moins est le taux de consultations dans une
+commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
+ceux qui ne se consultent pas assez.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{analyse_descriptive_files/figure-pdf/unnamed-chunk-12-1.pdf}
+
+}
+
+\caption{Corrélations entre le nombre de visite et quelques variables}
+
+\end{figure}%
+
+\subsection{Autocorrélation}\label{autocorruxe9lation}
+
+L'autocorrélation spatiale est une mesure essentielle pour analyser la
+dépendance entre des observations géographiques. Dans notre étude nos
+données sont des données portant sur des communes. Ainsi il peut exister
+une dépendance entre nos taux de consultations du fait de la proximité
+des communes ou de l'appartenance à un même département ou région. Ainsi
+nous allons mesurer cette dépendance en évaluant l'autocorrélation
+spatiale. Dans ce contexte, \textbf{l'indice de Moran} est largement
+utilisé pour quantifier cette dépendance en fournissant une mesure
+globale de l'autocorrélation spatiale.
+
+\subsubsection{Définition de l'indice de
+Moran}\label{duxe9finition-de-lindice-de-moran}
+
+\(\\\) L'indice de Moran (\(I\)) évalue la similitude des valeurs d'une
+variable entre différentes entités géographiques (par exemple, des
+communes) en fonction de leur proximité spatiale. Il se base sur la
+matrice de poids spatiale (\(W\)), qui définit les relations entre ces
+entités.
+
+\subsubsection{Formule de l'indice de
+Moran}\label{formule-de-lindice-de-moran}
+
+\(\\\) La formule mathématique de l'indice de Moran est la suivante :
+
+\[
+I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
+\]
+
+Où :
+
+\begin{itemize}
+\item
+  \(n\) : Nombre total d'entités spatiales (Ici, le nombre de communes).
+\item
+  \(x_i, x_j\) : Valeurs observées de la variable pour les entités \(i\)
+  et \(j\) (Ici le taux de consultations)
+\item
+  \(\bar{x}\) : Moyenne de la variable \(x\).
+\item
+  \(w_{ij}\) : Poids spatial définissant la relation entre \(i\) et
+  \(j\).
+\end{itemize}
+
+La matrice de \(W\) peut être constuit sur la base du voisinage entre
+les deux communes ou soit de la distance entre les deux communes. Dans
+le premier cas alors \(w_{ij}\) \(w_{ij} = 1\) si \(i\) et \(j\) sont
+voisins et \(w_{ij} = 0\) sinon. Dans le second cas \(w_{ij} = d_{ij}\).
+Nous allons dans notre cas utiliser une matrice de poids basée sur la
+distance, notamment celle d'Haversine.
+
+\subsubsection{Matrice de poids basée sur la distance de
+Haversine}\label{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}
+
+\subsubsection{Définition de la distance de
+Haversine}\label{duxe9finition-de-la-distance-de-haversine}
+
+\(\\\)
+
+La distance de Haversine est une mesure de la distance entre deux points
+sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\)
+et \(longitude\)). Elle est particulièrement utile pour les données
+géographiques projetées sur une surface sphérique, comme la Terre.
+
+\subsubsection{Formule de la distance de
+Haversine}\label{formule-de-la-distance-de-haversine}
+
+\(\\\)
+
+Si l'on considère deux points (\(i\)) et (\(j\)), la distance
+(\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon
+(\(r\)) est donnée par :
+
+\[
+ d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
+\]
+
+Où :
+
+\begin{itemize}
+\item
+  \(r\) : Rayon de la Terre (environ 6371 km).
+\item
+  \(\phi_i, \phi_j\) : Latitudes des points \(i\) et \(j\) (en radians).
+\item
+  \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en
+  radians). Après calcul nous avons ces statistiques sur nos distances.
+\end{itemize}
+
+Une visualtion de la densité de nos distance nous donne ceci, indiquant
+une forte asymétrie à gauche de la distribution. En d'autres termes,les
+communes étudiées sont assez rapprochées les unes des autres pour la
+plupart.
+
+\subsubsection{Construction de la matrice de
+poids}\label{construction-de-la-matrice-de-poids}
+
+\hfill\break
+Pour construire la matrice de poids, nous avons alors suivi ces
+étapes.\\
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Calculer les distances de Haversine entre chaque paire d'entités.
+\item
+  Définir un seuil de distance maximale (\(d_{max}\)) :
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Si \(d_{ij} < d_{max}\), \(w_{ij} = \frac{1}{d_{ij}}\).
+  \item
+    Sinon, \(w_{ij} = 0\).
+  \end{itemize}
+\item
+  Normaliser les poids pour que chaque ligne de la matrice ait une somme
+  égale à 1 : \[
+   w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
+  \]
+\end{enumerate}
+
+\bookmarksetup{startatroot}
+
+\chapter{Modélisation}\label{moduxe9lisation}
+
+\bookmarksetup{startatroot}
+
+\chapter{Modélisation}\label{moduxe9lisation-1}
+
+\bookmarksetup{startatroot}
+
+\chapter{Conclusion}\label{conclusion}
+
+\bookmarksetup{startatroot}
+
+\chapter{Conclusion}\label{conclusion-1}
+
+\bookmarksetup{startatroot}
+
+\chapter{Annexes}\label{annexes}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{../cartes/nombre_de_consulatations}
+    \caption{Carte du nombre de consultations par commune}
+    \label{fig:figure}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{../cartes/taux_de_consultations}
+    \caption{Carte du taux de consultations par commune}
+    \label{fig:figure}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{../cartes/taux_de_consultations_plus_19_ans}
+    \caption{Carte du taux de consultations par commune pour les plus de 19 ans}
+    \label{fig:figure}
+\end{figure}
+
+
+  \bibliography{references.bib,mabiblio.bib}
+
+
+
+\end{document}
