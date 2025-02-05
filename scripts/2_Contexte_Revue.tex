@@ -1,3 +1,74 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
 \section{Présentation du contexte}\label{pruxe9sentation-du-contexte}
 
 \subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}
@@ -111,14 +182,14 @@ individuelles aux contextes socio-économiques et territoriaux.
 L'âge constitue un déterminant majeur du recours aux soins. Les
 personnes âgées, en particulier celles de 65 à 79 ans, consultent plus
 fréquemment en raison de la prévalence accrue de maladies chroniques et
-du suivi médical nécessaire à leur prise en charge \cite{statcan2022}.
+du suivi médical nécessaire à leur prise en charge {[}@statcan2022{]}.
 En revanche, la population jeune et en bonne santé présente une
 utilisation plus sporadique des services médicaux. Le sexe est également
 un facteur différenciant important. De manière générale, les femmes
 consultent plus fréquemment que les hommes. Cette différence est
 attribuée aux besoins spécifiques en santé reproductive, mais aussi à
 une plus grande propension à rechercher des soins préventifs
-\cite{bag2024}. En revanche, les hommes, notamment dans les catégories
+{[}@bag2024{]}. En revanche, les hommes, notamment dans les catégories
 socio-professionnelles les plus actives, ont tendance à sous-utiliser
 les services de soins, ce qui peut entraîner des diagnostics plus
 tardifs et des complications médicales accrues.
@@ -135,7 +206,7 @@ Le revenu et la précarité économique influencent considérablement
 l'accès aux soins. Les individus à revenu élevé bénéficient généralement
 d'un meilleur accès aux consultations médicales, notamment grâce à une
 plus grande couverture sociale et des assurances complémentaires leur
-permettant de réduire les coûts associés aux soins \cite{bvs2023}. À
+permettant de réduire les coûts associés aux soins {[}@bvs2023{]}. À
 l'inverse, les personnes en situation de précarité rencontrent des
 obstacles financiers, administratifs et culturels qui limitent leur
 recours aux soins, malgré des besoins souvent accrus en raison de
@@ -143,7 +214,7 @@ conditions de vie plus précaires. Le niveau d'éducation joue un rôle clé
 dans la fréquentation des services de santé. Une instruction plus élevée
 est associée à une meilleure connaissance des risques sanitaires et à
 une adoption plus proactive des comportements de prévention, ce qui
-entraîne un recours plus fréquent aux soins médicaux \cite{bvs2023}. En
+entraîne un recours plus fréquent aux soins médicaux {[}@bvs2023{]}. En
 revanche, un faible niveau d'éducation est souvent corrélé à un moindre
 suivi médical et à une utilisation plus tardive des services de soins,
 notamment en cas de complications.
@@ -160,11 +231,11 @@ L'état matrimonial influence également la fréquence des consultations
 médicales. Les personnes mariées ou vivant en couple consultent
 davantage, bénéficiant du soutien d'un conjoint qui peut inciter à
 prendre soin de sa santé et à consulter régulièrement un médecin
-\cite{statcan2022}. Par ailleurs, l'accès à un médecin traitant ou de
+{[}@statcan2022{]}. Par ailleurs, l'accès à un médecin traitant ou de
 famille constitue un déterminant important. Les patients disposant d'un
 suivi médical régulier sont plus enclins à effectuer des consultations
 préventives et à être orientés rapidement vers des spécialistes si
-nécessaire \cite{statcan2022}.
+nécessaire {[}@statcan2022{]}.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -178,9 +249,11 @@ La perception de la santé est un facteur déterminant du recours aux
 soins. Les individus qui considèrent leur état de santé comme excellent
 ou très bon consultent rarement, tandis que ceux qui ont une perception
 négative de leur état de santé ont tendance à multiplier les visites
-médicales \cite{statcan2022}. Enfin, les inégalités spatiales dans
+médicales {[}@statcan2022{]}. Enfin, les inégalités spatiales dans
 l'accès aux soins modulent également la fréquence des consultations. En
 milieu urbain, la densité médicale plus élevée facilite l'accès aux
 services de soins, tandis qu'en zones rurales ou médicalement
 sous-dotées, les délais d'attente et les distances à parcourir
-constituent des freins majeurs \cite{irdes2020}.
+constituent des freins majeurs {[}@irdes2020{]}.
+
+\end{document}
