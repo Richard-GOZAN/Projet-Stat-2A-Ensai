@@ -10,5 +10,7 @@ scripts/*.lot
 scripts/*.lof
 scripts/*.toc
 scripts/*.gz
+scripts/*.bbl
+scripts/*.blg
 *.log
 Rapport_Projet_Stat_Ensai_files/

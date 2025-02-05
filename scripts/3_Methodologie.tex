@@ -1,0 +1,149 @@
+\section{Méthodologie}\label{muxe9thodologie}
+
+\subsection{Présentation des
+données}\label{pruxe9sentation-des-donnuxe9es}
+
+Les données que nous avons utilisées nous proviennent de \ldots{}
+
+\subsection{Motivation}\label{motivation}
+
+Les modèles linéaires généralisés à effets mixtes (GLMM) combinent :
+
+\begin{itemize}
+\item
+  Les caractéristiques des modèles linéaires généralisés (GLM) pour
+  modéliser des variables non-normalement distribuées.
+\item
+  Les propriétés des modèles à effets mixtes pour gérer des données
+  groupées ou hiérarchiques.
+\end{itemize}
+
+\subsection{Modèles Linéaires
+Généralisés}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s}
+
+Un GLM relie le prédicteur linéaire \(\eta\) à la moyenne \(\mu\) de la
+réponse à travers une fonction de lien \(g\) :
+
+\[ g(\mu) = \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i \]
+
+Les distributions possibles incluent :
+
+\begin{itemize}
+\item
+  \textbf{Normale} : Régression linéaire classique, avec lien identité.
+\item
+  \textbf{Binomiale} : Régression logistique pour données binaires, avec
+  lien logit.
+\item
+  \textbf{Poisson} : Régression de Poisson pour données de comptage,
+  avec lien logarithmique.
+\end{itemize}
+
+\subsubsection{Régression Logistique}\label{ruxe9gression-logistique}
+
+Modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la
+probabilité de succès :
+
+\[ P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y} \]
+
+La probabilité \(p\) est reliée au prédicteur par la fonction logistique
+:
+
+\[ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i. \]
+
+Le log-vraisemblance est exprimé comme :
+
+\[ \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right] \]
+
+\subsubsection{Régression de Poisson}\label{ruxe9gression-de-poisson}
+
+Utilisée pour modéliser des données de comptage
+(\(y \sim Pois(\lambda)\)), où \(\lambda\) est la moyenne et la variance
+:
+
+\[ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} \]
+
+Le lien logarithmique assure \(\lambda > 0\) :
+
+\[ \log{\lambda} = \beta_0 + \sum_{i=1}^m \beta_i x_i \]
+
+L'espérance est \(E[y] = \lambda\).
+
+\subsection{Modèles Linéaires
+Mixtes}\label{moduxe8les-linuxe9aires-mixtes}
+
+Ces modèles ajoutent des termes d'effets aléatoires
+\(\mathbf{Z} \mathbf{u}\) au prédicteur linéaire :
+
+\[ \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u} + \boldsymbol{\varepsilon}, \]
+avec :
+
+\begin{itemize}
+\item
+  \(\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})\), les effets aléatoires.
+\item
+  \(\boldsymbol{\varepsilon} \sim N(\mathbf{0}, \mathbf{R})\), les
+  résidus.
+\end{itemize}
+
+La matrice de covariance totale est :
+
+\[ \mathrm{Var}(\mathbf{y}) = \mathbf{Z} \mathbf{G} \mathbf{Z}^T + \mathbf{R}. \]
+
+Les paramètres sont estimés par maximum de vraisemblance (ML) ou par
+vraisemblance restreinte (REML).
+
+\subsection{Modèles Linéaires Généralisés à Effets Mixtes
+(GLMM)}\label{moduxe8les-linuxe9aires-guxe9nuxe9ralisuxe9s-uxe0-effets-mixtes-glmm}
+
+Un GLMM étend les GLM en intégrant des effets aléatoires :
+
+\[ g(\mu) = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \mathbf{u}, \] où
+:
+
+\begin{itemize}
+\item
+  \(g(\cdot)\) est la fonction de lien.
+\item
+  \(\mathbf{u} \sim N(\mathbf{0}, \mathbf{G})\) est le vecteur d'effets
+  aléatoires.
+\end{itemize}
+
+Les paramètres sont estimés via des méthodes comme :
+
+\begin{itemize}
+\item
+  Approximations Laplaciennes.
+\item
+  Quadrature gaussienne adaptative.
+\item
+  Méthodes MCMC (chaînes de Markov Monte Carlo).
+\end{itemize}
+
+\subsection{Prédictions et
+Simulations}\label{pruxe9dictions-et-simulations}
+
+Les GLMM permettent deux types de prédictions :
+
+\begin{itemize}
+\item
+  \textbf{Conditionnelles} : Basées sur les effets aléatoires
+  spécifiques (\(\mathbf{u}\)).
+\item
+  \textbf{Marginales} : En intégrant sur les effets aléatoires.
+\end{itemize}
+
+Les simulations utilisent des approches paramétriques pour évaluer la
+variabilité et tester les hypothèses. Une approche courante est le
+bootstrap paramétrique :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Générer des données simulées basées sur les paramètres estimés.
+\item
+  Réajuster le modèle pour chaque jeu de données simulé.
+\item
+  Analyser la distribution des estimations obtenues.
+\end{enumerate}
+
