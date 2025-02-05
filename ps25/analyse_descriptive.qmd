@@ -292,7 +292,7 @@ part des personnes agées (75 ans et plus), la part de quelques CSP
 (ouvriers et retraités).
 
 #### Taux de consultation et population totale
-$\\$
+
 ```{r}
 # Calcul des quantiles
 quantiles <- quantile(data$population_municipale_2021_x, probs = c(1/3, 2/3), na.rm = TRUE)

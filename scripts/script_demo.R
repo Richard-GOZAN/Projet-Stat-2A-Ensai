@@ -239,9 +239,16 @@ ggplot(data = data.frame(Variable = names(cor_target), Correlation = cor_target)
 ################################################
 ### MORTALITE ET NATALITE########################"
 
-# Charger les bibliothèques nécessaires
-library(ggplot2)
-library(gridExtra)  # Pour afficher plusieurs graphiques ensemble
+# 📌 Vérification et conversion des variables avant de tracer
+# Vérification et conversion du taux de mortalité
+if (class(df$taux_de_mortalite_annuel_moyen_2015_2021) != "numeric") {
+  df$taux_de_mortalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_mortalite_annuel_moyen_2015_2021))
+}
+
+# Vérification et conversion du taux de natalité
+if (class(df$taux_de_natalite_annuel_moyen_2015_2021) != "numeric") {
+  df$taux_de_natalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_natalite_annuel_moyen_2015_2021))
+}
 
 # 📌 1️⃣ Histogramme du taux de mortalité
 p1 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021)) +
@@ -279,6 +286,6 @@ p4 <- ggplot(df) +
   scale_fill_manual(values = c("Mortalité" = "red", "Natalité" = "blue")) +
   theme_minimal()
 
-# Afficher tous les graphiques ensemble
+# 📌 Affichage de tous les graphiques ensemble
+library(gridExtra)
 grid.arrange(p1, p2, p3, p4, ncol = 2)
-

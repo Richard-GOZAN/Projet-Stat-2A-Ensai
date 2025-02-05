@@ -21,3 +21,4 @@ format:
     number-sections: true
     number-depth: 4
     keep-tex: true
+    include-in-header: custom.tex

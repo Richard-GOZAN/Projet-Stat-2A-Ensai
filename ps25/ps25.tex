@@ -127,6 +127,85 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
+% === Chargement des packages ===
+\usepackage{amsmath, amssymb, geometry, pdfpages, graphicx, atbegshi, fancyhdr, tocloft, tcolorbox, xcolor, titlesec}
+
+% === Définition des couleurs ===
+\definecolor{bleu}{RGB}{0, 50, 150}      % Bleu foncé
+\definecolor{marron}{RGB}{139, 69, 19}   % Marron
+\definecolor{gris}{RGB}{100, 100, 100}   % Gris
+\definecolor{cadre}{RGB}{220, 220, 220}  % Gris clair pour encadrer les équations
+
+% === Configuration de la géométrie du document ===
+\geometry{a4paper, margin=2.5cm}
+
+% === Personnalisation des en-têtes et pieds de page ===
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\textbf{\textcolor{bleu}{Élèves Ingénieurs}}}
+\fancyhead[R]{\textbf{\textcolor{marron}{@Alex, Ali, Richard \& Toussaint}}}
+\fancyfoot[L]{\textbf{Mars 2025}}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\textbf{\textcolor{gris}{Projet Statistique}}}
+
+% === Table des matières stylisée ===
+\setcounter{tocdepth}{5}                
+\renewcommand\contentsname{\begin{center}\textcolor{marron}{\Huge\textbf{Sommaire}}\end{center}}
+
+% === Appliquer les en-têtes et pieds de page dès la première page ===
+\AtBeginDocument{
+  \thispagestyle{fancy}
+}
+
+% === Personnalisation des titres ===
+% TITRE DE CHAPITRE : Bleu, centré, numéroté
+\titleformat{\chapter}
+  {\centering\normalfont\Huge\bfseries\color{bleu}}{\thechapter}{1em}{}
+
+% TITRE DE SECTION : Marron, numéroté
+\titleformat{\section}
+  {\normalfont\LARGE\bfseries\color{marron}}{\thesection}{1em}{}
+
+% TITRE DE SOUS-SECTION : Gris, numéroté
+\titleformat{\subsection}
+  {\normalfont\Large\bfseries\color{gris}}{\thesubsection}{1em}{}
+
+% TITRE DE SOUS-SOUS-SECTION : Noir, en gras, numéroté
+\titleformat{\subsubsection}
+  {\normalfont\bfseries\large\color{black}}{\thesubsubsection}{1em}{}
+
+% TITRE DE PARAGRAPHES : Italique, en noir, numéroté
+\titleformat{\paragraph}
+  {\normalfont\itshape\normalsize\color{black}}{\theparagraph}{1em}{}
+
+% TITRE DE SOUS-PARAGRAPHES : Italique, en gris foncé, numéroté
+\titleformat{\subparagraph}
+  {\normalfont\itshape\small\color{gray}}{\thesubparagraph}{1em}{}
+
+
+% === Encadrement des équations ===
+\usepackage{empheq}
+\newtcolorbox{eqbox}{
+  colframe=cadre,
+  colback=white,
+  sharp corners,
+  boxrule=1pt,
+  left=10pt,
+  right=10pt,
+  top=5pt,
+  bottom=5pt
+}
+
+% Redéfinition de l'environnement equation avec encadrement
+\renewenvironment{equation}{
+  \begin{eqbox}
+  \begin{equation*}
+}{
+  \end{equation*}
+  \end{eqbox}
+}
 \KOMAoption{captions}{tableheading}
 \makeatletter
 \@ifpackageloaded{bookmark}{}{\usepackage{bookmark}}
@@ -658,8 +737,6 @@ part des personnes agées (75 ans et plus), la part de quelques CSP
 
 \subsubsection{Taux de consultation et population
 totale}\label{taux-de-consultation-et-population-totale}
-
-\(\\\)
 
 \begin{longtable}[]{@{}lr@{}}
 \caption{Taux de consultations selon la taille de la
