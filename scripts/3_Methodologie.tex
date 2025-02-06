@@ -71,18 +71,8 @@
 
 \section{Méthodologie}\label{muxe9thodologie}
 
-\subsection{\texorpdfstring{Estimation de l'Effet Aléatoire \(v_i\) dans
-une Agglomération
-Donnée}{Estimation de l'Effet Aléatoire v\_i dans une Agglomération Donnée}}\label{estimation-de-leffet-aluxe9atoire-v_i-dans-une-agglomuxe9ration-donnuxe9e}
-
-Pour une agglomération donnée \(i\), l'effet aléatoire \(v_i\)
-représente la composante non observée qui affecte le nombre attendu de
-cas d'un événement (par exemple, le cancer œsophagien) dans cette
-agglomération. Voici comment cet effet aléatoire est généralement défini
-et estimé.
-
-\subsubsection{\texorpdfstring{1. Définition de l'Effet Aléatoire
-\(v_i\)}{1. Définition de l'Effet Aléatoire v\_i}}\label{duxe9finition-de-leffet-aluxe9atoire-v_i}
+\subsection{\texorpdfstring{Définition de l'Effet Aléatoire
+\(v_i\)}{Définition de l'Effet Aléatoire v\_i}}\label{duxe9finition-de-leffet-aluxe9atoire-v_i}
 
 L'effet aléatoire \(v_i\) capture l'effet d'hétérogénéité non mesurable
 qui influence les résultats dans chaque agglomération. Il peut être
@@ -90,7 +80,17 @@ considéré comme une variation spécifique à l'agglomération qui n'est pas
 expliquée par les covariables observées dans le modèle (comme les
 facteurs socio-économiques).
 
-\subsubsection{2. Structure de Variance}\label{structure-de-variance}
+\subsection{\texorpdfstring{Estimation de l'Effet Aléatoire \(v_i\) dans
+les modèles
+mixtes}{Estimation de l'Effet Aléatoire v\_i dans les modèles mixtes}}\label{estimation-de-leffet-aluxe9atoire-v_i-dans-les-moduxe8les-mixtes}
+
+Pour une agglomération donnée \(i\), l'effet aléatoire \(v_i\)
+représente la composante non observée qui affecte le nombre attendu de
+cas d'un événement (par exemple, le cancer œsophagien) dans cette
+agglomération. Voici comment cet effet aléatoire est généralement défini
+et estimé.
+
+\subsubsection{Structure de Variance}\label{structure-de-variance}
 
 Dans le cadre d'un modèle mixte, l'effet \(v_i\) est généralement
 supposé suivre une distribution normale multivariée :
@@ -104,15 +104,15 @@ que la plupart des valeurs de \(v_i\) seront proches de zéro, certains
 pouvant être positifs (indiquant un risque plus élevé que prévu) et
 d'autres négatifs (indiquant un risque plus faible).
 
-\subsubsection{\texorpdfstring{3. Estimation de
-\(v_i\)}{3. Estimation de v\_i}}\label{estimation-de-v_i}
+\subsubsection{\texorpdfstring{Estimation de
+\(v_i\)}{Estimation de v\_i}}\label{estimation-de-v_i}
 
 \subsection{Méthodes d'Estimation}\label{muxe9thodes-destimation}
 
 Pour une agglomération donnée \(i\), l'estimation de \(v_i\) peut être
 réalisée à l'aide des méthodes suivantes :
 
-\subsubsection{1. Approche de Maximum de Vraisemblance
+\subsubsection{Approche de Maximum de Vraisemblance
 (ML)}\label{approche-de-maximum-de-vraisemblance-ml}
 
 \begin{itemize}
@@ -127,7 +127,7 @@ réalisée à l'aide des méthodes suivantes :
   dériver les estimations de \(v_i\) à partir des résidus du modèle.
 \end{itemize}
 
-\subsubsection{2. Approche Empirique}\label{approche-empirique}
+\subsubsection{Approche Empirique}\label{approche-empirique}
 
 \begin{itemize}
 \tightlist
@@ -139,7 +139,7 @@ réalisée à l'aide des méthodes suivantes :
   covariables.
 \end{itemize}
 
-\subsubsection{4. Utilisation des Effets
+\subsection{Utilisation des Effets
 Aléatoires}\label{utilisation-des-effets-aluxe9atoires}
 
 L'effet \(v_i\) est essentiel pour comprendre comment des facteurs non
@@ -198,7 +198,7 @@ Ce modèle suppose que la valeur de \(w_i\) dépend en moyenne des valeurs
 observées dans les zones voisines, ce qui permet de modéliser la
 corrélation spatiale.
 
-\subsection{Estimation des
+\subsubsection{Estimation des
 Paramètres}\label{estimation-des-paramuxe8tres}
 
 Pour estimer les paramètres de ces modèles (y compris \(v_i\) et
@@ -239,7 +239,8 @@ spécifiques dans le cadre de la \textbf{maximum de vraisemblance} ou des
   \end{itemize}
 \end{enumerate}
 
-\subsection{Régression logistique}\label{ruxe9gression-logistique}
+\subsection{Modèle de régression
+logistique}\label{moduxe8le-de-ruxe9gression-logistique}
 
 Elle modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la
 probabilité de succès : \[
@@ -255,8 +256,8 @@ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m
 \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right].
 \]
 
-\subsection{Modèles de Régressions de
-Poisson}\label{moduxe8les-de-ruxe9gressions-de-poisson}
+\subsection{Modèle de régression de
+Poisson}\label{moduxe8le-de-ruxe9gression-de-poisson}
 
 La régression de Poisson est un type de modèle linéaire généralisé (GLM)
 utilisé pour modéliser des données de comptage. La distribution de
@@ -274,7 +275,7 @@ coefficients à estimer.
 \subsection{Modèles de Régression de Poisson avec Effets
 Aléatoires}\label{moduxe8les-de-ruxe9gression-de-poisson-avec-effets-aluxe9atoires}
 
-\subsubsection{1. Régression Poisson avec Effets Aléatoires Non
+\subsubsection{Régression Poisson avec Effets Aléatoires Non
 Spatiaux}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-non-spatiaux}
 
 La formulation générale de ce modèle peut être écrite comme suit :
@@ -303,8 +304,8 @@ où :
   supposé indépendant et suivant une distribution normale.
 \end{itemize}
 
-\subsubsection{2. Régression Poisson avec Effets Aléatoires Spatiaux
-Basés sur la
+\subsubsection{Régression Poisson avec effets aléatoires spatiaux basés
+sur la
 Distance}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux-basuxe9s-sur-la-distance}
 
 Ce modèle prend en compte l'autocorrélation spatiale par l'introduction
@@ -324,9 +325,9 @@ où :
   covariance (définie plus haut).
 \end{itemize}
 
-\subsubsection{3. Régression Poisson avec Effets Aléatoires Spatiaux
-Basés sur le
-Voisinage}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux-basuxe9s-sur-le-voisinage}
+\subsubsection{Régression Poisson avec effets aléatoires spatiaux basés
+sur le
+voisinage}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux-basuxe9s-sur-le-voisinage}
 
 Ce modèle est similaire au précédent, mais \(v_i\) est remplacé par un
 effet aléatoire basé sur le voisinage :
@@ -345,7 +346,7 @@ où :
   capture l'influence des agglomérations voisines).
 \end{itemize}
 
-\subsubsection{Note sur l'Estimation}\label{note-sur-lestimation}
+\subsection{Note sur l'Estimation}\label{note-sur-lestimation}
 
 Pour tous ces modèles, l'estimation des paramètres est réalisée à l'aide
 de la \textbf{méthode de pseudo-vraisemblance}, qui prend en compte les

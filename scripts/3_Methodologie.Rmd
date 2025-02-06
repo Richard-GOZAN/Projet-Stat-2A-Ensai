@@ -5,15 +5,15 @@ output:
 ---
 # Méthodologie
 
-## Estimation de l'Effet Aléatoire $v_i$ dans une Agglomération Donnée
-
-Pour une agglomération donnée $i$, l'effet aléatoire $v_i$ représente la composante non observée qui affecte le nombre attendu de cas d'un événement (par exemple, le cancer œsophagien) dans cette agglomération. Voici comment cet effet aléatoire est généralement défini et estimé.
-
-### 1. Définition de l'Effet Aléatoire $v_i$
+## Définition de l'Effet Aléatoire $v_i$
 
 L'effet aléatoire $v_i$ capture l'effet d'hétérogénéité non mesurable qui influence les résultats dans chaque agglomération. Il peut être considéré comme une variation spécifique à l'agglomération qui n'est pas expliquée par les covariables observées dans le modèle (comme les facteurs socio-économiques).
 
-### 2. Structure de Variance
+## Estimation de l'Effet Aléatoire $v_i$ dans les modèles mixtes
+
+Pour une agglomération donnée $i$, l'effet aléatoire $v_i$ représente la composante non observée qui affecte le nombre attendu de cas d'un événement (par exemple, le cancer œsophagien) dans cette agglomération. Voici comment cet effet aléatoire est généralement défini et estimé.
+
+### Structure de Variance
 
 Dans le cadre d'un modèle mixte, l'effet $v_i$ est généralement supposé suivre une distribution normale multivariée :
 
@@ -23,23 +23,23 @@ $$
 
 où $\sigma_v^2$ est la variance des effets aléatoires. Cela signifie que la plupart des valeurs de $v_i$ seront proches de zéro, certains pouvant être positifs (indiquant un risque plus élevé que prévu) et d'autres négatifs (indiquant un risque plus faible).
 
-### 3. Estimation de $v_i$
+### Estimation de $v_i$
 
 ## Méthodes d'Estimation
 
 Pour une agglomération donnée $i$, l'estimation de $v_i$ peut être réalisée à l'aide des méthodes suivantes :
 
-### 1. Approche de Maximum de Vraisemblance (ML)
+### Approche de Maximum de Vraisemblance (ML)
 
 - Une fois que le modèle est ajusté, les effets aléatoires sont souvent estimés comme partie intégrante du processus d'optimisation de la vraisemblance. Cela se fait généralement en maximisant la vraisemblance marginale des données en tenant compte des effets aléatoires.
 
 - Après avoir obtenu les estimations des paramètres du modèle, on peut dériver les estimations de $v_i$ à partir des résidus du modèle.
 
-### 2. Approche Empirique
+### Approche Empirique
 
 - Après l'ajustement du modèle, les valeurs de $v_i$ peuvent être calculées à partir des résidus du modèle pour chaque agglomération. Cela implique de comparer les cas observés dans chaque agglomération à ceux prédits par le modèle, en tenant compte de l'effet des covariables.
 
-### 4. Utilisation des Effets Aléatoires
+## Utilisation des Effets Aléatoires
 
 L'effet $v_i$ est essentiel pour comprendre comment des facteurs non mesurés ou non observés influencent les résultats dans une agglomération $i$. Il permet aussi :
 
@@ -71,7 +71,7 @@ où :
 Ce modèle suppose que la valeur de $w_i$ dépend en moyenne des valeurs observées dans les zones voisines, ce qui permet de modéliser la corrélation spatiale.
 
 
-## Estimation des Paramètres
+### Estimation des Paramètres
 
 Pour estimer les paramètres de ces modèles (y compris $v_i$ et $w_i$), une approche courante consiste à utiliser des méthodes spécifiques dans le cadre de la **maximum de vraisemblance** ou des **approches bayésiennes**.
 
@@ -84,7 +84,7 @@ Pour estimer les paramètres de ces modèles (y compris $v_i$ et $w_i$), une app
    - Les algorithmes d'optimisation, tels que **Newton-Raphson**, sont utilisés pour maximiser la vraisemblance.
    - Pour des approches bayésiennes, des méthodes de simulation comme **MCMC (Markov Chain Monte Carlo)** sont couramment appliquées pour estimer $v_i$ et $w_i$.
 
-## Régression logistique
+## Modèle de régression logistique
 
 Elle modélise une réponse binaire ($y \sim B(n, p)$), où $p$ est la probabilité de succès :
 $$
@@ -101,7 +101,7 @@ $$
 \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right].
 $$
 
-## Modèles de Régressions de Poisson
+## Modèle de régression de Poisson
 
 La régression de Poisson est un type de modèle linéaire généralisé (GLM) utilisé pour modéliser des données de comptage. La distribution de Poisson suppose que la variance est égale à la moyenne, ce qui est souvent approprié pour des données de comptage. Le modèle de base est :
 
@@ -113,7 +113,7 @@ où $\mu_i$ est le nombre attendu de cas pour l'observation $i$, $X_{ij}$ sont l
 
 ## Modèles de Régression de Poisson avec Effets Aléatoires
 
-### 1. Régression Poisson avec Effets Aléatoires Non Spatiaux
+### Régression Poisson avec Effets Aléatoires Non Spatiaux
 
 La formulation générale de ce modèle peut être écrite comme suit :
 
@@ -129,7 +129,7 @@ où :
 - $\beta$ est le vecteur des coefficients à estimer,
 - $u_i$ est l'effet aléatoire spécifique à l'agglomération $i$, supposé indépendant et suivant une distribution normale.
 
-### 2. Régression Poisson avec Effets Aléatoires Spatiaux Basés sur la Distance
+### Régression Poisson avec effets aléatoires spatiaux basés sur la Distance
 
 Ce modèle prend en compte l'autocorrélation spatiale par l'introduction d'effets aléatoires spatiaux :
 
@@ -141,7 +141,7 @@ où :
 
 - $v_i$ est l'effet aléatoire spatial basé sur la distance, qui peut suivre un **processus gaussien** avec une certaine structure de covariance (définie plus haut).
 
-### 3. Régression Poisson avec Effets Aléatoires Spatiaux Basés sur le Voisinage
+### Régression Poisson avec effets aléatoires spatiaux basés sur le voisinage
 
 Ce modèle est similaire au précédent, mais $v_i$ est remplacé par un effet aléatoire basé sur le voisinage :
 
@@ -153,7 +153,7 @@ où :
 
 - $w_i$ représente l'effet aléatoire spatial basé sur le voisinage (par exemple, un **modèle autoregressif conditionnel (CAR)** qui capture l'influence des agglomérations voisines).
 
-### Note sur l'Estimation
+## Note sur l'Estimation
 
 Pour tous ces modèles, l'estimation des paramètres est réalisée à l'aide de la **méthode de pseudo-vraisemblance**, qui prend en compte les structures autocorrélées.
 
