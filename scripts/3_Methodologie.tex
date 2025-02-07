@@ -81,10 +81,10 @@ Ainsi, nous proposons une approche combinant les modèles de régression
 de Poisson standard et les modèles mixtes généralisés pour mieux
 comprendre les dynamiques d'accès aux soins.
 
-\subsection{1. Modélisation du nombre de visites de médécins
+\subsection{Modélisation du nombre de visites de médécins
 généralistes}\label{moduxe9lisation-du-nombre-de-visites-de-muxe9duxe9cins-guxe9nuxe9ralistes}
 
-\subsubsection{1.1. Modèle de régression de
+\subsubsection{Modèle de régression de
 Poisson}\label{moduxe8le-de-ruxe9gression-de-poisson}
 
 La régression de Poisson est un type de modèle linéaire généralisé (GLM)
@@ -102,7 +102,7 @@ coefficients à estimer. Toutefois, ce modèle suppose une indépendance
 entre observations, ce qui peut ne pas être réaliste en présence de
 corrélation spatiale ou d'hétérogénéité non observée.
 
-\subsubsection{1.2. Modèles de Régression de Poisson avec effets
+\subsubsection{Modèles de Régression de Poisson avec effets
 aléatoires}\label{moduxe8les-de-ruxe9gression-de-poisson-avec-effets-aluxe9atoires}
 
 Afin de mieux capter l'hétérogénéité entre les communes, nous
@@ -116,7 +116,7 @@ considéré comme une variation spécifique à l'agglomération qui n'est pas
 expliquée par les covariables observées dans le modèle (comme les
 facteurs socio-économiques).
 
-\paragraph{1.2.1. Régression de Poisson avec effets aléatoires non
+\paragraph{Régression de Poisson avec effets aléatoires non
 spatiaux}\label{ruxe9gression-de-poisson-avec-effets-aluxe9atoires-non-spatiaux}
 
 La formulation générale de ce modèle peut être écrite comme suit :
@@ -145,7 +145,7 @@ où :
   supposé indépendant et suivant une distribution normale.
 \end{itemize}
 
-\paragraph{1.2.2. Régression Poisson avec effets aléatoires
+\paragraph{Régression Poisson avec effets aléatoires
 spatiaux}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux}
 
 Deux approches sont utilisées pour modéliser la structure spatiale des
@@ -191,18 +191,17 @@ Ce modèle suppose que la valeur de \(w_i\) dépend en moyenne des valeurs
 observées dans les zones voisines, ce qui permet de modéliser la
 corrélation spatiale.
 
-\subsection{2. Estimation des
+\subsection{Estimation des
 paramètres}\label{estimation-des-paramuxe8tres}
 
-\subsubsection{2.1. Structure de variance des effets
+\subsubsection{Structure de variance des effets
 aléatoires}\label{structure-de-variance-des-effets-aluxe9atoires}
 
 Dans le cadre d'un modèle mixte, les effets aléatoires \(v_i\) et
 \(w_i\) sont supposés suivre une distribution normale centrée avec une
 variance \(\sigma_v^2\) et \(\sigma_w^2\) respectivement.
 
-\subsubsection{2.2. Méthodes
-d'estimation}\label{muxe9thodes-destimation}
+\subsubsection{Méthodes d'estimation}\label{muxe9thodes-destimation}
 
 Deux principales méthodes sont utilisées pour estimer les paramètres des
 modèles
@@ -224,7 +223,7 @@ calculées à partir des résidus du modèle pour chaque agglomération. Cela
 implique de comparer les cas observés dans chaque agglomération à ceux
 prédits par le modèle, en tenant compte de l'effet des covariables.
 
-\subsubsection{2.3. Étapes d'Estimation}\label{uxe9tapes-destimation}
+\subsubsection{Étapes d'Estimation}\label{uxe9tapes-destimation}
 
 Pour estimer les paramètres de ces modèles (y compris \(v_i\) et
 \(w_i\)), une approche courante consiste à utiliser des méthodes
@@ -279,7 +278,7 @@ où :
   capture l'influence des agglomérations voisines).
 \end{itemize}
 
-\subsection{3. Modèle de régression
+\subsection{Modèle de régression
 logistique}\label{moduxe8le-de-ruxe9gression-logistique}
 
 Elle modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la

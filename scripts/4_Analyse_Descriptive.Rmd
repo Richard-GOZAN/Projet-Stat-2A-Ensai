@@ -4,19 +4,14 @@ output:
     keep_tex: true
 ---
 
-```{r setup, include=FALSE, fig.align='center'}
-knitr::opts_chunk$set(
-	echo = FALSE,
-	message = FALSE,
-	warning = FALSE
-)
-```
 
 ```{r}
 # Chargement des packages
 library(stringi)
 library(dplyr)
 library(knitr)
+library(kableExtra)
+library(tidyr)
 library(tidyverse)
 library(summarytools)
 library(gridExtra)
@@ -169,9 +164,24 @@ descriptives sur nos données.
 ## Analyse univariée
 
 ```{r }
-## Statistiques descriptives sur le nombre de visite
+# Stats desc sur le nombre de visites
+stats <- summary(data$nb_visite) 
 
-#summary(data$nb_visite)
+# Sous forme de data frame
+summary_df <- data.frame(
+  Statistique = names(stats),
+  Valeur = as.numeric(stats)
+  ) %>%
+  pivot_wider(names_from = Statistique, values_from = Valeur) 
+
+# Génération du tableau en LaTeX
+summary_df %>% kable(format = "latex", 
+                     booktabs = TRUE,
+                     caption = "Résumé statistique du nombre de visites") %>%
+  kable_styling(latex_options = c("striped",
+                                  "HOLD_position"))
+
+
 
 ```
 
@@ -311,8 +321,12 @@ data_pop <- data %>%
   group_by(taille_commune) %>%
   summarise("Taux de consulations"= mean(taux_visites, na.rm = TRUE))
 
-# Affichage des résultats dans le RMarkdown
-kable(data_pop, caption = "Taux de consultations selon la taille de la commune")
+# Génération du tableau en LaTeX
+data_pop %>% kable(format = "latex", 
+                     booktabs = TRUE,
+                     caption = "Taux de consultations selon la taille de la commune") %>%
+  kable_styling(latex_options = c("striped",
+                                  "HOLD_position"))
 ```
 
 En divisant les communes en trois groupes égaux (ou presque égaux) en
@@ -336,8 +350,12 @@ data_age <- data %>%
   group_by(population_agee_importante) %>%
   summarise(consultations_moyennes = mean(taux_visites, na.rm = TRUE))
 
-# Affichage des résultats dans le RMarkdown
-kable(data_age, caption = "Taux de consultations selon la population âgée")
+# Génération du tableau en LaTeX
+data_age %>% kable(format = "latex", 
+                     booktabs = TRUE,
+                     caption = "Taux de consultations selon la population âgée") %>%
+  kable_styling(latex_options = c("striped",
+                                  "HOLD_position"))
 ```
 
 ```{r, fig.align='center', fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
@@ -452,8 +470,13 @@ for (var in variables) {
 # Format du tableau avec la significativité
 resultats$Significatif <- ifelse(resultats$P_value < 0.05, "Oui", "Non")
 
-# Affichage du tableau dans le RMarkdown
-kable(resultats, caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")
+# Génération du tableau en LaTeX
+resultats %>% kable(format = "latex", 
+                     booktabs = TRUE,
+                     caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")%>%
+  kable_styling(latex_options = c("striped",
+                                  "HOLD_position"))
+
 ```
 
 Les résultats nous montrent que le taux de consultation est positivement
@@ -680,10 +703,14 @@ if (anyNA(values)) {
 # Calcul de l'indice de Moran
 moran_result <- moran.test(values, W, zero.policy = TRUE)
 
-# Afficher les résultats
-kable(moran_result[["estimate"]], caption = "Résultats du test de Moran")
-
+# Génération du tableau en LaTeX
+moran_result[["estimate"]] %>% kable(format = "latex", 
+                     booktabs = TRUE,
+                     caption = "Résultats du test de Moran") %>%
+  kable_styling(latex_options = c("striped",
+                                  "HOLD_position"))
 ```
+
 
 Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
 `r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a

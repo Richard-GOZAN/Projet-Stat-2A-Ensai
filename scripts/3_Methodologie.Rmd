@@ -10,9 +10,9 @@ Dans le cadre de cette étude, nous cherchons à modéliser le nombre de consult
 #################################################################
 #################################################################
 
-## 1. Modélisation du nombre de visites de médécins généralistes
+## Modélisation du nombre de visites de médécins généralistes
 
-### 1.1. Modèle de régression de Poisson
+### Modèle de régression de Poisson
 
 La régression de Poisson est un type de modèle linéaire généralisé (GLM) utilisé pour modéliser des données de comptage. La distribution de Poisson suppose que la variance est égale à la moyenne, ce qui est souvent approprié pour des données de comptage. Le modèle de base est :
 
@@ -22,13 +22,13 @@ $$
 
 où $\mu_i$ est le nombre attendu de cas pour l'observation $i$, $X_{ij}$ sont les variables explicatives, et $\beta_j$ sont les coefficients à estimer. Toutefois, ce modèle suppose une indépendance entre observations, ce qui peut ne pas être réaliste en présence de corrélation spatiale ou d’hétérogénéité non observée.
 
-### 1.2. Modèles de Régression de Poisson avec effets aléatoires
+### Modèles de Régression de Poisson avec effets aléatoires
 
 Afin de mieux capter l’hétérogénéité entre les communes, nous introduisons des modèles avec effets aléatoires. Ces modèles permettent de prendre en compte des facteurs non observés qui influencent le nombre de consultations.
 
 Un effet aléatoire $v_i$ capture l'effet d'hétérogénéité non mesurable qui influence les résultats dans chaque agglomération. Il peut être considéré comme une variation spécifique à l'agglomération qui n'est pas expliquée par les covariables observées dans le modèle (comme les facteurs socio-économiques).
 
-#### 1.2.1. Régression de Poisson avec effets aléatoires non spatiaux
+#### Régression de Poisson avec effets aléatoires non spatiaux
 
 La formulation générale de ce modèle peut être écrite comme suit :
 
@@ -44,7 +44,7 @@ où :
 - $\beta$ est le vecteur des coefficients à estimer,
 - $u_i$ est l'effet aléatoire spécifique à l'agglomération $i$, supposé indépendant et suivant une distribution normale.
 
-#### 1.2.2. Régression Poisson avec effets aléatoires spatiaux
+#### Régression Poisson avec effets aléatoires spatiaux
 
 
 Deux approches sont utilisées pour modéliser la structure spatiale des données :
@@ -77,13 +77,13 @@ Ce modèle suppose que la valeur de $w_i$ dépend en moyenne des valeurs observ�
 #################################################################
 #################################################################
 
-## 2. Estimation des paramètres
+## Estimation des paramètres
 
-### 2.1. Structure de variance des effets aléatoires
+### Structure de variance des effets aléatoires
 
 Dans le cadre d'un modèle mixte, les effets aléatoires $v_i$ et $w_i$ sont supposés suivre une distribution normale centrée avec une variance $\sigma_v^2$ et $\sigma_w^2$ respectivement.
 
-### 2.2. Méthodes d'estimation
+### Méthodes d'estimation
 
 Deux principales méthodes sont utilisées pour estimer les paramètres des modèles
 
@@ -97,7 +97,7 @@ Après avoir obtenu les estimations des paramètres du modèle, on peut dériver
 
 Après l'ajustement du modèle, les valeurs de $v_i$ peuvent être calculées à partir des résidus du modèle pour chaque agglomération. Cela implique de comparer les cas observés dans chaque agglomération à ceux prédits par le modèle, en tenant compte de l'effet des covariables.
 
-### 2.3. Étapes d'Estimation
+### Étapes d'Estimation
 
 Pour estimer les paramètres de ces modèles (y compris $v_i$ et $w_i$), une approche courante consiste à utiliser des méthodes spécifiques dans le cadre de la **maximum de vraisemblance** ou des **approches bayésiennes**.
 
@@ -122,7 +122,7 @@ où :
 #################################################################
 #################################################################
 
-## 3. Modèle de régression logistique
+## Modèle de régression logistique
 
 Elle modélise une réponse binaire ($y \sim B(n, p)$), où $p$ est la probabilité de succès :
 $$

@@ -1,0 +1,120 @@
+---
+header-includes:
+   \usepackage{amsmath}
+   \usepackage{geometry}
+   \usepackage{pdfpages}
+   \usepackage{fontspec}
+   \usepackage{pdfpages}
+   \usepackage{graphicx}
+   \usepackage{amsmath}
+   \usepackage{atbegshi}
+   \usepackage{fancyhdr}
+   \usepackage{tocloft}
+   \usepackage{tcolorbox}
+   \usepackage{xcolor}
+   \definecolor{bleu}{RGB}{0,0,255}
+   \usepackage{everypage}
+   \usepackage{everypage}
+   \usepackage{graphicx}
+   \usepackage{fancyhdr}
+   \pagestyle{fancy} 
+   \definecolor{mybrown}{RGB}{139,69,19}
+   \fancyhead[R]{}
+output: 
+  pdf_document: 
+    number_sections: true
+    latex_engine: xelatex
+    fig_height: 4
+    fig_width: 5
+    fig_caption: true
+    keep_tex: true
+lang: fr
+bibliography: references.bib
+urlcolor: blue
+editor_options:
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+\setcounter{tocdepth}{5}                
+\renewcommand\contentsname{\begin{center}\textcolor{brown}{Sommaire}\end{center}}
+\AtBeginShipout{
+  \ifnum\value{page}=1\thispagestyle{empty}\fi}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{Elèves Ingénieurs}
+\fancyhead[R]{\textcolor{brown}{@Alex, Ali, Richard \& Toussaint}}
+\fancyfoot[C]{\thepage}
+\fancyfoot[L]{Mars 2025}
+\fancyfoot[R]{Projet Statistique}
+\AddEverypageHook{
+  \ifnum\value{page}>1 
+    \fancyhead[L]{Elèves Ingénieurs}
+    \fancyhead[R]{\textcolor{brown}{@Alex, Ali, Richard \& Toussaint}}
+    \fancyfoot[C]{\thepage}
+    \fancyfoot[L]{Mars 2025}
+    \fancyfoot[R]{Projet Statistique}
+  \else
+    \fancyhead[L]{} 
+    \fancyhead[R]{}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{}
+  \fi
+}
+```{=latex}
+\tableofcontents
+```
+
+\newpage
+
+\renewcommand\listtablename{\begin{center}\textcolor{brown}{Liste des Tableaux}\end{center}}
+\renewcommand\listfigurename{\begin{center}\textcolor{brown}{Liste des Figures}\end{center}} 
+
+\setlength{\cftfignumwidth}{3em}
+\setlength{\cfttabnumwidth}{3em}
+```{=latex}
+\listoftables
+```
+
+\newpage
+
+```{=latex}
+\listoffigures
+```
+
+\newpage
+
+```{r setup, include=FALSE, fig.align='center'}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+
+```{r child="1_Introduction.Rmd"}
+```
+
+
+```{r child= "2_Contexte_Revue.Rmd"}
+
+```
+
+
+```{r child= "3_Methodologie.Rmd"}
+
+```
+
+```{r child= "4_Analyse_Descriptive.Rmd"}
+
+```
+
+
+```{r child= "8_Annexes.Rmd"}
+
+```
+
