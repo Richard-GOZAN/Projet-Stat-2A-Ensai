@@ -5,56 +5,60 @@ output:
 ---
 # Méthodologie
 
-## Définition de l'Effet Aléatoire $v_i$
+Dans le cadre de cette étude, nous cherchons à modéliser le nombre de consultations médicales en prenant en compte les caractéristiques socio-économiques et spatiales des communes. La littérature suggère que les modèles de régression de Poisson et ses variantes avec effets aléatoires sont particulièrement adaptés aux données de comptage, tout en tenant compte de l’hétérogénéité locale et des dépendances spatiales. Ainsi, nous proposons une approche combinant les modèles de régression de Poisson standard et les modèles mixtes généralisés pour mieux comprendre les dynamiques d’accès aux soins.
 
-L'effet aléatoire $v_i$ capture l'effet d'hétérogénéité non mesurable qui influence les résultats dans chaque agglomération. Il peut être considéré comme une variation spécifique à l'agglomération qui n'est pas expliquée par les covariables observées dans le modèle (comme les facteurs socio-économiques).
+#################################################################
+#################################################################
 
-## Estimation de l'Effet Aléatoire $v_i$ dans les modèles mixtes
+## 1. Modélisation du nombre de visites de médécins généralistes
 
-Pour une agglomération donnée $i$, l'effet aléatoire $v_i$ représente la composante non observée qui affecte le nombre attendu de cas d'un événement (par exemple, le cancer œsophagien) dans cette agglomération. Voici comment cet effet aléatoire est généralement défini et estimé.
+### 1.1. Modèle de régression de Poisson
 
-### Structure de Variance
-
-Dans le cadre d'un modèle mixte, l'effet $v_i$ est généralement supposé suivre une distribution normale multivariée :
+La régression de Poisson est un type de modèle linéaire généralisé (GLM) utilisé pour modéliser des données de comptage. La distribution de Poisson suppose que la variance est égale à la moyenne, ce qui est souvent approprié pour des données de comptage. Le modèle de base est :
 
 $$
-v_i \sim N(0, \sigma_v^2)
+\log(\mu_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \dots + \beta_p X_{ip} = (X\beta)_i
 $$
 
-où $\sigma_v^2$ est la variance des effets aléatoires. Cela signifie que la plupart des valeurs de $v_i$ seront proches de zéro, certains pouvant être positifs (indiquant un risque plus élevé que prévu) et d'autres négatifs (indiquant un risque plus faible).
+où $\mu_i$ est le nombre attendu de cas pour l'observation $i$, $X_{ij}$ sont les variables explicatives, et $\beta_j$ sont les coefficients à estimer. Toutefois, ce modèle suppose une indépendance entre observations, ce qui peut ne pas être réaliste en présence de corrélation spatiale ou d’hétérogénéité non observée.
 
-### Estimation de $v_i$
+### 1.2. Modèles de Régression de Poisson avec effets aléatoires
 
-## Méthodes d'Estimation
+Afin de mieux capter l’hétérogénéité entre les communes, nous introduisons des modèles avec effets aléatoires. Ces modèles permettent de prendre en compte des facteurs non observés qui influencent le nombre de consultations.
 
-Pour une agglomération donnée $i$, l'estimation de $v_i$ peut être réalisée à l'aide des méthodes suivantes :
+Un effet aléatoire $v_i$ capture l'effet d'hétérogénéité non mesurable qui influence les résultats dans chaque agglomération. Il peut être considéré comme une variation spécifique à l'agglomération qui n'est pas expliquée par les covariables observées dans le modèle (comme les facteurs socio-économiques).
 
-### Approche de Maximum de Vraisemblance (ML)
+#### 1.2.1. Régression de Poisson avec effets aléatoires non spatiaux
 
-- Une fois que le modèle est ajusté, les effets aléatoires sont souvent estimés comme partie intégrante du processus d'optimisation de la vraisemblance. Cela se fait généralement en maximisant la vraisemblance marginale des données en tenant compte des effets aléatoires.
+La formulation générale de ce modèle peut être écrite comme suit :
 
-- Après avoir obtenu les estimations des paramètres du modèle, on peut dériver les estimations de $v_i$ à partir des résidus du modèle.
+$$
+\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i
+$$
 
-### Approche Empirique
+où :
 
-- Après l'ajustement du modèle, les valeurs de $v_i$ peuvent être calculées à partir des résidus du modèle pour chaque agglomération. Cela implique de comparer les cas observés dans chaque agglomération à ceux prédits par le modèle, en tenant compte de l'effet des covariables.
+- $\mu_i$ est la moyenne du nombre de visites pour l'agglomération $i$,
+- $E_i$ est la taille de la population de l'agglomération $i$ (terme d'ajustement de l'exposition),
+- $X$ est la matrice de conception pour les facteurs socio-économiques,
+- $\beta$ est le vecteur des coefficients à estimer,
+- $u_i$ est l'effet aléatoire spécifique à l'agglomération $i$, supposé indépendant et suivant une distribution normale.
 
-## Utilisation des Effets Aléatoires
+#### 1.2.2. Régression Poisson avec effets aléatoires spatiaux
 
-L'effet $v_i$ est essentiel pour comprendre comment des facteurs non mesurés ou non observés influencent les résultats dans une agglomération $i$. Il permet aussi :
 
-- D'ajuster pour la variabilité non expliquée par les facteurs observés.
-- D'améliorer la précision des estimations de risque dans le modèle en tenant compte des corrélations spatiales.
+Deux approches sont utilisées pour modéliser la structure spatiale des données :
 
-En résumé, pour une agglomération donnée $i$, $v_i$ représente le composant aléatoire du modèle qui ajuste l'incidence observée à celle attendue, en tenant compte de la structure de dépendance spatiale et des effets non mesurés. L'estimation de $v_i$ se fait généralement par des méthodes comme le maximum de vraisemblance ou l'analyse des résidus après ajustement du modèle.
+- Effets aléatoires basés sur la distance : ajout d’un effet spatial $v_i$ capturant la corrélation entre communes distantes.
 
-## Effets Aléatoires Spatiaux Basés sur le Voisinage $w_i$
+- Effets aléatoires basés sur le voisinage : utilisation d’un terme $w_i$ représentant les influences des communes voisines à travers un modèle autorégressif conditionnel (CAR).
 
-### Modèle de Voisinage
+Ce modèle prend en compte l'autocorrélation spatiale par l'introduction d'effets aléatoires spatiaux :
 
-Dans le modèle avec effets aléatoires basés sur le voisinage, $w_i$ représente la variation qui dépend des valeurs observées dans les zones voisines. Ceci est souvent formulé en utilisant un **modèle autoregressif conditionnel (CAR)**.
-
-### Structure des Modèles CAR
+$$
+\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + w_i
+$$
+où $w_i$ suit une distribution conditionnelle dépendant des voisins.
 
 Le modèle CAR peut être spécifié comme suit :
 
@@ -70,12 +74,32 @@ où :
 
 Ce modèle suppose que la valeur de $w_i$ dépend en moyenne des valeurs observées dans les zones voisines, ce qui permet de modéliser la corrélation spatiale.
 
+#################################################################
+#################################################################
 
-### Estimation des Paramètres
+## 2. Estimation des paramètres
+
+### 2.1. Structure de variance des effets aléatoires
+
+Dans le cadre d'un modèle mixte, les effets aléatoires $v_i$ et $w_i$ sont supposés suivre une distribution normale centrée avec une variance $\sigma_v^2$ et $\sigma_w^2$ respectivement.
+
+### 2.2. Méthodes d'estimation
+
+Deux principales méthodes sont utilisées pour estimer les paramètres des modèles
+
+*Approche de Maximum de Vraisemblance (ML)*
+
+Une fois que le modèle est ajusté, les effets aléatoires sont souvent estimés comme partie intégrante du processus d'optimisation de la vraisemblance. Cela se fait généralement en maximisant la vraisemblance marginale des données en tenant compte des effets aléatoires.
+
+Après avoir obtenu les estimations des paramètres du modèle, on peut dériver les estimations de $v_i$ à partir des résidus du modèle.
+
+*Approche Empirique*
+
+Après l'ajustement du modèle, les valeurs de $v_i$ peuvent être calculées à partir des résidus du modèle pour chaque agglomération. Cela implique de comparer les cas observés dans chaque agglomération à ceux prédits par le modèle, en tenant compte de l'effet des covariables.
+
+### 2.3. Étapes d'Estimation
 
 Pour estimer les paramètres de ces modèles (y compris $v_i$ et $w_i$), une approche courante consiste à utiliser des méthodes spécifiques dans le cadre de la **maximum de vraisemblance** ou des **approches bayésiennes**.
-
-### Étapes d'Estimation
 
 1. **Pseudo-vraisemblance**
    - On utilise la vraisemblance conditionnelle de $Y$ étant donné les effets aléatoires, pour améliorer l'estimation des paramètres.
@@ -83,8 +107,22 @@ Pour estimer les paramètres de ces modèles (y compris $v_i$ et $w_i$), une app
 2. **Optimisation**
    - Les algorithmes d'optimisation, tels que **Newton-Raphson**, sont utilisés pour maximiser la vraisemblance.
    - Pour des approches bayésiennes, des méthodes de simulation comme **MCMC (Markov Chain Monte Carlo)** sont couramment appliquées pour estimer $v_i$ et $w_i$.
+   
 
-## Modèle de régression logistique
+Ce modèle est similaire au précédent, mais $v_i$ est remplacé par un effet aléatoire basé sur le voisinage :
+
+$$
+\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + w_i
+$$
+
+où :
+
+- $w_i$ représente l'effet aléatoire spatial basé sur le voisinage (par exemple, un **modèle autoregressif conditionnel (CAR)** qui capture l'influence des agglomérations voisines).
+
+#################################################################
+#################################################################
+
+## 3. Modèle de régression logistique
 
 Elle modélise une réponse binaire ($y \sim B(n, p)$), où $p$ est la probabilité de succès :
 $$
@@ -101,58 +139,6 @@ $$
 \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right].
 $$
 
-## Modèle de régression de Poisson
-
-La régression de Poisson est un type de modèle linéaire généralisé (GLM) utilisé pour modéliser des données de comptage. La distribution de Poisson suppose que la variance est égale à la moyenne, ce qui est souvent approprié pour des données de comptage. Le modèle de base est :
-
-$$
-\log(\mu_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \dots + \beta_p X_{ip} = (X\beta)_i
-$$
-
-où $\mu_i$ est le nombre attendu de cas pour l'observation $i$, $X_{ij}$ sont les variables explicatives, et $\beta_j$ sont les coefficients à estimer.
-
-## Modèles de Régression de Poisson avec Effets Aléatoires
-
-### Régression Poisson avec Effets Aléatoires Non Spatiaux
-
-La formulation générale de ce modèle peut être écrite comme suit :
-
-$$
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i
-$$
-
-où :
-
-- $\mu_i$ est la moyenne du nombre de visites pour l'agglomération $i$,
-- $E_i$ est la taille de la population de l'agglomération $i$ (terme d'ajustement de l'exposition),
-- $X$ est la matrice de conception pour les facteurs socio-économiques,
-- $\beta$ est le vecteur des coefficients à estimer,
-- $u_i$ est l'effet aléatoire spécifique à l'agglomération $i$, supposé indépendant et suivant une distribution normale.
-
-### Régression Poisson avec effets aléatoires spatiaux basés sur la Distance
-
-Ce modèle prend en compte l'autocorrélation spatiale par l'introduction d'effets aléatoires spatiaux :
-
-$$
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + v_i
-$$
-
-où :
-
-- $v_i$ est l'effet aléatoire spatial basé sur la distance, qui peut suivre un **processus gaussien** avec une certaine structure de covariance (définie plus haut).
-
-### Régression Poisson avec effets aléatoires spatiaux basés sur le voisinage
-
-Ce modèle est similaire au précédent, mais $v_i$ est remplacé par un effet aléatoire basé sur le voisinage :
-
-$$
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + w_i
-$$
-
-où :
-
-- $w_i$ représente l'effet aléatoire spatial basé sur le voisinage (par exemple, un **modèle autoregressif conditionnel (CAR)** qui capture l'influence des agglomérations voisines).
-
 ## Note sur l'Estimation
 
 Pour tous ces modèles, l'estimation des paramètres est réalisée à l'aide de la **méthode de pseudo-vraisemblance**, qui prend en compte les structures autocorrélées.
@@ -163,3 +149,5 @@ De plus, pour la comparaison des modèles, on utilise les critères suivants :
 - **BIC (Bayesian Information Criterion)** : similaire à l'AIC, mais avec une pénalisation plus forte sur la complexité du modèle.
 
 Ces critères permettent de choisir le modèle le plus adapté en fonction des données disponibles.
+
+Cette méthodologie propose une modélisation rigoureuse du nombre de consultations en combinant régression de Poisson et modèles mixtes. L’ajout d’effets aléatoires et de structures spatiales permet d’améliorer la précision des estimations et d’obtenir une meilleure compréhension des disparités géographiques dans l’accès aux soins. La comparaison des modèles permettra d’identifier la structure la plus adaptée aux données étudiées.

@@ -71,110 +71,103 @@
 
 \section{Méthodologie}\label{muxe9thodologie}
 
-\subsection{\texorpdfstring{Définition de l'Effet Aléatoire
-\(v_i\)}{Définition de l'Effet Aléatoire v\_i}}\label{duxe9finition-de-leffet-aluxe9atoire-v_i}
+Dans le cadre de cette étude, nous cherchons à modéliser le nombre de
+consultations médicales en prenant en compte les caractéristiques
+socio-économiques et spatiales des communes. La littérature suggère que
+les modèles de régression de Poisson et ses variantes avec effets
+aléatoires sont particulièrement adaptés aux données de comptage, tout
+en tenant compte de l'hétérogénéité locale et des dépendances spatiales.
+Ainsi, nous proposons une approche combinant les modèles de régression
+de Poisson standard et les modèles mixtes généralisés pour mieux
+comprendre les dynamiques d'accès aux soins.
 
-L'effet aléatoire \(v_i\) capture l'effet d'hétérogénéité non mesurable
+\subsection{1. Modélisation du nombre de visites de médécins
+généralistes}\label{moduxe9lisation-du-nombre-de-visites-de-muxe9duxe9cins-guxe9nuxe9ralistes}
+
+\subsubsection{1.1. Modèle de régression de
+Poisson}\label{moduxe8le-de-ruxe9gression-de-poisson}
+
+La régression de Poisson est un type de modèle linéaire généralisé (GLM)
+utilisé pour modéliser des données de comptage. La distribution de
+Poisson suppose que la variance est égale à la moyenne, ce qui est
+souvent approprié pour des données de comptage. Le modèle de base est :
+
+\[
+\log(\mu_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \dots + \beta_p X_{ip} = (X\beta)_i
+\]
+
+où \(\mu_i\) est le nombre attendu de cas pour l'observation \(i\),
+\(X_{ij}\) sont les variables explicatives, et \(\beta_j\) sont les
+coefficients à estimer. Toutefois, ce modèle suppose une indépendance
+entre observations, ce qui peut ne pas être réaliste en présence de
+corrélation spatiale ou d'hétérogénéité non observée.
+
+\subsubsection{1.2. Modèles de Régression de Poisson avec effets
+aléatoires}\label{moduxe8les-de-ruxe9gression-de-poisson-avec-effets-aluxe9atoires}
+
+Afin de mieux capter l'hétérogénéité entre les communes, nous
+introduisons des modèles avec effets aléatoires. Ces modèles permettent
+de prendre en compte des facteurs non observés qui influencent le nombre
+de consultations.
+
+Un effet aléatoire \(v_i\) capture l'effet d'hétérogénéité non mesurable
 qui influence les résultats dans chaque agglomération. Il peut être
 considéré comme une variation spécifique à l'agglomération qui n'est pas
 expliquée par les covariables observées dans le modèle (comme les
 facteurs socio-économiques).
 
-\subsection{\texorpdfstring{Estimation de l'Effet Aléatoire \(v_i\) dans
-les modèles
-mixtes}{Estimation de l'Effet Aléatoire v\_i dans les modèles mixtes}}\label{estimation-de-leffet-aluxe9atoire-v_i-dans-les-moduxe8les-mixtes}
+\paragraph{1.2.1. Régression de Poisson avec effets aléatoires non
+spatiaux}\label{ruxe9gression-de-poisson-avec-effets-aluxe9atoires-non-spatiaux}
 
-Pour une agglomération donnée \(i\), l'effet aléatoire \(v_i\)
-représente la composante non observée qui affecte le nombre attendu de
-cas d'un événement (par exemple, le cancer œsophagien) dans cette
-agglomération. Voici comment cet effet aléatoire est généralement défini
-et estimé.
-
-\subsubsection{Structure de Variance}\label{structure-de-variance}
-
-Dans le cadre d'un modèle mixte, l'effet \(v_i\) est généralement
-supposé suivre une distribution normale multivariée :
+La formulation générale de ce modèle peut être écrite comme suit :
 
 \[
-v_i \sim N(0, \sigma_v^2)
+\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i
 \]
 
-où \(\sigma_v^2\) est la variance des effets aléatoires. Cela signifie
-que la plupart des valeurs de \(v_i\) seront proches de zéro, certains
-pouvant être positifs (indiquant un risque plus élevé que prévu) et
-d'autres négatifs (indiquant un risque plus faible).
-
-\subsubsection{\texorpdfstring{Estimation de
-\(v_i\)}{Estimation de v\_i}}\label{estimation-de-v_i}
-
-\subsection{Méthodes d'Estimation}\label{muxe9thodes-destimation}
-
-Pour une agglomération donnée \(i\), l'estimation de \(v_i\) peut être
-réalisée à l'aide des méthodes suivantes :
-
-\subsubsection{Approche de Maximum de Vraisemblance
-(ML)}\label{approche-de-maximum-de-vraisemblance-ml}
-
-\begin{itemize}
-\item
-  Une fois que le modèle est ajusté, les effets aléatoires sont souvent
-  estimés comme partie intégrante du processus d'optimisation de la
-  vraisemblance. Cela se fait généralement en maximisant la
-  vraisemblance marginale des données en tenant compte des effets
-  aléatoires.
-\item
-  Après avoir obtenu les estimations des paramètres du modèle, on peut
-  dériver les estimations de \(v_i\) à partir des résidus du modèle.
-\end{itemize}
-
-\subsubsection{Approche Empirique}\label{approche-empirique}
+où :
 
 \begin{itemize}
 \tightlist
 \item
-  Après l'ajustement du modèle, les valeurs de \(v_i\) peuvent être
-  calculées à partir des résidus du modèle pour chaque agglomération.
-  Cela implique de comparer les cas observés dans chaque agglomération à
-  ceux prédits par le modèle, en tenant compte de l'effet des
-  covariables.
+  \(\mu_i\) est la moyenne du nombre de visites pour l'agglomération
+  \(i\),
+\item
+  \(E_i\) est la taille de la population de l'agglomération \(i\) (terme
+  d'ajustement de l'exposition),
+\item
+  \(X\) est la matrice de conception pour les facteurs
+  socio-économiques,
+\item
+  \(\beta\) est le vecteur des coefficients à estimer,
+\item
+  \(u_i\) est l'effet aléatoire spécifique à l'agglomération \(i\),
+  supposé indépendant et suivant une distribution normale.
 \end{itemize}
 
-\subsection{Utilisation des Effets
-Aléatoires}\label{utilisation-des-effets-aluxe9atoires}
+\paragraph{1.2.2. Régression Poisson avec effets aléatoires
+spatiaux}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux}
 
-L'effet \(v_i\) est essentiel pour comprendre comment des facteurs non
-mesurés ou non observés influencent les résultats dans une agglomération
-\(i\). Il permet aussi :
+Deux approches sont utilisées pour modéliser la structure spatiale des
+données :
 
 \begin{itemize}
-\tightlist
 \item
-  D'ajuster pour la variabilité non expliquée par les facteurs observés.
+  Effets aléatoires basés sur la distance : ajout d'un effet spatial
+  \(v_i\) capturant la corrélation entre communes distantes.
 \item
-  D'améliorer la précision des estimations de risque dans le modèle en
-  tenant compte des corrélations spatiales.
+  Effets aléatoires basés sur le voisinage : utilisation d'un terme
+  \(w_i\) représentant les influences des communes voisines à travers un
+  modèle autorégressif conditionnel (CAR).
 \end{itemize}
 
-En résumé, pour une agglomération donnée \(i\), \(v_i\) représente le
-composant aléatoire du modèle qui ajuste l'incidence observée à celle
-attendue, en tenant compte de la structure de dépendance spatiale et des
-effets non mesurés. L'estimation de \(v_i\) se fait généralement par des
-méthodes comme le maximum de vraisemblance ou l'analyse des résidus
-après ajustement du modèle.
+Ce modèle prend en compte l'autocorrélation spatiale par l'introduction
+d'effets aléatoires spatiaux :
 
-\subsection{\texorpdfstring{Effets Aléatoires Spatiaux Basés sur le
-Voisinage
-\(w_i\)}{Effets Aléatoires Spatiaux Basés sur le Voisinage w\_i}}\label{effets-aluxe9atoires-spatiaux-basuxe9s-sur-le-voisinage-w_i}
-
-\subsubsection{Modèle de Voisinage}\label{moduxe8le-de-voisinage}
-
-Dans le modèle avec effets aléatoires basés sur le voisinage, \(w_i\)
-représente la variation qui dépend des valeurs observées dans les zones
-voisines. Ceci est souvent formulé en utilisant un \textbf{modèle
-autoregressif conditionnel (CAR)}.
-
-\subsubsection{Structure des Modèles
-CAR}\label{structure-des-moduxe8les-car}
+\[
+\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + w_i
+\] où \(w_i\) suit une distribution conditionnelle dépendant des
+voisins.
 
 Le modèle CAR peut être spécifié comme suit :
 
@@ -198,15 +191,45 @@ Ce modèle suppose que la valeur de \(w_i\) dépend en moyenne des valeurs
 observées dans les zones voisines, ce qui permet de modéliser la
 corrélation spatiale.
 
-\subsubsection{Estimation des
-Paramètres}\label{estimation-des-paramuxe8tres}
+\subsection{2. Estimation des
+paramètres}\label{estimation-des-paramuxe8tres}
+
+\subsubsection{2.1. Structure de variance des effets
+aléatoires}\label{structure-de-variance-des-effets-aluxe9atoires}
+
+Dans le cadre d'un modèle mixte, les effets aléatoires \(v_i\) et
+\(w_i\) sont supposés suivre une distribution normale centrée avec une
+variance \(\sigma_v^2\) et \(\sigma_w^2\) respectivement.
+
+\subsubsection{2.2. Méthodes
+d'estimation}\label{muxe9thodes-destimation}
+
+Deux principales méthodes sont utilisées pour estimer les paramètres des
+modèles
+
+\emph{Approche de Maximum de Vraisemblance (ML)}
+
+Une fois que le modèle est ajusté, les effets aléatoires sont souvent
+estimés comme partie intégrante du processus d'optimisation de la
+vraisemblance. Cela se fait généralement en maximisant la vraisemblance
+marginale des données en tenant compte des effets aléatoires.
+
+Après avoir obtenu les estimations des paramètres du modèle, on peut
+dériver les estimations de \(v_i\) à partir des résidus du modèle.
+
+\emph{Approche Empirique}
+
+Après l'ajustement du modèle, les valeurs de \(v_i\) peuvent être
+calculées à partir des résidus du modèle pour chaque agglomération. Cela
+implique de comparer les cas observés dans chaque agglomération à ceux
+prédits par le modèle, en tenant compte de l'effet des covariables.
+
+\subsubsection{2.3. Étapes d'Estimation}\label{uxe9tapes-destimation}
 
 Pour estimer les paramètres de ces modèles (y compris \(v_i\) et
 \(w_i\)), une approche courante consiste à utiliser des méthodes
 spécifiques dans le cadre de la \textbf{maximum de vraisemblance} ou des
 \textbf{approches bayésiennes}.
-
-\subsubsection{Étapes d'Estimation}\label{uxe9tapes-destimation}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -239,96 +262,6 @@ spécifiques dans le cadre de la \textbf{maximum de vraisemblance} ou des
   \end{itemize}
 \end{enumerate}
 
-\subsection{Modèle de régression
-logistique}\label{moduxe8le-de-ruxe9gression-logistique}
-
-Elle modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la
-probabilité de succès : \[
-P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y}
-\] La probabilité \(p\) est reliée au prédicteur par la fonction
-logistique :
-
-\[
-p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i.
-\] La log-vraisemblance est exprimée comme :
-
-\[
-\ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right].
-\]
-
-\subsection{Modèle de régression de
-Poisson}\label{moduxe8le-de-ruxe9gression-de-poisson}
-
-La régression de Poisson est un type de modèle linéaire généralisé (GLM)
-utilisé pour modéliser des données de comptage. La distribution de
-Poisson suppose que la variance est égale à la moyenne, ce qui est
-souvent approprié pour des données de comptage. Le modèle de base est :
-
-\[
-\log(\mu_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \dots + \beta_p X_{ip} = (X\beta)_i
-\]
-
-où \(\mu_i\) est le nombre attendu de cas pour l'observation \(i\),
-\(X_{ij}\) sont les variables explicatives, et \(\beta_j\) sont les
-coefficients à estimer.
-
-\subsection{Modèles de Régression de Poisson avec Effets
-Aléatoires}\label{moduxe8les-de-ruxe9gression-de-poisson-avec-effets-aluxe9atoires}
-
-\subsubsection{Régression Poisson avec Effets Aléatoires Non
-Spatiaux}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-non-spatiaux}
-
-La formulation générale de ce modèle peut être écrite comme suit :
-
-\[
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i
-\]
-
-où :
-
-\begin{itemize}
-\tightlist
-\item
-  \(\mu_i\) est la moyenne du nombre de visites pour l'agglomération
-  \(i\),
-\item
-  \(E_i\) est la taille de la population de l'agglomération \(i\) (terme
-  d'ajustement de l'exposition),
-\item
-  \(X\) est la matrice de conception pour les facteurs
-  socio-économiques,
-\item
-  \(\beta\) est le vecteur des coefficients à estimer,
-\item
-  \(u_i\) est l'effet aléatoire spécifique à l'agglomération \(i\),
-  supposé indépendant et suivant une distribution normale.
-\end{itemize}
-
-\subsubsection{Régression Poisson avec effets aléatoires spatiaux basés
-sur la
-Distance}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux-basuxe9s-sur-la-distance}
-
-Ce modèle prend en compte l'autocorrélation spatiale par l'introduction
-d'effets aléatoires spatiaux :
-
-\[
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + v_i
-\]
-
-où :
-
-\begin{itemize}
-\tightlist
-\item
-  \(v_i\) est l'effet aléatoire spatial basé sur la distance, qui peut
-  suivre un \textbf{processus gaussien} avec une certaine structure de
-  covariance (définie plus haut).
-\end{itemize}
-
-\subsubsection{Régression Poisson avec effets aléatoires spatiaux basés
-sur le
-voisinage}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux-basuxe9s-sur-le-voisinage}
-
 Ce modèle est similaire au précédent, mais \(v_i\) est remplacé par un
 effet aléatoire basé sur le voisinage :
 
@@ -345,6 +278,23 @@ où :
   (par exemple, un \textbf{modèle autoregressif conditionnel (CAR)} qui
   capture l'influence des agglomérations voisines).
 \end{itemize}
+
+\subsection{3. Modèle de régression
+logistique}\label{moduxe8le-de-ruxe9gression-logistique}
+
+Elle modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la
+probabilité de succès : \[
+P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y}
+\] La probabilité \(p\) est reliée au prédicteur par la fonction
+logistique :
+
+\[
+p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i.
+\] La log-vraisemblance est exprimée comme :
+
+\[
+\ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right].
+\]
 
 \subsection{Note sur l'Estimation}\label{note-sur-lestimation}
 
@@ -367,5 +317,13 @@ suivants :
 
 Ces critères permettent de choisir le modèle le plus adapté en fonction
 des données disponibles.
+
+Cette méthodologie propose une modélisation rigoureuse du nombre de
+consultations en combinant régression de Poisson et modèles mixtes.
+L'ajout d'effets aléatoires et de structures spatiales permet
+d'améliorer la précision des estimations et d'obtenir une meilleure
+compréhension des disparités géographiques dans l'accès aux soins. La
+comparaison des modèles permettra d'identifier la structure la plus
+adaptée aux données étudiées.
 
 \end{document}
