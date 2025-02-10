@@ -12,5 +12,6 @@ scripts/*.toc
 scripts/*.gz
 scripts/*.bbl
 scripts/*.blg
+scripts/test.*
 *.log
 Rapport_Projet_Stat_Ensai_files/
