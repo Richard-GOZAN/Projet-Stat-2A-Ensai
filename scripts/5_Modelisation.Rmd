@@ -4,4 +4,51 @@ output:
     keep_tex: true
 ---
 
-# Modélisation
+
+```{r }
+# Importation des données
+data <- read.csv("../data/data.csv", sep = ",", dec=".")
+```
+
+
+```{r }
+# Création des variables agrégées
+
+# Création de la variable indiquant le nombre de femmes en âge de procréer 
+data$femmes_15_49 <- rowSums(data[, paste0("femmes_", c("15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))], na.rm=TRUE)
+```
+
+
+```{r }
+# Installation des packages nécessaires
+library(lme4)
+
+# Modèle de régression de Poisson avec effets aléatoires non spatiaux
+modele_non_spatial <- glmer(nb_visite ~ (1 | code) + population_municipale_2021 + nb_de_pers_agees_de_65_ans_ou_2021 + femmes_15_49 + taille_menage_moyenne, 
+                            family = poisson(link = "log"), data = data)
+
+# Résumé du modèle non spatial
+summary(modele_non_spatial)
+```
+
+
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
