@@ -137,10 +137,13 @@ femmes_vars <- intersect(colnames(df), paste0("femmes_", age_groups))
 pyramide <- data.frame(
   Age = rep(age_groups, 2),  # Liste tous les âges d'abord pour les hommes, puis pour les femmes
   Sexe = c(rep("Homme", length(age_groups)), rep("Femme", length(age_groups))),
-  Population = c(colSums(df[paste0("hommes_", age_groups)], na.rm=TRUE),
-                 -colSums(df[paste0("femmes_", age_groups)], na.rm=TRUE))  # Femmes en négatif
+  Population = c(-colSums(df[paste0("hommes_", age_groups)], na.rm=TRUE),
+                 +colSums(df[paste0("femmes_", age_groups)], na.rm=TRUE))  # Hommes en négatif
 )
 
+
+# Convertir Age en facteur ordonné pour garantir le bon ordre
+pyramide$Age <- factor(pyramide$Age, levels = age_groups, ordered = TRUE)
 
 
 ggplot(pyramide, aes(x=Age, y=Population, fill=Sexe)) +
@@ -152,7 +155,7 @@ ggplot(pyramide, aes(x=Age, y=Population, fill=Sexe)) +
        y="Population",
        fill="Sexe") +
   theme_minimal() +
-  scale_fill_manual(values=c("blue", "pink"))  # Couleurs pour Homme/Femme
+  scale_fill_manual(values=c("pink", "blue"))  # Couleurs pour Femme/Homme
 
 
 ```

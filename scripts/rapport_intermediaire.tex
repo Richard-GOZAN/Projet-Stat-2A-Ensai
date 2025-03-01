@@ -55,38 +55,28 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
-% definitions for citeproc citations
-\NewDocumentCommand\citeproctext{}{}
-\NewDocumentCommand\citeproc{mm}{%
-  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
-\makeatletter
- % allow citations to break across lines
- \let\@cite@ofmt\@firstofone
- % avoid brackets around text for \cite:
- \def\@biblabel#1{}
- \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
-\makeatother
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
- {\begin{list}{}{%
-  \setlength{\itemindent}{0pt}
-  \setlength{\leftmargin}{0pt}
-  \setlength{\parsep}{0pt}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
   % turn on hanging indent if param 1 is 1
   \ifodd #1
-   \setlength{\leftmargin}{\cslhangindent}
-   \setlength{\itemindent}{-1\cslhangindent}
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
   \fi
   % set entry spacing
-  \setlength{\itemsep}{#2\baselineskip}}}
- {\end{list}}
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
 \usepackage{calc}
-\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 \ifLuaTeX
 \usepackage[bidi=basic]{babel}
@@ -115,7 +105,7 @@
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
-\usepackage{bookmark}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
@@ -178,7 +168,8 @@
 
 \newpage
 
-\section{Introduction}\label{introduction}
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
 
 La répartition géographique des besoins en soins de santé est un enjeu
 majeur pour les politiques publiques, notamment en ce qui concerne
@@ -218,12 +209,15 @@ pour l'analyse spatiale des données de soins. Sur le plan opérationnel,
 il fournit des outils pour identifier les zones prioritaires et soutenir
 la prise de décision en matière de politiques de santé publique.
 
-\section{Présentation du contexte}\label{pruxe9sentation-du-contexte}
+\hypertarget{pruxe9sentation-du-contexte}{%
+\section{Présentation du contexte}\label{pruxe9sentation-du-contexte}}
 
-\subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}
+\hypertarget{intuxe9ruxeat-de-luxe9tude}{%
+\subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}}
 
+\hypertarget{cadre-conceptuel-de-luxe9tude}{%
 \subsection{Cadre conceptuel de
-l'étude}\label{cadre-conceptuel-de-luxe9tude}
+l'étude}\label{cadre-conceptuel-de-luxe9tude}}
 
 Dans cette partie, nous allons définir certainses notions clés qui
 apparaissent dans notre étude entre autres, le nombre de visites, le
@@ -265,7 +259,8 @@ moyenne.
 où \(\tau_i\) et \(n_i\) sont respectivement le taux et le nombre de
 visite de la commune \(i\).
 
-\subsection{Revue de littérature}\label{revue-de-littuxe9rature}
+\hypertarget{revue-de-littuxe9rature}{%
+\subsection{Revue de littérature}\label{revue-de-littuxe9rature}}
 
 La modélisation des visites dans les hôpitaux est cruciale pour
 comprendre les dynamiques de la santé publique et pour optimiser la
@@ -405,7 +400,8 @@ soins, tandis qu'en zones rurales ou médicalement sous-dotées, les
 délais d'attente et les distances à parcourir constituent des freins
 majeurs (Irdes 2020).
 
-\section{Méthodologie}\label{muxe9thodologie}
+\hypertarget{muxe9thodologie}{%
+\section{Méthodologie}\label{muxe9thodologie}}
 
 Dans le cadre de cette étude, nous cherchons à modéliser le nombre de
 consultations médicales en prenant en compte les caractéristiques
@@ -417,11 +413,13 @@ Ainsi, nous proposons une approche combinant les modèles de régression
 de Poisson standard et les modèles mixtes généralisés pour mieux
 comprendre les dynamiques d'accès aux soins.
 
+\hypertarget{moduxe9lisation-du-nombre-de-visites-de-muxe9duxe9cins-guxe9nuxe9ralistes}{%
 \subsection{Modélisation du nombre de visites de médécins
-généralistes}\label{moduxe9lisation-du-nombre-de-visites-de-muxe9duxe9cins-guxe9nuxe9ralistes}
+généralistes}\label{moduxe9lisation-du-nombre-de-visites-de-muxe9duxe9cins-guxe9nuxe9ralistes}}
 
+\hypertarget{moduxe8le-de-ruxe9gression-de-poisson}{%
 \subsubsection{Modèle de régression de
-Poisson}\label{moduxe8le-de-ruxe9gression-de-poisson}
+Poisson}\label{moduxe8le-de-ruxe9gression-de-poisson}}
 
 La régression de Poisson est un type de modèle linéaire généralisé (GLM)
 utilisé pour modéliser des données de comptage. La distribution de
@@ -438,8 +436,9 @@ coefficients à estimer. Toutefois, ce modèle suppose une indépendance
 entre observations, ce qui peut ne pas être réaliste en présence de
 corrélation spatiale ou d'hétérogénéité non observée.
 
+\hypertarget{moduxe8les-de-ruxe9gression-de-poisson-avec-effets-aluxe9atoires}{%
 \subsubsection{Modèles de Régression de Poisson avec effets
-aléatoires}\label{moduxe8les-de-ruxe9gression-de-poisson-avec-effets-aluxe9atoires}
+aléatoires}\label{moduxe8les-de-ruxe9gression-de-poisson-avec-effets-aluxe9atoires}}
 
 Afin de mieux capter l'hétérogénéité entre les communes, nous
 introduisons des modèles avec effets aléatoires. Ces modèles permettent
@@ -452,8 +451,9 @@ considéré comme une variation spécifique à l'agglomération qui n'est pas
 expliquée par les covariables observées dans le modèle (comme les
 facteurs socio-économiques).
 
+\hypertarget{ruxe9gression-de-poisson-avec-effets-aluxe9atoires-non-spatiaux}{%
 \paragraph{Régression de Poisson avec effets aléatoires non
-spatiaux}\label{ruxe9gression-de-poisson-avec-effets-aluxe9atoires-non-spatiaux}
+spatiaux}\label{ruxe9gression-de-poisson-avec-effets-aluxe9atoires-non-spatiaux}}
 
 La formulation générale de ce modèle peut être écrite comme suit :
 
@@ -481,8 +481,9 @@ où :
   supposé indépendant et suivant une distribution normale.
 \end{itemize}
 
+\hypertarget{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux}{%
 \paragraph{Régression Poisson avec effets aléatoires
-spatiaux}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux}
+spatiaux}\label{ruxe9gression-poisson-avec-effets-aluxe9atoires-spatiaux}}
 
 Deux approches sont utilisées pour modéliser la structure spatiale des
 données :
@@ -527,17 +528,20 @@ Ce modèle suppose que la valeur de \(w_i\) dépend en moyenne des valeurs
 observées dans les zones voisines, ce qui permet de modéliser la
 corrélation spatiale.
 
+\hypertarget{estimation-des-paramuxe8tres}{%
 \subsection{Estimation des
-paramètres}\label{estimation-des-paramuxe8tres}
+paramètres}\label{estimation-des-paramuxe8tres}}
 
+\hypertarget{structure-de-variance-des-effets-aluxe9atoires}{%
 \subsubsection{Structure de variance des effets
-aléatoires}\label{structure-de-variance-des-effets-aluxe9atoires}
+aléatoires}\label{structure-de-variance-des-effets-aluxe9atoires}}
 
 Dans le cadre d'un modèle mixte, les effets aléatoires \(v_i\) et
 \(w_i\) sont supposés suivre une distribution normale centrée avec une
 variance \(\sigma_v^2\) et \(\sigma_w^2\) respectivement.
 
-\subsubsection{Méthodes d'estimation}\label{muxe9thodes-destimation}
+\hypertarget{muxe9thodes-destimation}{%
+\subsubsection{Méthodes d'estimation}\label{muxe9thodes-destimation}}
 
 Deux principales méthodes sont utilisées pour estimer les paramètres des
 modèles
@@ -559,7 +563,8 @@ calculées à partir des résidus du modèle pour chaque agglomération. Cela
 implique de comparer les cas observés dans chaque agglomération à ceux
 prédits par le modèle, en tenant compte de l'effet des covariables.
 
-\subsubsection{Étapes d'Estimation}\label{uxe9tapes-destimation}
+\hypertarget{uxe9tapes-destimation}{%
+\subsubsection{Étapes d'Estimation}\label{uxe9tapes-destimation}}
 
 Pour estimer les paramètres de ces modèles (y compris \(v_i\) et
 \(w_i\)), une approche courante consiste à utiliser des méthodes
@@ -614,8 +619,9 @@ où :
   capture l'influence des agglomérations voisines).
 \end{itemize}
 
+\hypertarget{moduxe8le-de-ruxe9gression-logistique}{%
 \subsection{Modèle de régression
-logistique}\label{moduxe8le-de-ruxe9gression-logistique}
+logistique}\label{moduxe8le-de-ruxe9gression-logistique}}
 
 Elle modélise une réponse binaire (\(y \sim B(n, p)\)), où \(p\) est la
 probabilité de succès : \[
@@ -631,7 +637,8 @@ p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m
 \ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right].
 \]
 
-\subsection{Note sur l'Estimation}\label{note-sur-lestimation}
+\hypertarget{note-sur-lestimation}{%
+\subsection{Note sur l'Estimation}\label{note-sur-lestimation}}
 
 Pour tous ces modèles, l'estimation des paramètres est réalisée à l'aide
 de la \textbf{méthode de pseudo-vraisemblance}, qui prend en compte les
@@ -661,7 +668,8 @@ compréhension des disparités géographiques dans l'accès aux soins. La
 comparaison des modèles permettra d'identifier la structure la plus
 adaptée aux données étudiées.
 
-\section{Analyse descriptive}\label{analyse-descriptive}
+\hypertarget{analyse-descriptive}{%
+\section{Analyse descriptive}\label{analyse-descriptive}}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -678,27 +686,28 @@ l'exception des tranches du troisième âge.
 
 \begin{figure}
 
-{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-16-1} 
+{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-8-1} 
 
 }
 
-\caption{Pyramide des âges}\label{fig:unnamed-chunk-16}
+\caption{Pyramide des âges}\label{fig:unnamed-chunk-8}
 \end{figure}
 
 Dans cette partie, nous allons réaliser quelques statistiques
 descriptives sur nos données.
 
-\subsection{Analyse univariée}\label{analyse-univariuxe9e}
+\hypertarget{analyse-univariuxe9e}{%
+\subsection{Analyse univariée}\label{analyse-univariuxe9e}}
 
 \begin{table}[H]
-\centering
-\caption{\label{tab:unnamed-chunk-17}Résumé statistique du nombre de visites}
+
+\caption{\label{tab:unnamed-chunk-9}Résumé statistique du nombre de visites}
 \centering
 \begin{tabular}[t]{rrrrrr}
 \toprule
 Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max.\\
 \midrule
-\cellcolor{gray!10}{1037} & \cellcolor{gray!10}{5993} & \cellcolor{gray!10}{9127} & \cellcolor{gray!10}{19129.63} & \cellcolor{gray!10}{17290} & \cellcolor{gray!10}{765833}\\
+\cellcolor{gray!6}{1037} & \cellcolor{gray!6}{5993} & \cellcolor{gray!6}{9127} & \cellcolor{gray!6}{19129.63} & \cellcolor{gray!6}{17290} & \cellcolor{gray!6}{765833}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -752,23 +761,24 @@ distribution permet de constater que la natalité est nde façon générale
 
 \begin{figure}
 
-{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-18-1} 
+{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-10-1} 
 
 }
 
-\caption{Taux de Natalité et Taux de Mortalité}\label{fig:unnamed-chunk-18}
+\caption{Taux de Natalité et Taux de Mortalité}\label{fig:unnamed-chunk-10}
 \end{figure}
 
 \begin{figure}
 
-{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-19-1} 
+{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-11-1} 
 
 }
 
-\caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-19}
+\caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-11}
 \end{figure}
 
-\subsection{Analyse bivariée}\label{analyse-bivariuxe9e}
+\hypertarget{analyse-bivariuxe9e}{%
+\subsection{Analyse bivariée}\label{analyse-bivariuxe9e}}
 
 Nous allons ici, voir s'il y a un lien à priori entre le taux de
 consultation et certaines de nos variables explicatives. Ainsi, nous
@@ -778,22 +788,23 @@ taux de consulation et des variables telles que la population totale, la
 part des personnes agées (75 ans et plus), la part de quelques CSP
 (ouvriers et retraités).
 
+\hypertarget{taux-de-consultation-et-population-totale}{%
 \subsubsection{Taux de consultation et population
-totale}\label{taux-de-consultation-et-population-totale}
+totale}\label{taux-de-consultation-et-population-totale}}
 
 \(\\\)
 
 \begin{table}[H]
-\centering
-\caption{\label{tab:unnamed-chunk-20}Taux de consultations selon la taille de la commune}
+
+\caption{\label{tab:unnamed-chunk-12}Taux de consultations selon la taille de la commune}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
 taille\_commune & Taux de consulations\\
 \midrule
-\cellcolor{gray!10}{Grande (> 8974)} & \cellcolor{gray!10}{1.526810}\\
+\cellcolor{gray!6}{Grande (> 8974)} & \cellcolor{gray!6}{1.526810}\\
 Moyenne (4849 - 8974) & 1.456356\\
-\cellcolor{gray!10}{Petite (<= 4848)} & \cellcolor{gray!10}{1.383861}\\
+\cellcolor{gray!6}{Petite (<= 4848)} & \cellcolor{gray!6}{1.383861}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -803,18 +814,19 @@ fonction de la population totale, il ressort qu'en moyenne, plus la
 taille de la commune est importante plus le taux de consulations est
 élevé.
 
+\hypertarget{taux-de-consultation-et-population-uxe2guxe9e}{%
 \subsubsection{Taux de consultation et population
-âgée}\label{taux-de-consultation-et-population-uxe2guxe9e}
+âgée}\label{taux-de-consultation-et-population-uxe2guxe9e}}
 
 \begin{table}[H]
-\centering
-\caption{\label{tab:unnamed-chunk-21}Taux de consultations selon la population âgée}
+
+\caption{\label{tab:unnamed-chunk-13}Taux de consultations selon la population âgée}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
 population\_agee\_importante & consultations\_moyennes\\
 \midrule
-\cellcolor{gray!10}{Non (<= 670)} & \cellcolor{gray!10}{1.501111}\\
+\cellcolor{gray!6}{Non (<= 670)} & \cellcolor{gray!6}{1.501111}\\
 Oui (> 670) & 1.410213\\
 \bottomrule
 \end{tabular}
@@ -822,19 +834,20 @@ Oui (> 670) & 1.410213\\
 
 \begin{figure}
 
-{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-22-1} 
+{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-14-1} 
 
 }
 
-\caption{Relation entre taux de consultations et part des plus de 75 ans}\label{fig:unnamed-chunk-22}
+\caption{Relation entre taux de consultations et part des plus de 75 ans}\label{fig:unnamed-chunk-14}
 \end{figure}
 
 Les communes avec une population âgée importante (communes dont la
 population âgée de 75 ans ou plus est supérieure à la médiane) ont en
 moyenne un taux de consultations plus faible.
 
+\hypertarget{taux-de-consultation-et-csp}{%
 \subsubsection{Taux de consultation et
-CSP}\label{taux-de-consultation-et-csp}
+CSP}\label{taux-de-consultation-et-csp}}
 
 Aucune catégorie ne semble montrer une relation linéaire évidente avec
 le taux de visite. Par ailleurs, pour toutes les catégories
@@ -844,22 +857,23 @@ dans les relations. Une analyse statistique supplémentaire, comme le
 calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
 relations observées visuellement.
 
-\subsubsection{Analyse de corrélation}\label{analyse-de-corruxe9lation}
+\hypertarget{analyse-de-corruxe9lation}{%
+\subsubsection{Analyse de corrélation}\label{analyse-de-corruxe9lation}}
 
 Les résultats de la corrélation de Pearson sont consignées dans le
 tableau suivant :
 
 \begin{table}[H]
-\centering
-\caption{\label{tab:unnamed-chunk-24}Corrélations de Pearson entre le taux de consultation et les autres variables}
+
+\caption{\label{tab:unnamed-chunk-16}Corrélations de Pearson entre le taux de consultation et les autres variables}
 \centering
 \begin{tabular}[t]{llrrl}
 \toprule
   & Variable & Correlation & P\_value & Significatif\\
 \midrule
-\cellcolor{gray!10}{cor} & \cellcolor{gray!10}{population\_municipale\_2021\_x} & \cellcolor{gray!10}{0.0765022} & \cellcolor{gray!10}{0.0000118} & \cellcolor{gray!10}{Oui}\\
+\cellcolor{gray!6}{cor} & \cellcolor{gray!6}{population\_municipale\_2021\_x} & \cellcolor{gray!6}{0.0765022} & \cellcolor{gray!6}{0.0000118} & \cellcolor{gray!6}{Oui}\\
 cor1 & part\_des\_pers\_agees\_de\_75\_ans\_ou\_2021 & -0.6258560 & 0.0000000 & Oui\\
-\cellcolor{gray!10}{cor2} & \cellcolor{gray!10}{population\_de\_15\_ans\_ou\_selon\_la\_csp\_2021\_retraites} & \cellcolor{gray!10}{-0.0285517} & \cellcolor{gray!10}{0.1024362} & \cellcolor{gray!10}{Non}\\
+\cellcolor{gray!6}{cor2} & \cellcolor{gray!6}{population\_de\_15\_ans\_ou\_selon\_la\_csp\_2021\_retraites} & \cellcolor{gray!6}{-0.0285517} & \cellcolor{gray!6}{0.1024362} & \cellcolor{gray!6}{Non}\\
 cor3 & population\_de\_15\_ans\_ou\_selon\_la\_csp\_2021\_ouvriers & 0.1077559 & 0.0000000 & Oui\\
 \bottomrule
 \end{tabular}
@@ -875,14 +889,15 @@ ceux qui ne se consultent pas assez.
 
 \begin{figure}
 
-{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-25-1} 
+{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-17-1} 
 
 }
 
-\caption{Corrélations entre le nombre de visite et quelques variables}\label{fig:unnamed-chunk-25}
+\caption{Corrélations entre le nombre de visite et quelques variables}\label{fig:unnamed-chunk-17}
 \end{figure}
 
-\subsection{Autocorrélation}\label{autocorruxe9lation}
+\hypertarget{autocorruxe9lation}{%
+\subsection{Autocorrélation}\label{autocorruxe9lation}}
 
 L'autocorrélation spatiale est une mesure essentielle pour analyser la
 dépendance entre des observations géographiques. Dans notre étude nos
@@ -894,8 +909,9 @@ spatiale. Dans ce contexte, \textbf{l'indice de Moran} est largement
 utilisé pour quantifier cette dépendance en fournissant une mesure
 globale de l'autocorrélation spatiale.
 
+\hypertarget{duxe9finition-de-lindice-de-moran}{%
 \subsubsection{Définition de l'indice de
-Moran}\label{duxe9finition-de-lindice-de-moran}
+Moran}\label{duxe9finition-de-lindice-de-moran}}
 
 L'indice de Moran (\(I\)) évalue la similitude des valeurs d'une
 variable entre différentes entités géographiques (par exemple, des
@@ -903,8 +919,9 @@ communes) en fonction de leur proximité spatiale. Il se base sur la
 matrice de poids spatiale (\(W\)), qui définit les relations entre ces
 entités.
 
+\hypertarget{formule-de-lindice-de-moran}{%
 \subsubsection{Formule de l'indice de
-Moran}\label{formule-de-lindice-de-moran}
+Moran}\label{formule-de-lindice-de-moran}}
 
 La formule mathématique de l'indice de Moran est la suivante :
 
@@ -934,16 +951,18 @@ voisins et \(w_{ij} = 0\) sinon. Dans le second cas \(w_{ij} = d_{ij}\).
 Nous allons dans notre cas utiliser une matrice de poids basée sur la
 distance, notamment celle d'Haversine.
 
+\hypertarget{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}{%
 \subsubsection{Matrice de poids basée sur la distance de
-Haversine}\label{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}
+Haversine}\label{matrice-de-poids-basuxe9e-sur-la-distance-de-haversine}}
 
 La distance de Haversine est une mesure de la distance entre deux points
 sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\)
 et \(longitude\)). Elle est particulièrement utile pour les données
 géographiques projetées sur une surface sphérique, comme la Terre.
 
+\hypertarget{formule-de-la-distance-de-haversine}{%
 \subsubsection{Formule de la distance de
-Haversine}\label{formule-de-la-distance-de-haversine}
+Haversine}\label{formule-de-la-distance-de-haversine}}
 
 Si l'on considère deux points (\(i\)) et (\(j\)), la distance
 (\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon
@@ -972,15 +991,16 @@ plupart.
 
 \begin{figure}
 
-{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-27-1} 
+{\centering \includegraphics{rapport_intermediaire_files/figure-latex/unnamed-chunk-19-1} 
 
 }
 
-\caption{Densité des distances}\label{fig:unnamed-chunk-27}
+\caption{Densité des distances}\label{fig:unnamed-chunk-19}
 \end{figure}
 
+\hypertarget{construction-de-la-matrice-de-poids}{%
 \subsubsection{Construction de la matrice de
-poids}\label{construction-de-la-matrice-de-poids}
+poids}\label{construction-de-la-matrice-de-poids}}
 
 \hfill\break
 Pour construire la matrice de poids, nous avons alors suivi ces
@@ -1009,16 +1029,16 @@ Pour construire la matrice de poids, nous avons alors suivi ces
 \end{enumerate}
 
 \begin{table}[H]
-\centering
-\caption{\label{tab:unnamed-chunk-28}Résultats du test de Moran}
+
+\caption{\label{tab:unnamed-chunk-20}Résultats du test de Moran}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
   & x\\
 \midrule
-\cellcolor{gray!10}{Moran I statistic} & \cellcolor{gray!10}{0.1275832}\\
+\cellcolor{gray!6}{Moran I statistic} & \cellcolor{gray!6}{0.1275832}\\
 Expectation & -0.0003056\\
-\cellcolor{gray!10}{Variance} & \cellcolor{gray!10}{0.0000029}\\
+\cellcolor{gray!6}{Variance} & \cellcolor{gray!6}{0.0000029}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1028,7 +1048,8 @@ Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
 permet de conclure qu'il y a effectivement une autocorrélation positive
 et significative entre les communes selon leur taux de consultations.
 
-\section{Annexes}\label{annexes}
+\hypertarget{annexes}{%
+\section{Annexes}\label{annexes}}
 
 \begin{figure}
     \centering
@@ -1049,21 +1070,21 @@ et significative entre les communes selon leur taux de consultations.
     \label{fig:figure}
 \end{figure}
 
-\phantomsection\label{refs}
+\hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
-\bibitem[\citeproctext]{ref-statcan2022}
+\leavevmode\vadjust pre{\hypertarget{ref-statcan2022}{}}%
 Canada, Statistique. 2022. {«~Fréquence des consultations médicales et
 facteurs sociodémographiques~»}. \url{https://www150.statcan.gc.ca}.
 
-\bibitem[\citeproctext]{ref-irdes2020}
+\leavevmode\vadjust pre{\hypertarget{ref-irdes2020}{}}%
 Irdes. 2020. {«~Inégalités spatiales d'accessibilité aux soins
 médicaux~»}. \url{https://www.irdes.fr}.
 
-\bibitem[\citeproctext]{ref-bag2024}
+\leavevmode\vadjust pre{\hypertarget{ref-bag2024}{}}%
 publique, Office fédéral de la santé. 2024. {«~Santé des femmes et accès
 aux soins en Suisse~»}. \url{https://bag.admin.ch}.
 
-\bibitem[\citeproctext]{ref-bvs2023}
+\leavevmode\vadjust pre{\hypertarget{ref-bvs2023}{}}%
 Santé, BVS. 2023. {«~Facteurs influençant l'accès aux soins médicaux en
 milieu défavorisé~»}. \url{https://docs.bvsalud.org}.
 
