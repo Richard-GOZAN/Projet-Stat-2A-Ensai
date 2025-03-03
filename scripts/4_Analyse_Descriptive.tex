@@ -151,22 +151,9 @@
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(knitr)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: le package 'knitr' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(kableExtra)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning: le package 'kableExtra' a été compilé avec la version R 4.3.3
-\end{verbatim}
 
 \begin{verbatim}
 ## 
@@ -185,18 +172,6 @@
 \FunctionTok{library}\NormalTok{(tidyverse)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning: le package 'tidyverse' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: le package 'ggplot2' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: le package 'forcats' a été compilé avec la version R 4.3.3
-\end{verbatim}
 
 \begin{verbatim}
 ## -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
@@ -236,10 +211,6 @@
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: le package 'gridExtra' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{verbatim}
 ## 
 ## Attachement du package : 'gridExtra'
 ## 
@@ -252,44 +223,17 @@
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(purrr)}
 \FunctionTok{library}\NormalTok{(skimr)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: le package 'skimr' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(spdep)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: le package 'spdep' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{verbatim}
 ## Le chargement a nécessité le package : spData
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: le package 'spData' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{verbatim}
 ## To access larger datasets in this package, install the spDataLarge
 ## package with: `install.packages('spDataLarge',
 ## repos='https://nowosad.github.io/drat/', type='source')`
 ## Le chargement a nécessité le package : sf
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: le package 'sf' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{verbatim}
-## Linking to GEOS 3.11.2, GDAL 3.8.2, PROJ 9.3.1; sf_use_s2() is TRUE
+## Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -297,10 +241,6 @@
 \FunctionTok{library}\NormalTok{(geosphere)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning: le package 'geosphere' a été compilé avec la version R 4.3.3
-\end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -427,10 +367,13 @@ l'exception des tranches du troisième âge.
 \NormalTok{pyramide }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
   \AttributeTok{Age =} \FunctionTok{rep}\NormalTok{(age\_groups, }\DecValTok{2}\NormalTok{),  }\CommentTok{\# Liste tous les âges d\textquotesingle{}abord pour les hommes, puis pour les femmes}
   \AttributeTok{Sexe =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\StringTok{"Homme"}\NormalTok{, }\FunctionTok{length}\NormalTok{(age\_groups)), }\FunctionTok{rep}\NormalTok{(}\StringTok{"Femme"}\NormalTok{, }\FunctionTok{length}\NormalTok{(age\_groups))),}
-  \AttributeTok{Population =} \FunctionTok{c}\NormalTok{(}\FunctionTok{colSums}\NormalTok{(df[}\FunctionTok{paste0}\NormalTok{(}\StringTok{"hommes\_"}\NormalTok{, age\_groups)], }\AttributeTok{na.rm=}\ConstantTok{TRUE}\NormalTok{),}
-                 \SpecialCharTok{{-}}\FunctionTok{colSums}\NormalTok{(df[}\FunctionTok{paste0}\NormalTok{(}\StringTok{"femmes\_"}\NormalTok{, age\_groups)], }\AttributeTok{na.rm=}\ConstantTok{TRUE}\NormalTok{))  }\CommentTok{\# Femmes en négatif}
+  \AttributeTok{Population =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\FunctionTok{colSums}\NormalTok{(df[}\FunctionTok{paste0}\NormalTok{(}\StringTok{"hommes\_"}\NormalTok{, age\_groups)], }\AttributeTok{na.rm=}\ConstantTok{TRUE}\NormalTok{),}
+                 \SpecialCharTok{+}\FunctionTok{colSums}\NormalTok{(df[}\FunctionTok{paste0}\NormalTok{(}\StringTok{"femmes\_"}\NormalTok{, age\_groups)], }\AttributeTok{na.rm=}\ConstantTok{TRUE}\NormalTok{))  }\CommentTok{\# Hommes en négatif}
 \NormalTok{)}
 
+
+\CommentTok{\# Convertir Age en facteur ordonné pour garantir le bon ordre}
+\NormalTok{pyramide}\SpecialCharTok{$}\NormalTok{Age }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(pyramide}\SpecialCharTok{$}\NormalTok{Age, }\AttributeTok{levels =}\NormalTok{ age\_groups, }\AttributeTok{ordered =} \ConstantTok{TRUE}\NormalTok{)}
 
 
 \FunctionTok{ggplot}\NormalTok{(pyramide, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Age, }\AttributeTok{y=}\NormalTok{Population, }\AttributeTok{fill=}\NormalTok{Sexe)) }\SpecialCharTok{+}
@@ -442,7 +385,7 @@ l'exception des tranches du troisième âge.
        \AttributeTok{y=}\StringTok{"Population"}\NormalTok{,}
        \AttributeTok{fill=}\StringTok{"Sexe"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{, }\StringTok{"pink"}\NormalTok{))  }\CommentTok{\# Couleurs pour Homme/Femme}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"pink"}\NormalTok{, }\StringTok{"blue"}\NormalTok{))  }\CommentTok{\# Couleurs pour Femme/Homme}
 \end{Highlighting}
 \end{Shaded}
 
@@ -538,12 +481,130 @@ peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en
 ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On
 remarque une corrélation négative entre ces deux taux. Néanmoins cette
 corrélation n'a à priori aucun sens. Par ailleurs, l'observation des
-distribution permet de constater que la natalité est nde façon générale
-élevée par rapport à la mortalité dans les communes étudiées.
+distribution permet de constater que la natalité est de façon générale
+élevée par rapport à la mortalité dans les communes étudiées. En vue de
+mieux de mieux voir peut être l'effet de la mortalité sur la natalité,
+nous allons nous intéresser alors à une analyse de la corrélation entre
+les deux taux par groupe d'age. Nous avons considérer les groupes d'âge
+suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables
+disponibles et ausi à partir de l'information sur l'âge des femmes en
+âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont
+l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans
+chaque groupe, alors nous avons dans notre analyse opté plutôt pour le
+pourcentage des femmes de chaque groupe en partant du principe que la
+natalité est très souvent liée aux femmes et du fait que nous pouvons
+analyser une diminution du pourcentage comme étant dû à une mortalité.
+Ainsi sur la base de cette nouvelle hypothèse, voici nos nouiveauxc
+résultats
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# 📌 Vérification et conversion des variables avant de tracer}
+\CommentTok{\# Charger les bibliothèques nécessaires}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(readr)}
+\FunctionTok{library}\NormalTok{(reshape2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attachement du package : 'reshape2'
+\end{verbatim}
+
+\begin{verbatim}
+## L'objet suivant est masqué depuis 'package:tidyr':
+## 
+##     smiths
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(gridExtra)}
+
+\CommentTok{\# Créer les groupes d\textquotesingle{}âge en sommant les colonnes correspondantes}
+\NormalTok{data}\SpecialCharTok{$}\NormalTok{pop\_femmes }\OtherTok{\textless{}{-}}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_0\_4 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_5\_9 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_10\_14 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_15\_19 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_20\_24 }\SpecialCharTok{+} 
+\NormalTok{                    data}\SpecialCharTok{$}\NormalTok{femmes\_25\_29 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_30\_34 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_35\_39 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_40\_44 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_45\_49 }\SpecialCharTok{+} 
+\NormalTok{                    data}\SpecialCharTok{$}\NormalTok{femmes\_50\_54 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_55\_59 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_60\_64 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_65\_69 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_70\_74 }\SpecialCharTok{+} 
+\NormalTok{                    data}\SpecialCharTok{$}\NormalTok{femmes\_75\_79 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_80\_84 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_85\_89 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_90\_94 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_95\_plus}
+
+\NormalTok{data}\SpecialCharTok{$}\NormalTok{femmes\_0\_24 }\OtherTok{\textless{}{-}}\NormalTok{ (data}\SpecialCharTok{$}\NormalTok{femmes\_0\_4 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_5\_9 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_10\_14 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_15\_19 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_20\_24) }\SpecialCharTok{/}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{pop\_femmes}
+\NormalTok{data}\SpecialCharTok{$}\NormalTok{femmes\_25\_45 }\OtherTok{\textless{}{-}}\NormalTok{ (data}\SpecialCharTok{$}\NormalTok{femmes\_25\_29 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_30\_34 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_35\_39 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_40\_44) }\SpecialCharTok{/}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{pop\_femmes}
+\NormalTok{data}\SpecialCharTok{$}\NormalTok{femmes\_45\_60 }\OtherTok{\textless{}{-}}\NormalTok{ (data}\SpecialCharTok{$}\NormalTok{femmes\_45\_49 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_50\_54 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_55\_59) }\SpecialCharTok{/}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{pop\_femmes}
+\NormalTok{data}\SpecialCharTok{$}\NormalTok{femmes\_60\_plus }\OtherTok{\textless{}{-}}\NormalTok{ (data}\SpecialCharTok{$}\NormalTok{femmes\_60\_64 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_65\_69 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_70\_74 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_75\_79 }\SpecialCharTok{+} 
+\NormalTok{                         data}\SpecialCharTok{$}\NormalTok{femmes\_80\_84 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_85\_89 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_90\_94 }\SpecialCharTok{+}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{femmes\_95\_plus) }\SpecialCharTok{/}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{pop\_femmes}
+
+\CommentTok{\# Extraire le taux de natalité}
+\NormalTok{data}\SpecialCharTok{$}\NormalTok{taux\_natalite }\OtherTok{\textless{}{-}}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{taux\_de\_natalite\_annuel\_moyen\_2015\_2021}
+
+\CommentTok{\# {-}{-}{-}{-} Création des graphiques {-}{-}{-}{-}}
+
+\NormalTok{g1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ femmes\_0\_24, }\AttributeTok{y =}\NormalTok{ taux\_natalite)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{color =} \StringTok{"blue"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"0{-}24 ans"}\NormalTok{,}
+       \AttributeTok{x =} \StringTok{"Proportion de Femmes 0{-}24 ans"}\NormalTok{,}
+       \AttributeTok{y =} \StringTok{"Taux de Natalité"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\NormalTok{g2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ femmes\_25\_45, }\AttributeTok{y =}\NormalTok{ taux\_natalite)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"red"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"25{-}45 ans"}\NormalTok{,}
+       \AttributeTok{x =} \StringTok{"Proportion de Femmes"}\NormalTok{,}
+       \AttributeTok{y =} \StringTok{"Taux de Natalité"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\NormalTok{g3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ femmes\_45\_60, }\AttributeTok{y =}\NormalTok{ taux\_natalite)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"green"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{color =} \StringTok{"green"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"45{-}60 ans"}\NormalTok{,}
+       \AttributeTok{x =} \StringTok{"Proportion de Femmes"}\NormalTok{,}
+       \AttributeTok{y =} \StringTok{"Taux de Natalité"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\NormalTok{g4 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ femmes\_60\_plus, }\AttributeTok{y =}\NormalTok{ taux\_natalite)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"purple"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{color =} \StringTok{"purple"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"60+ ans"}\NormalTok{,}
+       \AttributeTok{x =} \StringTok{"Proportion de Femmes"}\NormalTok{,}
+       \AttributeTok{y =} \StringTok{"Taux de Natalité"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\CommentTok{\# {-}{-}{-}{-}  Affichage en grille (2x2) {-}{-}{-}{-}}
+\FunctionTok{grid.arrange}\NormalTok{(g1, g2, g3, g4, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{, }\AttributeTok{nrow =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using formula = 'y ~ x'
+\end{verbatim}
+
+\begin{verbatim}
+## `geom_smooth()` using formula = 'y ~ x'
+## `geom_smooth()` using formula = 'y ~ x'
+## `geom_smooth()` using formula = 'y ~ x'
+\end{verbatim}
+
+\begin{figure}
+
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-5-1} 
+
+}
+
+\caption{Taux de Natalité et Pourcentage des femmes dans chaque groupe}\label{fig:unnamed-chunk-5}
+\end{figure}
+
+Les résultats nous montrent un lien croissant pour les tranches d'âge
+0-24 et 25-45 ans montrant ainsi que dans ces tranches d'âge si le
+pourcentage des femmes diminuent (quer l'on pourrait assimiler à une
+mort des femmes) alors le taux de natalité diminue. Par ailleurs ceux de
+la tranche 45-60 semble n'avoir aucun lien sur le taux de natalité.
+Enfin il a été constaté un lien négatif pour la tranche d'âge 60 ans et
+plus.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Vérification et conversion des variables avant de tracer}
 \CommentTok{\# Vérification et conversion du taux de mortalité}
 \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{class}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{taux\_de\_mortalite\_annuel\_moyen\_2015\_2021) }\SpecialCharTok{!=} \StringTok{"numeric"}\NormalTok{) \{}
 \NormalTok{  df}\SpecialCharTok{$}\NormalTok{taux\_de\_mortalite\_annuel\_moyen\_2015\_2021 }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{as.character}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{taux\_de\_mortalite\_annuel\_moyen\_2015\_2021))}
@@ -554,7 +615,7 @@ distribution permet de constater que la natalité est nde façon générale
 \NormalTok{  df}\SpecialCharTok{$}\NormalTok{taux\_de\_natalite\_annuel\_moyen\_2015\_2021 }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{as.character}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{taux\_de\_natalite\_annuel\_moyen\_2015\_2021))}
 \NormalTok{\}}
 
-\CommentTok{\# 📌 1️⃣ Histogramme du taux de mortalité}
+\CommentTok{\#  Histogramme du taux de mortalité}
 \NormalTok{p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ taux\_de\_mortalite\_annuel\_moyen\_2015\_2021)) }\SpecialCharTok{+}
   \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{30}\NormalTok{, }\AttributeTok{fill =} \StringTok{"red"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{labs}\NormalTok{( }
@@ -562,7 +623,7 @@ distribution permet de constater que la natalité est nde façon générale
        \AttributeTok{y =} \StringTok{"Nombre de communes"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{theme\_minimal}\NormalTok{()}
 
-\CommentTok{\# 📌 2️⃣ Histogramme du taux de natalité}
+\CommentTok{\#  Histogramme du taux de natalité}
 \NormalTok{p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ taux\_de\_natalite\_annuel\_moyen\_2015\_2021)) }\SpecialCharTok{+}
   \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{30}\NormalTok{, }\AttributeTok{fill =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{labs}\NormalTok{(}
@@ -570,7 +631,7 @@ distribution permet de constater que la natalité est nde façon générale
        \AttributeTok{y =} \StringTok{"Nombre de communes"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{theme\_minimal}\NormalTok{()}
 
-\CommentTok{\# 📌 3️⃣ Nuage de points pour voir la relation entre mortalité et natalité}
+\CommentTok{\#  Nuage de points pour voir la relation entre mortalité et natalité}
 \NormalTok{p3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ taux\_de\_mortalite\_annuel\_moyen\_2015\_2021, }
                      \AttributeTok{y =}\NormalTok{ taux\_de\_natalite\_annuel\_moyen\_2015\_2021)) }\SpecialCharTok{+}
   \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{color =} \StringTok{"purple"}\NormalTok{) }\SpecialCharTok{+}
@@ -580,7 +641,7 @@ distribution permet de constater que la natalité est nde façon générale
        \AttributeTok{y =} \StringTok{"Taux de natalité"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{theme\_minimal}\NormalTok{()}
 
-\CommentTok{\# 📌 4️⃣ Courbes de densité pour mieux voir la distribution}
+\CommentTok{\#  Courbes de densité pour mieux voir la distribution}
 \NormalTok{p4 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df) }\SpecialCharTok{+}
   \FunctionTok{geom\_density}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ taux\_de\_mortalite\_annuel\_moyen\_2015\_2021, }\AttributeTok{fill =} \StringTok{"Mortalité"}\NormalTok{), }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{geom\_density}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ taux\_de\_natalite\_annuel\_moyen\_2015\_2021, }\AttributeTok{fill =} \StringTok{"Natalité"}\NormalTok{), }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{color =} \StringTok{"blue"}\NormalTok{) }\SpecialCharTok{+}
@@ -590,7 +651,7 @@ distribution permet de constater que la natalité est nde façon générale
   \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"Mortalité"} \OtherTok{=} \StringTok{"red"}\NormalTok{, }\StringTok{"Natalité"} \OtherTok{=} \StringTok{"blue"}\NormalTok{)) }\SpecialCharTok{+}
   \FunctionTok{theme\_minimal}\NormalTok{()}
 
-\CommentTok{\# 📌 Affichage de tous les graphiques ensemble}
+\CommentTok{\#  Affichage de tous les graphiques ensemble}
 \FunctionTok{library}\NormalTok{(gridExtra)}
 \FunctionTok{grid.arrange}\NormalTok{(p1, p2, p3, p4, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{)}
 \end{Highlighting}
@@ -602,26 +663,18 @@ distribution permet de constater que la natalité est nde façon générale
 
 \begin{figure}
 
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-5-1} 
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-6-1} 
 
 }
 
-\caption{Taux de Natalité et Taux de Mortalité}\label{fig:unnamed-chunk-5}
+\caption{Taux de Natalité et Taux de Mortalité}\label{fig:unnamed-chunk-6}
 \end{figure}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(ggplot2)}
 \FunctionTok{library}\NormalTok{(patchwork)}
-\end{Highlighting}
-\end{Shaded}
 
-\begin{verbatim}
-## Warning: le package 'patchwork' a été compilé avec la version R 4.3.3
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \CommentTok{\# Premier graphique pour nb\_visite}
 \NormalTok{plot1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data) }\SpecialCharTok{+}
   \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ nb\_visite) }\SpecialCharTok{+}
@@ -645,11 +698,11 @@ distribution permet de constater que la natalité est nde façon générale
 
 \begin{figure}
 
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-6-1} 
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-7-1} 
 
 }
 
-\caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-6}
+\caption{Répartition du nombre et du taux de consultations}\label{fig:unnamed-chunk-7}
 \end{figure}
 
 \subsection{Analyse bivariée}\label{analyse-bivariuxe9e}
@@ -693,7 +746,7 @@ totale}\label{taux-de-consultation-et-population-totale}
 
 \begin{table}[H]
 \centering
-\caption{\label{tab:unnamed-chunk-7}Taux de consultations selon la taille de la commune}
+\caption{\label{tab:unnamed-chunk-8}Taux de consultations selon la taille de la commune}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
@@ -739,7 +792,7 @@ taille de la commune est importante plus le taux de consulations est
 
 \begin{table}[H]
 \centering
-\caption{\label{tab:unnamed-chunk-8}Taux de consultations selon la population âgée}
+\caption{\label{tab:unnamed-chunk-9}Taux de consultations selon la population âgée}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
@@ -770,11 +823,11 @@ Oui (> 670) & 1.410213\\
 
 \begin{figure}
 
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-9-1} 
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-10-1} 
 
 }
 
-\caption{Relation entre taux de consultations et part des plus de 75 ans}\label{fig:unnamed-chunk-9}
+\caption{Relation entre taux de consultations et part des plus de 75 ans}\label{fig:unnamed-chunk-10}
 \end{figure}
 
 Les communes avec une population âgée importante (communes dont la
@@ -839,7 +892,7 @@ tableau suivant :
 
 \begin{table}[H]
 \centering
-\caption{\label{tab:unnamed-chunk-11}Corrélations de Pearson entre le taux de consultation et les autres variables}
+\caption{\label{tab:unnamed-chunk-12}Corrélations de Pearson entre le taux de consultation et les autres variables}
 \centering
 \begin{tabular}[t]{llrrl}
 \toprule
@@ -864,7 +917,7 @@ ceux qui ne se consultent pas assez.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Sélectionner uniquement les variables d\textquotesingle{}intérêt}
-\CommentTok{\# 📌 Définition des noms lisibles pour les variables}
+\CommentTok{\# Définition des noms lisibles pour les variables}
 \NormalTok{nom\_variables }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
   \StringTok{"taux\_de\_mortalite\_annuel\_moyen\_2015\_2021"} \OtherTok{=} \StringTok{"Mortalité"}\NormalTok{,}
   \StringTok{"taux\_de\_natalite\_annuel\_moyen\_2015\_2021"} \OtherTok{=} \StringTok{"Natalité"}\NormalTok{,}
@@ -874,36 +927,36 @@ ceux qui ne se consultent pas assez.
   \StringTok{"nb\_visite"} \OtherTok{=} \StringTok{"Nombre de visites"}
 \NormalTok{)}
 
-\CommentTok{\# 📌 Sélectionner les variables d\textquotesingle{}analyse}
+\CommentTok{\#  Sélectionner les variables d\textquotesingle{}analyse}
 \NormalTok{variables\_analyse }\OtherTok{\textless{}{-}} \FunctionTok{names}\NormalTok{(nom\_variables)}
 
 \NormalTok{df\_analyse }\OtherTok{\textless{}{-}}\NormalTok{ df[variables\_analyse]}
 
-\CommentTok{\# 📌 Convertir toutes les colonnes en numérique}
+\CommentTok{\#  Convertir toutes les colonnes en numérique}
 \NormalTok{df\_analyse }\OtherTok{\textless{}{-}}\NormalTok{ df\_analyse }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{everything}\NormalTok{(), as.numeric))}
 
-\CommentTok{\# 📌 Supprimer les valeurs manquantes}
+\CommentTok{\# Supprimer les valeurs manquantes}
 \NormalTok{df\_analyse }\OtherTok{\textless{}{-}} \FunctionTok{na.omit}\NormalTok{(df\_analyse)  }
 
-\CommentTok{\# 📌 Calculer les corrélations}
+\CommentTok{\#  Calculer les corrélations}
 \NormalTok{cor\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{cor}\NormalTok{(df\_analyse, }\AttributeTok{use=}\StringTok{"complete.obs"}\NormalTok{)}
 
-\CommentTok{\# 📌 Trier les corrélations par ordre décroissant}
+\CommentTok{\# Trier les corrélations par ordre décroissant}
 \NormalTok{cor\_target }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(cor\_matrix[}\StringTok{"nb\_visite"}\NormalTok{, ], }\AttributeTok{decreasing=}\ConstantTok{TRUE}\NormalTok{)}
 
-\CommentTok{\# 📌 Remplacer les noms de variables par des noms plus lisibles}
+\CommentTok{\#  Remplacer les noms de variables par des noms plus lisibles}
 \NormalTok{cor\_data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
   \AttributeTok{Variable =} \FunctionTok{names}\NormalTok{(cor\_target),}
   \AttributeTok{Correlation =}\NormalTok{ cor\_target}
 \NormalTok{)}
 
-\CommentTok{\# 📌 Appliquer les nouveaux noms}
+\CommentTok{\# Appliquer les nouveaux noms}
 \NormalTok{cor\_data}\SpecialCharTok{$}\NormalTok{Variable }\OtherTok{\textless{}{-}}\NormalTok{ nom\_variables[cor\_data}\SpecialCharTok{$}\NormalTok{Variable]}
 
-\CommentTok{\# 📌 Exclure "Nombre de visites" du graphique}
+\CommentTok{\# Exclure "Nombre de visites" du graphique}
 \NormalTok{cor\_data }\OtherTok{\textless{}{-}}\NormalTok{ cor\_data[cor\_data}\SpecialCharTok{$}\NormalTok{Variable }\SpecialCharTok{!=} \StringTok{"Nombre de visites"}\NormalTok{, ]}
 
-\CommentTok{\# 📌 Afficher le barplot des corrélations}
+\CommentTok{\# Afficher le barplot des corrélations}
 \FunctionTok{ggplot}\NormalTok{(cor\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(Variable, Correlation), }\AttributeTok{y =}\NormalTok{ Correlation, }\AttributeTok{fill =}\NormalTok{ Correlation)) }\SpecialCharTok{+}
   \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
@@ -917,11 +970,11 @@ ceux qui ne se consultent pas assez.
 
 \begin{figure}
 
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-12-1} 
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-13-1} 
 
 }
 
-\caption{Corrélations entre le nombre de visite et quelques variables}\label{fig:unnamed-chunk-12}
+\caption{Corrélations entre le nombre de visite et quelques variables}\label{fig:unnamed-chunk-13}
 \end{figure}
 
 \subsection{Autocorrélation}\label{autocorruxe9lation}
@@ -7615,11 +7668,11 @@ plupart.
 
 \begin{figure}
 
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-14-1} 
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-15-1} 
 
 }
 
-\caption{Densité des distances}\label{fig:unnamed-chunk-14}
+\caption{Densité des distances}\label{fig:unnamed-chunk-15}
 \end{figure}
 
 \subsubsection{Construction de la matrice de
@@ -7653,33 +7706,56 @@ Pour construire la matrice de poids, nous avons alors suivi ces
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# \# Créer la matrice de poids (inverse des distances)}
-\CommentTok{\# weight\_matrix \textless{}{-} 1 / dist\_matrix}
-\CommentTok{\# diag(weight\_matrix) \textless{}{-} 0  \# Aucun poids pour soi{-}même}
-\CommentTok{\# }
-\CommentTok{\# \# Gérer les cas où les distances sont nulles ou infinies}
-\CommentTok{\# weight\_matrix[is.infinite(weight\_matrix)] \textless{}{-} 0}
-\CommentTok{\# }
-\CommentTok{\# \# Créer l\textquotesingle{}objet spatial de pondération}
-\CommentTok{\# W \textless{}{-} mat2listw(weight\_matrix, style = "W")}
-\CommentTok{\# }
-\CommentTok{\# \# Vérifier que la variable à analyser existe et ne contient pas de NA}
-\CommentTok{\# if (!("taux\_visites\_19\_ans\_ou\_plus" \%in\% names(data))) \{}
-\CommentTok{\#   stop("La colonne \textquotesingle{}taux\_visites\_19\_ans\_ou\_plus\textquotesingle{} doit exister dans la base de données.")}
-\CommentTok{\# \}}
-\CommentTok{\# values \textless{}{-} data$taux\_visites\_19\_ans\_ou\_plus}
-\CommentTok{\# }
-\CommentTok{\# if (anyNA(values)) \{}
-\CommentTok{\#   stop("La colonne \textquotesingle{}taux\_visites\_19\_ans\_ou\_plus\textquotesingle{} ne doit pas contenir de valeurs manquantes.")}
-\CommentTok{\# \}}
-\CommentTok{\# }
-\CommentTok{\# \# Calcul de l\textquotesingle{}indice de Moran}
-\CommentTok{\# moran\_result \textless{}{-} moran.test(values, W, zero.policy = TRUE)}
-\CommentTok{\# }
-\CommentTok{\# \# Afficher les résultats}
-\CommentTok{\# kable(moran\_result[["estimate"]], caption = "Résultats du test de Moran")}
+\CommentTok{\# Créer la matrice de poids (inverse des distances)}
+\NormalTok{weight\_matrix }\OtherTok{\textless{}{-}} \DecValTok{1} \SpecialCharTok{/}\NormalTok{ dist\_matrix}
+\FunctionTok{diag}\NormalTok{(weight\_matrix) }\OtherTok{\textless{}{-}} \DecValTok{0}  \CommentTok{\# Aucun poids pour soi{-}même}
+
+\CommentTok{\# Gérer les cas où les distances sont nulles ou infinies}
+\NormalTok{weight\_matrix[}\FunctionTok{is.infinite}\NormalTok{(weight\_matrix)] }\OtherTok{\textless{}{-}} \DecValTok{0}
+
+\CommentTok{\# Créer l\textquotesingle{}objet spatial de pondération}
+\NormalTok{W }\OtherTok{\textless{}{-}} \FunctionTok{mat2listw}\NormalTok{(weight\_matrix, }\AttributeTok{style =} \StringTok{"W"}\NormalTok{)}
+
+\CommentTok{\# Vérifier que la variable à analyser existe et ne contient pas de NA}
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\NormalTok{(}\StringTok{"taux\_visites\_19\_ans\_ou\_plus"} \SpecialCharTok{\%in\%} \FunctionTok{names}\NormalTok{(data))) \{}
+  \FunctionTok{stop}\NormalTok{(}\StringTok{"La colonne \textquotesingle{}taux\_visites\_19\_ans\_ou\_plus\textquotesingle{} doit exister dans la base de données."}\NormalTok{)}
+\NormalTok{\}}
+\NormalTok{values }\OtherTok{\textless{}{-}}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{taux\_visites\_19\_ans\_ou\_plus}
+
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{anyNA}\NormalTok{(values)) \{}
+  \FunctionTok{stop}\NormalTok{(}\StringTok{"La colonne \textquotesingle{}taux\_visites\_19\_ans\_ou\_plus\textquotesingle{} ne doit pas contenir de valeurs manquantes."}\NormalTok{)}
+\NormalTok{\}}
+
+\CommentTok{\# Calcul de l\textquotesingle{}indice de Moran}
+\NormalTok{moran\_result }\OtherTok{\textless{}{-}} \FunctionTok{moran.test}\NormalTok{(values, W, }\AttributeTok{zero.policy =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# Génération du tableau en LaTeX}
+\NormalTok{moran\_result[[}\StringTok{"estimate"}\NormalTok{]] }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{kable}\NormalTok{(}\AttributeTok{format =} \StringTok{"latex"}\NormalTok{, }
+                     \AttributeTok{booktabs =} \ConstantTok{TRUE}\NormalTok{,}
+                     \AttributeTok{caption =} \StringTok{"Résultats du test de Moran"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"striped"}\NormalTok{,}
+                                  \StringTok{"HOLD\_position"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
+\begin{table}[H]
+\centering
+\caption{\label{tab:unnamed-chunk-16}Résultats du test de Moran}
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+  & x\\
+\midrule
+\cellcolor{gray!10}{Moran I statistic} & \cellcolor{gray!10}{0.1275832}\\
+Expectation & -0.0003056\\
+\cellcolor{gray!10}{Variance} & \cellcolor{gray!10}{0.0000029}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
+0.1275832. Le test nous a permi d'obtenir une p-value de 0. Ce qui
+permet de conclure qu'il y a effectivement une autocorrélation positive
+et significative entre les communes selon leur taux de consultations.
 
 \end{document}

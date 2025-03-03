@@ -216,9 +216,74 @@ nombre de consultations moyennes par personnes.
 
 2. Taux de mortalité et de Natalité
 
-Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distribution permet de constater que la natalité est nde façon générale élevée par rapport à la mortalité dans les communes étudiées. 
+Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distribution permet de constater que la natalité est de façon générale élevée par rapport à la mortalité dans les communes étudiées. En vue de mieux de mieux voir peut être l'effet de la mortalité sur la natalité, nous allons nous intéresser alors à une analyse de la corrélation entre les deux taux par groupe d'age. Nous avons considérer les groupes d'âge suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables disponibles et ausi à partir de l'information sur l'âge des femmes en âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans chaque groupe, alors nous avons dans notre analyse opté plutôt pour le pourcentage des femmes de chaque groupe en partant du principe que la natalité est très souvent liée aux femmes et du fait que nous pouvons analyser une diminution du pourcentage comme étant dû à une mortalité. Ainsi sur la base de cette nouvelle hypothèse, voici nos nouiveauxc résultats
+
+```{r fig.align='center', fig.cap= "Taux de Natalité et Pourcentage des femmes dans chaque groupe"}
+# Charger les bibliothèques nécessaires
+library(ggplot2)
+library(readr)
+library(reshape2)
+library(gridExtra)
+
+# Créer les groupes d'âge en sommant les colonnes correspondantes
+data$pop_femmes <- data$femmes_0_4 + data$femmes_5_9 + data$femmes_10_14 + data$femmes_15_19 + data$femmes_20_24 + 
+                    data$femmes_25_29 + data$femmes_30_34 + data$femmes_35_39 + data$femmes_40_44 + data$femmes_45_49 + 
+                    data$femmes_50_54 + data$femmes_55_59 + data$femmes_60_64 + data$femmes_65_69 + data$femmes_70_74 + 
+                    data$femmes_75_79 + data$femmes_80_84 + data$femmes_85_89 + data$femmes_90_94 + data$femmes_95_plus
+
+data$femmes_0_24 <- (data$femmes_0_4 + data$femmes_5_9 + data$femmes_10_14 + data$femmes_15_19 + data$femmes_20_24) / data$pop_femmes
+data$femmes_25_45 <- (data$femmes_25_29 + data$femmes_30_34 + data$femmes_35_39 + data$femmes_40_44) / data$pop_femmes
+data$femmes_45_60 <- (data$femmes_45_49 + data$femmes_50_54 + data$femmes_55_59) / data$pop_femmes
+data$femmes_60_plus <- (data$femmes_60_64 + data$femmes_65_69 + data$femmes_70_74 + data$femmes_75_79 + 
+                         data$femmes_80_84 + data$femmes_85_89 + data$femmes_90_94 + data$femmes_95_plus) / data$pop_femmes
+
+# Extraire le taux de natalité
+data$taux_natalite <- data$taux_de_natalite_annuel_moyen_2015_2021
+
+# ---- Création des graphiques ----
+
+g1 <- ggplot(data, aes(x = femmes_0_24, y = taux_natalite)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "blue") +
+  labs(title = "0-24 ans",
+       x = "Proportion de Femmes 0-24 ans",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+g2 <- ggplot(data, aes(x = femmes_25_45, y = taux_natalite)) +
+  geom_point(color = "red", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(title = "25-45 ans",
+       x = "Proportion de Femmes",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+g3 <- ggplot(data, aes(x = femmes_45_60, y = taux_natalite)) +
+  geom_point(color = "green", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "green") +
+  labs(title = "45-60 ans",
+       x = "Proportion de Femmes",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+g4 <- ggplot(data, aes(x = femmes_60_plus, y = taux_natalite)) +
+  geom_point(color = "purple", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "purple") +
+  labs(title = "60+ ans",
+       x = "Proportion de Femmes",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+# ----  Affichage en grille (2x2) ----
+grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
+  
+
+```
+Les résultats nous montrent un lien croissant pour les tranches d'âge 0-24 et 25-45 ans montrant ainsi que dans ces tranches d'âge si le pourcentage des femmes diminuent (quer l'on pourrait assimiler à une mort des femmes) alors le taux de natalité diminue. Par ailleurs ceux de la tranche 45-60 semble n'avoir aucun lien sur le taux de natalité. Enfin il a été constaté un lien négatif pour la tranche d'âge 60 ans et plus.
+
+
 ```{r fig.align='center', fig.cap= "Taux de Natalité et Taux de Mortalité"}
-# 📌 Vérification et conversion des variables avant de tracer
+# Vérification et conversion des variables avant de tracer
 # Vérification et conversion du taux de mortalité
 if (class(df$taux_de_mortalite_annuel_moyen_2015_2021) != "numeric") {
   df$taux_de_mortalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_mortalite_annuel_moyen_2015_2021))
@@ -229,7 +294,7 @@ if (class(df$taux_de_natalite_annuel_moyen_2015_2021) != "numeric") {
   df$taux_de_natalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_natalite_annuel_moyen_2015_2021))
 }
 
-# 📌 1️⃣ Histogramme du taux de mortalité
+#  Histogramme du taux de mortalité
 p1 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021)) +
   geom_histogram(bins = 30, fill = "red", alpha = 0.7, color = "black") +
   labs( 
@@ -237,7 +302,7 @@ p1 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021)) +
        y = "Nombre de communes") +
   theme_minimal()
 
-# 📌 2️⃣ Histogramme du taux de natalité
+#  Histogramme du taux de natalité
 p2 <- ggplot(df, aes(x = taux_de_natalite_annuel_moyen_2015_2021)) +
   geom_histogram(bins = 30, fill = "blue", alpha = 0.7, color = "black") +
   labs(
@@ -245,7 +310,7 @@ p2 <- ggplot(df, aes(x = taux_de_natalite_annuel_moyen_2015_2021)) +
        y = "Nombre de communes") +
   theme_minimal()
 
-# 📌 3️⃣ Nuage de points pour voir la relation entre mortalité et natalité
+#  Nuage de points pour voir la relation entre mortalité et natalité
 p3 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021, 
                      y = taux_de_natalite_annuel_moyen_2015_2021)) +
   geom_point(alpha = 0.7, color = "purple") +
@@ -255,7 +320,7 @@ p3 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021,
        y = "Taux de natalité") +
   theme_minimal()
 
-# 📌 4️⃣ Courbes de densité pour mieux voir la distribution
+#  Courbes de densité pour mieux voir la distribution
 p4 <- ggplot(df) +
   geom_density(aes(x = taux_de_mortalite_annuel_moyen_2015_2021, fill = "Mortalité"), alpha = 0.5, color = "red") +
   geom_density(aes(x = taux_de_natalite_annuel_moyen_2015_2021, fill = "Natalité"), alpha = 0.5, color = "blue") +
@@ -265,7 +330,7 @@ p4 <- ggplot(df) +
   scale_fill_manual(values = c("Mortalité" = "red", "Natalité" = "blue")) +
   theme_minimal()
 
-# 📌 Affichage de tous les graphiques ensemble
+#  Affichage de tous les graphiques ensemble
 library(gridExtra)
 grid.arrange(p1, p2, p3, p4, ncol = 2)
 
@@ -492,7 +557,7 @@ ceux qui ne se consultent pas assez.
 
 ```{r, fig.align='center', fig.cap= "Corrélations entre le nombre de visite et quelques variables"}
 # Sélectionner uniquement les variables d'intérêt
-# 📌 Définition des noms lisibles pour les variables
+# Définition des noms lisibles pour les variables
 nom_variables <- c(
   "taux_de_mortalite_annuel_moyen_2015_2021" = "Mortalité",
   "taux_de_natalite_annuel_moyen_2015_2021" = "Natalité",
@@ -502,36 +567,36 @@ nom_variables <- c(
   "nb_visite" = "Nombre de visites"
 )
 
-# 📌 Sélectionner les variables d'analyse
+#  Sélectionner les variables d'analyse
 variables_analyse <- names(nom_variables)
 
 df_analyse <- df[variables_analyse]
 
-# 📌 Convertir toutes les colonnes en numérique
+#  Convertir toutes les colonnes en numérique
 df_analyse <- df_analyse %>% mutate(across(everything(), as.numeric))
 
-# 📌 Supprimer les valeurs manquantes
+# Supprimer les valeurs manquantes
 df_analyse <- na.omit(df_analyse)  
 
-# 📌 Calculer les corrélations
+#  Calculer les corrélations
 cor_matrix <- cor(df_analyse, use="complete.obs")
 
-# 📌 Trier les corrélations par ordre décroissant
+# Trier les corrélations par ordre décroissant
 cor_target <- sort(cor_matrix["nb_visite", ], decreasing=TRUE)
 
-# 📌 Remplacer les noms de variables par des noms plus lisibles
+#  Remplacer les noms de variables par des noms plus lisibles
 cor_data <- data.frame(
   Variable = names(cor_target),
   Correlation = cor_target
 )
 
-# 📌 Appliquer les nouveaux noms
+# Appliquer les nouveaux noms
 cor_data$Variable <- nom_variables[cor_data$Variable]
 
-# 📌 Exclure "Nombre de visites" du graphique
+# Exclure "Nombre de visites" du graphique
 cor_data <- cor_data[cor_data$Variable != "Nombre de visites", ]
 
-# 📌 Afficher le barplot des corrélations
+# Afficher le barplot des corrélations
 ggplot(cor_data, aes(x = reorder(Variable, Correlation), y = Correlation, fill = Correlation)) +
   geom_bar(stat="identity") +
   coord_flip() +
