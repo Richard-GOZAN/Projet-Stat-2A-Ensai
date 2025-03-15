@@ -11,44 +11,132 @@ data <- read.csv("../data/data.csv", sep = ",", dec=".")
 ```
 
 
-```{r }
-# Création des variables agrégées
 
-# Création de la variable indiquant le nombre de femmes en âge de procréer 
-data$femmes_15_49 <- rowSums(data[, paste0("femmes_", c("15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))], na.rm=TRUE)
+
+```{r }
+# # Création des variables agrégées
+# 
+# # Création de la variable indiquant le nombre de femmes en âge de procréer 
+# data$femmes_15_49 <- rowSums(data[, paste0("femmes_", c("15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))], na.rm=TRUE)
 ```
 
 
 ```{r }
-# Installation des packages nécessaires
-library(lme4)
-
-# Modèle de régression de Poisson avec effets aléatoires non spatiaux
-modele_non_spatial <- glmer(nb_visite ~ (1 | code) + population_municipale_2021 + nb_de_pers_agees_de_65_ans_ou_2021 + femmes_15_49 + taille_menage_moyenne, 
-                            family = poisson(link = "log"), data = data)
-
-# Résumé du modèle non spatial
-summary(modele_non_spatial)
+# # Installation des packages nécessaires
+# library(lme4)
+# 
+# # Modèle de régression de Poisson avec effets aléatoires non spatiaux
+# modele_non_spatial <- glmer(nb_visite ~ (1 | code) + population_municipale_2021 + nb_de_pers_agees_de_65_ans_ou_2021 + femmes_15_49 + taille_menage_moyenne, 
+#                             family = poisson(link = "log"), data = data)
+# 
+# # Résumé du modèle non spatial
+# summary(modele_non_spatial)
 ```
 
 
+```{r}
+library(geosphere)
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
 
+```{r}
+# Identification des paires de communes où la distance dépasse 2000 km
+indices <- which(distance_matrix > 2000, arr.ind = TRUE)
 
-```{r }
+# Extraire la colonne des indices des lignes
+ligne_indices <- indices[, 1]
 
+# Supprimer les doublons
+ligne_indices_unique <- unique(ligne_indices)
+
+# Récupération des lignes concernées
+indices_concernes <- ligne_indices_unique[1:7]
+
+data[indices_concernes, c(2, 93, 94)]
+```
+
+```{r}
+# Mise à jour des coordonnées géographiques
+data[1973, c(93, 94)] <- c(2.775222, 50.41792)
+data[72, c(93, 94)] <- c(6.231506, 44.09108)
+data[399, c(93, 94)] <- c(1.560560, 45.16898)
+data[1264, c(93, 94)] <- c(-1.486812, 47.29624)
+data[1947, c(93, 94)] <- c(1.623721, 50.48337)
+data[2124, c(93, 94)] <- c(2.916621, 42.74637)
+data[2746, c(93, 94)] <- c(2.376579, 43.49010)
 ```
 
 
-```{r }
+```{r}
+d_max <- 500
 
+# Calcul de la matrice de poids
+matrice_poids <- ifelse(distance_matrix <= d_max & distance_matrix > 0, 1 / distance_matrix, 0)
+  
+# Normalisation par ligne
+matrice_poids_norm <- matrice_poids / rowSums(matrice_poids)
+# y <- rowSums(matrice_poids_norm)
+# y
+# 
+# sum(y > 0 & y <= 1)
+# nrow(data)
+# 
+# i <- which((y = 0 | y > 1), arr.ind = TRUE)
 ```
 
 
-```{r }
+```{r}
+library(spdep)
 
+### Matrice de voisinage
+dist.w <- mat2listw(matrice_poids, style = "W", row.names=NULL)
+dist.w
 ```
 
+```{r}
+attach(data)
 
-```{r }
+### Modèle estimé
+modele <- taux_visites ~
+  population_municipale_2021_x +
+  taux_de_natalite_annuel_moyen_2015_2021 +
+  taux_de_mortalite_annuel_moyen_2015_2021 +
+  part_des_familles_sans_enf_de_de_25_ans_2021 +
+  part_des_familles_avec_1_enf_de_de_25_ans_2021 +
+  part_d_en_concubinage_ou_union_libre
 
+### Modèle MCO
+ze.lm <- lm(modele, data=data)
+summary(ze.lm)
+
+### Test de Moran adapté sur les résidus
+matrice <- dist.w
+lm.morantest(ze.lm,matrice)
+
+### Test LM-Error et LM-Lag
+lm.RStests(ze.lm,matrice,test="all")
+
+### Modèle SEM
+library(spatialreg)
+ze.sem<-errorsarlm(modele, data=data, matrice)
+summary(ze.sem)
+
+### Test d’Hausman
+Hausman.test(ze.sem)
+
+### Modèle SAR
+ze.sar<-lagsarlm(modele, data=data, matrice)
+summary(ze.sar)
+
+### Modèle SDM
+ze.sardm<-lagsarlm(modele, data=data, matrice, type="mixed")
+summary(ze.sardm)
+
+### Test de l’hypothèse de facteur commun
+# ze.sardm : Modèle non contraint
+# ze.sem : Modèle contraint
+FC.test<-LR.sarlm(ze.sardm,ze.sem)
+print(FC.test)
 ```
+
