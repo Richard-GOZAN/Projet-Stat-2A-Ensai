@@ -142,7 +142,7 @@ print(FC.test)
 
 ```{r}
 # Sélection des variables pertinentes
-data_model <- data[1:100, c("nb_visite", "population_municipale_2021_x",
+data_model <- data[, c("nb_visite", "population_municipale_2021_x",
                               "taux_de_mortalite_annuel_moyen_2015_2021",
                               "taux_de_natalite_annuel_moyen_2015_2021",
                               "part_des_pers_agees_de_75_ans_ou_2021",
