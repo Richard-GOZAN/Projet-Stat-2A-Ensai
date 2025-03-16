@@ -11,13 +11,32 @@ output:
 
 Dans cette partie, nous allons définir certainses notions clés qui apparaissent dans notre étude entre autres, le nombre de visites, le nombre de visites espérés ainsi que le taux de visite. 
 
-1. Nombre de visites espérés
+1. La notion de voisin
 
-Le nombre de visite espérés, terme qui apparaitra dans notre modélisation est le nombre de visite qu'il y aurait eu dans chaque commune si le taux de visite était le même dans dans ces dernières. En d'autres terme si $r$ est le taux moyen de visite alors, le nombre de visite escompté noté $\mu$ est calculé par :
+Après avoir choisi l'échelle d'agrégation et effectué une analyse descriptive, il devient indispensable de définir le voisinage d'un objet spatial pour quantifier l'influence réciproque entre entités. La définition formelle se traduit par la détermination d'un ensemble de couples \((i,j)\) d'objets spatiaux, avec la contrainte qu'un objet ne peut être voisin de lui-même, c'est-à-dire que pour tout \(i\), \((i,i)\) n'est pas considéré.
 
-$$ \mu_i = r * P_i$$
-
-où $P_i$ est le nombre d'habitants dans la commune $i$
+Une méthode classique consiste à construire une matrice de voisinage binaire \(W\) définie par :
+$$
+W_{ij} = \begin{cases} 
+1, & \text{si } i \text{ et } j \text{ sont considérés comme voisins} \\
+0, & \text{sinon}
+\end{cases}
+$$
+Les méthodes pour définir les voisins sont diverses :
+\begin{itemize}
+  \item \textbf{Basée sur la distance :}  
+  On utilise la distance euclidienne,
+  $$
+  d(i,j) = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2},
+  $$
+  pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante.
+  
+  \item \textbf{Basée sur la contiguïté :}  
+  Pour des données surfaciques (comme des zones administratives), les voisins sont définis en fonction du partage d'une frontière commune. On distingue par exemple la contiguïté \emph{Rook} (deux zones sont voisines si elles partagent un segment de frontière) et la contiguïté \emph{Queen} (elles sont voisines si elles partagent au moins un point).
+  
+  \item \textbf{Basée sur l'optimisation d'une trajectoire :}  
+  Une autre approche consiste à ordonner les points selon un chemin optimisé (par exemple, le plus court chemin ou le cycle hamiltonien dans le problème du voyageur de commerce). Les voisins d'un point sont alors définis comme les points qui se suivent immédiatement dans cet ordre.
+\end{itemize}
 
 2. Taux de visite
 
