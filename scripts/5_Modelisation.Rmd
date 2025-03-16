@@ -140,3 +140,30 @@ FC.test<-LR.sarlm(ze.sardm,ze.sem)
 print(FC.test)
 ```
 
+```{r}
+# Sélection des variables pertinentes
+data_model <- data[1:100, c("nb_visite", "population_municipale_2021_x",
+                              "taux_de_mortalite_annuel_moyen_2015_2021",
+                              "taux_de_natalite_annuel_moyen_2015_2021",
+                              "part_des_pers_agees_de_75_ans_ou_2021",
+                              "longitude", "latitude")]
+
+# Ajustement du modèle de Poisson avec effet spatial
+mod_poisson <- spaMM::fitme(
+  nb_visite ~ population_municipale_2021_x + 
+    taux_de_mortalite_annuel_moyen_2015_2021 + 
+    taux_de_natalite_annuel_moyen_2015_2021 + 
+    part_des_pers_agees_de_75_ans_ou_2021 + 
+    Matern(1 | longitude + latitude), 
+  data = data_model, 
+  family = poisson(),  # Régression de Poisson
+  fixed = list(dist.method = "Earth")  # Distance de Haversine pour l'effet spatial
+)
+
+# Affichage des résultats
+summary(mod_poisson)  # Résumé du modèle avec coefficients et p-values
+spaMM::fixef(mod_poisson)    # Coefficients estimés des variables explicatives
+spaMM::VarCorr(mod_poisson)  # Paramètres de variance et corrélation de l'effet spatial
+```
+
+
