@@ -1,0 +1,54 @@
+---
+output: pdf_document
+---
+
+# Chargement des librairies
+
+```{r}
+library(FactoMineR)
+library(factoextra)
+```
+
+
+# Chargement des données
+
+```{r}
+# Importation des données
+data <- read.csv("data/data.csv", sep = ",", dec=".")
+```
+
+# Choix des variables à intégrer dans l'analyse factorielle
+
+```{r}
+data_acp <- data[, c("nb_visite", "population_municipale_2021_x",
+                              "taux_de_mortalite_annuel_moyen_2015_2021",
+                              "taux_de_natalite_annuel_moyen_2015_2021",
+                              "part_des_pers_agees_de_75_ans_ou_2021"
+                      )]
+```
+
+
+# Mise en oeuvre de l'Analyse factorielle
+
+```{r}
+# Vérification du type des variables
+str(data_acp)
+```
+
+```{r}
+# Réaliser l'ACP
+resultat_acp <- PCA(data_acp, scale.unit = TRUE, ncp = 5, graph = FALSE)
+
+# Afficher le diagramme des valeurs propres
+fviz_eig(resultat_acp, addlabels = TRUE, ylim = c(0, 50))
+
+# Visualiser les résultats
+fviz_pca_ind(resultat_acp, geom.ind = "point", pointshape = 21, pointsize = 2, 
+             fill.ind = "blue", col.ind = "black", repel = TRUE)
+
+fviz_pca_var(resultat_acp, col.var = "red", repel = TRUE)
+
+# Afficher les contributions des variables
+fviz_contrib(resultat_acp, choice = "var", axes = 1)
+fviz_contrib(resultat_acp, choice = "var", axes = 2)
+```
