@@ -5,8 +5,6 @@ output:
 ---
 # Présentation du contexte
 
-## Intérêt de l'étude
-
 ## Cadre conceptuel de l'étude
 
 Dans cette partie, nous allons définir certainses notions clés qui apparaissent dans notre étude entre autres, le nombre de visites, le nombre de visites espérés ainsi que le taux de visite. 

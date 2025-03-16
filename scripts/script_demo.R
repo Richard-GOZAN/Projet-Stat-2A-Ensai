@@ -434,7 +434,4 @@ model_inla <- inla(Consultations ~ TauxNatalite + TauxMortalite +
                    data = data)
 
 summary(model_inla)
-
-
-
   

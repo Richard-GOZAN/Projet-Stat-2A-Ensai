@@ -49,6 +49,7 @@ où $y_i$ est la valeur de la variable d’intérêt en un point $i$, $\bar{y}$ 
 
 D'autres indices existent, comme la \textbf{statistique de Geary}, qui est moins sensible aux valeurs extrêmes, et les \textbf{indicateurs locaux d'autocorrélation spatiale (LISA)}, qui permettent d'identifier des clusters spatiaux spécifiques.
 
+
 ## Modélisation en économétrie spatiale
 
 Voici un rappel des différents éléments utilisés dans l'ensemble des modèles d'économétrie spatiale :
