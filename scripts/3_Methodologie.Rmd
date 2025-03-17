@@ -95,7 +95,7 @@ $$
 \textbf{SDM (Spatial Durbin Model)} :
 Le modèle SDM est une extension du modèle SAR. Il prend en compte non seulement la dépendance de \( Y \) aux observations voisines, mais aussi l'effet des variables explicatives des régions voisines. Il est défini par :
 $$
-Y = \rho W Y + X \beta + W X \theta + \varepsilon
+Y = \rho W Y + X \beta + \theta W X + \varepsilon
 $$
 \underline{\textbf{Interprétation :}}
 \begin{itemize}
