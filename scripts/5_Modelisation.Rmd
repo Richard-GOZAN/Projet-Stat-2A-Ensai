@@ -165,5 +165,3 @@ summary(mod_poisson)  # Résumé du modèle avec coefficients et p-values
 spaMM::fixef(mod_poisson)    # Coefficients estimés des variables explicatives
 spaMM::VarCorr(mod_poisson)  # Paramètres de variance et corrélation de l'effet spatial
 ```
-
-

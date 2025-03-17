@@ -181,6 +181,12 @@ modèles d'économétrie spatiale :
 
 \subsubsection{Modèles principaux}\label{moduxe8les-principaux}
 
+Le modèle général est défini comme suit :
+
+\[
+Y = \rho W Y + X \beta + \theta W X + u, \quad u = \lambda W u + \varepsilon
+\]
+
 \textbf{SAR (Spatial AutoRegressive Model)} : Le modèle SAR introduit
 une dépendance spatiale directement sur la variable dépendante \(Y\).
 L'idée est que la valeur de \(Y\) en un lieu donné dépend des valeurs
@@ -211,7 +217,7 @@ Y = X \beta + u, \quad u = \lambda W u + \varepsilon
 modèle SAR. Il prend en compte non seulement la dépendance de \(Y\) aux
 observations voisines, mais aussi l'effet des variables explicatives des
 régions voisines. Il est défini par : \[
-Y = \rho W Y + X \beta + W X \theta + \varepsilon
+Y = \rho W Y + X \beta + \theta W X + \varepsilon
 \] \underline{\textbf{Interprétation :}}
 
 \begin{itemize}
@@ -225,7 +231,7 @@ que SAR et SDM, car il suppose que la variable dépendante \(Y\) n'est
 pas directement influencée par les valeurs voisines, mais uniquement par
 les variables explicatives des zones voisines. Il est écrit comme suit :
 \[
-Y = X \beta + W X \theta + \varepsilon
+Y = X \beta + \theta W X + \varepsilon
 \] où \(W X\) capture l'effet des variables explicatives des unités
 voisines.
 
