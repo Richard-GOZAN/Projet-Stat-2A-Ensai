@@ -166,6 +166,56 @@ descriptives sur nos données.
 
 ## Analyse univariée
 
+### Taux et Nombre de visites
+
+L'analyse des statistiques descriptives sur le nombre de consultations
+annuelles de médecin généraliste entre 2018 et 2022 révèle une
+distribution fortement asymétrique à droite, avec une grande dispersion
+des données. La moyenne de 19130 consultations, nettement supérieure à
+la médiane de 9127, indique la présence de valeurs extrêmes tirant la
+distribution vers le haut. Cette asymétrie est confirmée par l'écart
+considérable entre le minimum de 1037 et le maximum de 765833
+consultations par an.
+
+```{r, fig.align='center', fig.cap= "Distributiion du nombre et du taux de consultations"}
+library(ggplot2)
+library(patchwork)
+
+# Premier graphique pour nb_visite
+plot1 <- ggplot(data) +
+  aes(x = nb_visite) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ylab("Nombre de communes") +
+  xlab("Nombre de consultations")
+
+# Deuxième graphique pour taux_visites_19_ans_ou_plus
+plot2 <- ggplot(data) +
+  aes(x = taux_visites_19_ans_ou_plus) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ylab("Nombre de communes") +
+  xlab("Taux de consultations")
+
+# Combinaison des deux graphiques
+plot1 + plot2
+```
+
+La moitié des médecins généralistes effectuent entre 5993 et 17290
+consultations annuellement, ce qui suggère une variabilité importante
+dans la charge de travail. La médiane de 9127 consultations par an,
+équivalant à environ 25 consultations par jour ouvrable, semble plus
+représentative de l'activité typique d'un médecin généraliste que la
+moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
+lumière la diversité des pratiques et des charges de travail parmi les
+médecins généralistes, avec potentiellement quelques cas atypiques
+présentant un volume de consultations exceptionnellement élevé.
+
+Le nombre de visites pouvant potentiellement être influencé par la
+taille de la commune et donc par sa population, nous avons éliminer cet
+effet en calculant le taux de consultations qui n'est autre que le
+nombre de consultations moyennes par personnes.
+
 ```{r }
 # Stats desc sur le nombre de visites
 stats <- summary(data$nb_visite) 
@@ -183,40 +233,67 @@ summary_df %>% kable(format = "latex",
                      caption = "Résumé statistique du nombre de visites") %>%
   kable_styling(latex_options = c("striped",
                                   "HOLD_position"))
+```
 
+### Taux de mortalité et de Natalité
 
+Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distributions permet de constater que la natalité est de façon générale élevée par rapport à la mortalité dans les communes étudiées.
+
+```{r fig.align='center', fig.cap= "Taux de Natalité et Taux de Mortalité"}
+# Vérification et conversion des variables avant de tracer
+# Vérification et conversion du taux de mortalité
+if (class(data$taux_de_mortalite_annuel_moyen_2015_2021) != "numeric") {
+  data$taux_de_mortalite_annuel_moyen_2015_2021 <- as.numeric(as.character(data$taux_de_mortalite_annuel_moyen_2015_2021))
+}
+
+# Vérification et conversion du taux de natalité
+if (class(data$taux_de_natalite_annuel_moyen_2015_2021) != "numeric") {
+  data$taux_de_natalite_annuel_moyen_2015_2021 <- as.numeric(as.character(data$taux_de_natalite_annuel_moyen_2015_2021))
+}
+
+#  Histogramme du taux de mortalité
+p1 <- ggplot(data, aes(x = taux_de_mortalite_annuel_moyen_2015_2021)) +
+  geom_histogram(bins = 30, fill = "red", alpha = 0.7, color = "black") +
+  labs( 
+       x = "Taux de mortalité", 
+       y = "Nombre de communes") +
+  theme_minimal()
+
+#  Histogramme du taux de natalité
+p2 <- ggplot(data, aes(x = taux_de_natalite_annuel_moyen_2015_2021)) +
+  geom_histogram(bins = 30, fill = "blue", alpha = 0.7, color = "black") +
+  labs(
+       x = "Taux de natalité", 
+       y = "Nombre de communes") +
+  theme_minimal()
+
+#  Nuage de points pour voir la relation entre mortalité et natalité
+p3 <- ggplot(data, aes(x = taux_de_mortalite_annuel_moyen_2015_2021, 
+                     y = taux_de_natalite_annuel_moyen_2015_2021)) +
+  geom_point(alpha = 0.7, color = "purple") +
+  geom_smooth(method = "lm", color = "black", linetype = "dashed") +  # Ajout d'une tendance linéaire
+  labs(
+       x = "Taux de mortalité",
+       y = "Taux de natalité") +
+  theme_minimal()
+
+#  Courbes de densité pour mieux voir la distribution
+p4 <- ggplot(data) +
+  geom_density(aes(x = taux_de_mortalite_annuel_moyen_2015_2021, fill = "Mortalité"), alpha = 0.5, color = "red") +
+  geom_density(aes(x = taux_de_natalite_annuel_moyen_2015_2021, fill = "Natalité"), alpha = 0.5, color = "blue") +
+  labs(
+       x = "Taux",
+       y = "Densité") +
+  scale_fill_manual(values = c("Mortalité" = "red", "Natalité" = "blue")) +
+  theme_minimal()
+
+#  Affichage de tous les graphiques ensemble
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 
 ```
 
-1. Taux et Nombre de visites
-
-L'analyse des statistiques descriptives sur le nombre de consultations
-annuelles de médecin généraliste entre 2018 et 2022 révèle une
-distribution fortement asymétrique à droite, avec une grande dispersion
-des données. La moyenne de 19130 consultations, nettement supérieure à
-la médiane de 9127, indique la présence de valeurs extrêmes tirant la
-distribution vers le haut. Cette asymétrie est confirmée par l'écart
-considérable entre le minimum de 1037 et le maximum de 765833
-consultations par an.
-
-La moitié des médecins généralistes effectuent entre 5993 et 17290
-consultations annuellement, ce qui suggère une variabilité importante
-dans la charge de travail. La médiane de 9127 consultations par an,
-équivalant à environ 25 consultations par jour ouvrable, semble plus
-représentative de l'activité typique d'un médecin généraliste que la
-moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
-lumière la diversité des pratiques et des charges de travail parmi les
-médecins généralistes, avec potentiellement quelques cas atypiques
-présentant un volume de consultations exceptionnellement élevé.
-
-Le nombre de visites pouvant potentiellement être influencé par la
-taille de la commune et donc par sa population, nous avons éliminer cet
-effet en calculant le taux de consultations qui n'est autre que le
-nombre de consultations moyennes par personnes.
-
-2. Taux de mortalité et de Natalité
-
-Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distribution permet de constater que la natalité est de façon générale élevée par rapport à la mortalité dans les communes étudiées. En vue de mieux de mieux voir peut être l'effet de la mortalité sur la natalité, nous allons nous intéresser alors à une analyse de la corrélation entre les deux taux par groupe d'age. Nous avons considérer les groupes d'âge suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables disponibles et ausi à partir de l'information sur l'âge des femmes en âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans chaque groupe, alors nous avons dans notre analyse opté plutôt pour le pourcentage des femmes de chaque groupe en partant du principe que la natalité est très souvent liée aux femmes et du fait que nous pouvons analyser une diminution du pourcentage comme étant dû à une mortalité. Ainsi sur la base de cette nouvelle hypothèse, voici nos nouiveauxc résultats
+En vue de mieux de mieux voir peut être l'effet de la mortalité sur la natalité, nous allons nous intéresser alors à une analyse de la corrélation entre les deux taux par groupe d'age. Nous avons considérer les groupes d'âge suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables disponibles et ausi à partir de l'information sur l'âge des femmes en âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans chaque groupe, alors nous avons dans notre analyse opté plutôt pour le pourcentage des femmes de chaque groupe en partant du principe que la natalité est très souvent liée aux femmes et du fait que nous pouvons analyser une diminution du pourcentage comme étant dû à une mortalité. Ainsi sur la base de cette nouvelle hypothèse, voici nos nouveaux résultats.
 
 ```{r fig.align='center', fig.cap= "Taux de Natalité et Pourcentage des femmes dans chaque groupe"}
 # Charger les bibliothèques nécessaires
@@ -276,92 +353,8 @@ g4 <- ggplot(data, aes(x = femmes_60_plus, y = taux_natalite)) +
 
 # ----  Affichage en grille (2x2) ----
 grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
-  
-
 ```
 Les résultats nous montrent un lien croissant pour les tranches d'âge 0-24 et 25-45 ans montrant ainsi que dans ces tranches d'âge si le pourcentage des femmes diminuent (quer l'on pourrait assimiler à une mort des femmes) alors le taux de natalité diminue. Par ailleurs ceux de la tranche 45-60 semble n'avoir aucun lien sur le taux de natalité. Enfin il a été constaté un lien négatif pour la tranche d'âge 60 ans et plus.
-
-
-```{r fig.align='center', fig.cap= "Taux de Natalité et Taux de Mortalité"}
-# Vérification et conversion des variables avant de tracer
-# Vérification et conversion du taux de mortalité
-if (class(df$taux_de_mortalite_annuel_moyen_2015_2021) != "numeric") {
-  df$taux_de_mortalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_mortalite_annuel_moyen_2015_2021))
-}
-
-# Vérification et conversion du taux de natalité
-if (class(df$taux_de_natalite_annuel_moyen_2015_2021) != "numeric") {
-  df$taux_de_natalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_natalite_annuel_moyen_2015_2021))
-}
-
-#  Histogramme du taux de mortalité
-p1 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021)) +
-  geom_histogram(bins = 30, fill = "red", alpha = 0.7, color = "black") +
-  labs( 
-       x = "Taux de mortalité", 
-       y = "Nombre de communes") +
-  theme_minimal()
-
-#  Histogramme du taux de natalité
-p2 <- ggplot(df, aes(x = taux_de_natalite_annuel_moyen_2015_2021)) +
-  geom_histogram(bins = 30, fill = "blue", alpha = 0.7, color = "black") +
-  labs(
-       x = "Taux de natalité", 
-       y = "Nombre de communes") +
-  theme_minimal()
-
-#  Nuage de points pour voir la relation entre mortalité et natalité
-p3 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021, 
-                     y = taux_de_natalite_annuel_moyen_2015_2021)) +
-  geom_point(alpha = 0.7, color = "purple") +
-  geom_smooth(method = "lm", color = "black", linetype = "dashed") +  # Ajout d'une tendance linéaire
-  labs(
-       x = "Taux de mortalité",
-       y = "Taux de natalité") +
-  theme_minimal()
-
-#  Courbes de densité pour mieux voir la distribution
-p4 <- ggplot(df) +
-  geom_density(aes(x = taux_de_mortalite_annuel_moyen_2015_2021, fill = "Mortalité"), alpha = 0.5, color = "red") +
-  geom_density(aes(x = taux_de_natalite_annuel_moyen_2015_2021, fill = "Natalité"), alpha = 0.5, color = "blue") +
-  labs(
-       x = "Taux",
-       y = "Densité") +
-  scale_fill_manual(values = c("Mortalité" = "red", "Natalité" = "blue")) +
-  theme_minimal()
-
-#  Affichage de tous les graphiques ensemble
-library(gridExtra)
-grid.arrange(p1, p2, p3, p4, ncol = 2)
-
-```
-
-```{r, fig.align='center', fig.cap= "Répartition du nombre et du taux de consultations"}
-library(ggplot2)
-library(patchwork)
-
-# Premier graphique pour nb_visite
-plot1 <- ggplot(data) +
-  aes(x = nb_visite) +
-  geom_histogram(bins = 30L, fill = "gray") +
-  theme_minimal() +
-  ylab("Nombre de consultations") +
-  xlab("")
-
-# Deuxième graphique pour taux_visites_19_ans_ou_plus
-plot2 <- ggplot(data) +
-  aes(x = taux_visites_19_ans_ou_plus) +
-  geom_histogram(bins = 30L, fill = "gray") +
-  theme_minimal() +
-  ylab("Taux de consultations") +
-  xlab("")
-
-# Combinaison des deux graphiques
-plot1 + plot2
-
-```
-
-
 
 ## Analyse bivariée
 
@@ -374,7 +367,9 @@ part des personnes agées (75 ans et plus), la part de quelques CSP
 (ouvriers et retraités).
 
 ### Taux de consultation et population totale
-$\\$
+
+En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort un lien clair entre la taille des communes françaises et le taux de consultations médicales, mettant en évidence une tendance où les grandes communes (> 8974 habitants) affichent un taux moyen de consultations supérieur (1,526810) par rapport aux communes moyennes (1,456356) et petites (1,383861). Cette observation suggère que l'accès facilité aux infrastructures médicales dans les zones urbaines contribue à une utilisation accrue des services de santé. En revanche, les petites communes, probablement plus isolées et moins dotées en praticiens, semblent rencontrer des barrières structurelles limitant la fréquence des consultations.
+
 ```{r}
 # Calcul des quantiles
 quantiles <- quantile(data$population_municipale_2021_x, probs = c(1/3, 2/3), na.rm = TRUE)
@@ -397,13 +392,9 @@ data_pop %>% kable(format = "latex",
                                   "HOLD_position"))
 ```
 
-En divisant les communes en trois groupes égaux (ou presque égaux) en
-fonction de la population totale, il ressort qu'en moyenne, plus la
-taille de la commune est importante plus le taux de consulations est
-élevé.
-
-
 ### Taux de consultation et population âgée
+
+L'analyse met en évidence que les communes françaises avec une population âgée significative (population âgée de 75 ans et plus est supérieure à la médiane soit plus de 670 habitants âgés de 75 ans et plus) présentent un taux moyen de consultations inférieur (1,410213) comparé aux communes où la population âgée est moindre (1,501111). Cette observation peut refléter des défis spécifiques aux populations plus âgées, tels que des obstacles physiques ou logistiques pour accéder aux soins médicaux, ou encore une moindre propension à consulter régulièrement en raison d'habitudes ou de conditions de santé chroniques. Ces résultats soulignent un paradoxe apparent, car les besoins en soins médicaux des personnes âgées sont en général plus importants, ce qui pourrait indiquer une inadéquation entre l'offre médicale et les besoins spécifiques de cette tranche d'âge. Cela met en lumière un enjeu crucial pour les politiques de santé visant à améliorer l'accès et l'utilisation des services médicaux pour les populations vieillissantes.
 
 ```{r}
 # Calcul de la médiane
@@ -424,28 +415,23 @@ data_age %>% kable(format = "latex",
                      caption = "Taux de consultations selon la population âgée") %>%
   kable_styling(latex_options = c("striped",
                                   "HOLD_position"))
+
+#```{r fig.align='center', fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
+#ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
+#  geom_point(color = "blue", size = 3) +          # Points bleus
+#  geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
+#  labs(
+#    x = "Part des plus de 75 ans",
+#    y = "Taux de consultation"
+#  ) +
+#  theme_minimal()
+#```
+
 ```
-
-```{r, fig.align='center', fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
-ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
-  geom_point(color = "blue", size = 3) +          # Points bleus
-  geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
-  labs(
-    x = "Part des plus de 75 ans",
-    y = "Taux de consultation"
-  ) +
-  theme_minimal()
-
-```
-
-Les communes avec une population âgée importante (communes dont la
-population âgée de 75 ans ou plus est supérieure à la médiane) ont en
-moyenne un taux de consultations plus faible.
-
 
 ### Taux de consultation et CSP
 
-```{r eval=FALSE, fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle", include=FALSE}
+```{r fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle"}
 # Chargement les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
@@ -490,7 +476,8 @@ plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
   labs(title = "", x = "Sans activites", y = "Taux de visites")
 
 # Affichage des graphiques ensemble
-grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 2)
+grid.arrange(plot1, plot2, plot3, plot4, ncol = 2)
+grid.arrange(plot5, plot6, plot7, plot8, ncol = 2)
 ```
 
 
