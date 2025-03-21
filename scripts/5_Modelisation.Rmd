@@ -69,6 +69,11 @@ data[2746, c(93, 94)] <- c(2.376579, 43.49010)
 
 
 ```{r}
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
+
+```{r}
 d_max <- 500
 
 # Calcul de la matrice de poids
