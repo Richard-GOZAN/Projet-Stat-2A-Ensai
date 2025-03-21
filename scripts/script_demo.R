@@ -434,4 +434,23 @@ model_inla <- inla(Consultations ~ TauxNatalite + TauxMortalite +
                    data = data)
 
 summary(model_inla)
+
+selected_variables = [
+  'population_municipale_2021_x',  
+  'nb_de_pers_agees_de_25_a_64_ans_2021_x', 
+  'nb_de_pers_agees_de_65_ans_ou_2021', 
+  'hommes_5_9', 
+  'femmes_5-9', 
+  'taux_de_mortalite_annuel_moyen_2015_2021', 
+  'taux_de_natalite_annuel_moyen_2015_2021',
+  'part_des_pers_agees_de_75_ans_ou_2021',
+  'population_de_15_ans_ou_selon_la_csp_2021_cadres_et_professions_intellectuelles_superieures',
+  'population_de_15_ans_ou_selon_la_csp_2021_employes', 
+  'population_de_15_ans_ou_selon_la_csp_2021_ouvriers',  
+  'part_des_familles_sans_enf_de_de_25_ans_2021', 
+  'part_des_familles_avec_1_enf_de_de_25_ans_2021', 
+  'part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021', 
+  'longitude', 'latitude' 
+]
+
   
