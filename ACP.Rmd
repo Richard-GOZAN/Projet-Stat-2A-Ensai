@@ -2,53 +2,139 @@
 output: pdf_document
 ---
 
-# Chargement des librairies
-
-```{r}
-library(FactoMineR)
-library(factoextra)
-```
-
-
 # Chargement des données
 
 ```{r}
 # Importation des données
 data <- read.csv("data/data.csv", sep = ",", dec=".")
+
+data$part_des_pers_agees_de_65_ans_ou_plus_2021 <-
+  (data$nb_de_pers_agees_de_65_ans_ou_2021 /
+     data$population_municipale_2021_x) * 100
 ```
 
 # Choix des variables à intégrer dans l'analyse factorielle
 
 ```{r}
-data_acp <- data[, c("nb_visite", "population_municipale_2021_x",
-                              "taux_de_mortalite_annuel_moyen_2015_2021",
-                              "taux_de_natalite_annuel_moyen_2015_2021",
-                              "part_des_pers_agees_de_75_ans_ou_2021"
-                      )]
+variables <- c(
+  "population_municipale_2021_x",
+  "taux_de_mortalite_annuel_moyen_2015_2021",
+  "taux_de_natalite_annuel_moyen_2015_2021",
+  "part_des_familles_sans_enf_de_de_25_ans_2021",
+  "part_des_familles_avec_1_enf_de_de_25_ans_2021",
+  "part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021",
+  "part_des_mariees",
+  "part_divorcees_2021",
+  "population_de_15_ans_ou_selon_la_csp_2021_employes",
+  "population_de_15_ans_ou_selon_la_csp_2021_ouvriers",
+  "part_des_pers_agees_de_de_25_ans_2021",
+  "part_des_pers_agees_de_25_a_64_ans_2021",
+  "part_des_pers_agees_de_65_ans_ou_plus_2021"
+)
+```
+
+
+# Rennomage des variables
+
+```{r}
+nouvelles_etiquettes <- c(
+  "PopTotale",
+  "Mortalite",
+  "Natalite",
+  "FamSansEnfant",
+  "Fam1Enf",
+  "Fam3Enf",
+  "Maries",
+  "Divorces",
+  "Employes",
+  "Ouvriers",
+  "PopMoins25",
+  "Pop25_64",
+  "Pop65Plus"
+)
 ```
 
 
 # Mise en oeuvre de l'Analyse factorielle
 
 ```{r}
-# Vérification du type des variables
-str(data_acp)
+# Charger les packages
+suppressPackageStartupMessages({
+  library(FactoMineR)
+  library(factoextra)
+})
 ```
 
 ```{r}
-# Réaliser l'ACP
-resultat_acp <- PCA(data_acp, scale.unit = TRUE, ncp = 5, graph = FALSE)
+# Sélection et renommage
+df_acp <- data[, variables]
+colnames(df_acp) <- nouvelles_etiquettes
 
-# Afficher le diagramme des valeurs propres
-fviz_eig(resultat_acp, addlabels = TRUE, ylim = c(0, 50))
-
-# Visualiser les résultats
-fviz_pca_ind(resultat_acp, geom.ind = "point", pointshape = 21, pointsize = 2, 
-             fill.ind = "blue", col.ind = "black", repel = TRUE)
-
-fviz_pca_var(resultat_acp, col.var = "red", repel = TRUE)
-
-# Afficher les contributions des variables
-fviz_contrib(resultat_acp, choice = "var", axes = 1)
-fviz_contrib(resultat_acp, choice = "var", axes = 2)
+# Gérer les valeurs manquantes
+df_acp <- na.omit(df_acp)
 ```
+
+
+```{r}
+# Standardiser les données
+df_acp_std <- scale(df_acp)
+
+# Réaliser l'ACP
+res_pca <- PCA(df_acp_std, graph = FALSE)
+```
+
+```{r}
+# Valeurs propres
+fviz_eig(res_pca, addlabels = TRUE)
+```
+
+L’analyse en composantes principales (ACP) révèle une structure claire des données, organisée autour de deux dimensions principales qui expliquent 68.5 % de la variance totale (44.2 % pour la première dimension, 24.3 % pour la seconde). Ces axes mettent en lumière des oppositions sociodémographiques marquées entre les communes.
+
+```{r}
+# Visualisation
+fviz_pca_var(res_pca, 
+             col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE) +
+  labs(title = "Cercle des corrélations")
+```
+
+## 1. Première dimension : Vieillissement vs Dynamisme démographique
+
+La première dimension, la plus significative, oppose deux profils de communes. À droite du cercle des corrélations, les variables Plus65ans (part des 65 ans ou plus), Mortalite (taux de mortalité) et FamSansEnfant (familles sans enfants) sont fortement corrélées. Ces communes se caractérisent par un vieillissement prononcé de la population, une mortalité élevée et une faible présence d’enfants. À l’inverse, à gauche de l’axe, les variables Natalite (taux de natalité), Moins25ans (part des moins de 25 ans) et Maries (taux de mariage) dominent. Ce pôle représente des communes jeunes, dynamiques, avec une natalité soutenue et une population active plus nombreuse. Cette opposition illustre un clivage territorial entre des zones en déclin démographique et des territoires attractifs pour les jeunes familles.
+
+## 2. Deuxième dimension : Structure socio-économique et fragilité familiale
+
+La deuxième dimension oppose, en haut du cercle, les communes marquées par une forte proportion d’Ouvriers et un taux de Divorces élevé. Ces territoires reflètent un contexte socio-économique fragile, souvent associé à des difficultés sociales. À l’opposé, en bas de l’axe, les variables Employes (part des employés du tertiaire) et PopTotale (population municipale) prédominent. Ce pôle représente des communes plus densément peuplées, avec une économie tournée vers les services et une certaine stabilité conjugale. Cet axe souligne ainsi un contraste entre des communes ouvrières en mutation et des territoires tertiaires plus stables.
+
+```{r}
+# Contributions des variables
+fviz_contrib(res_pca, choice = "var", axes = 1, top = 10)
+fviz_contrib(res_pca, choice = "var", axes = 2, top = 10)
+```
+
+## 3. Contributions des variables et corrélations clés
+
+Les contributions des variables confirment ces interprétations :
+
+- Sur le premier axe, Plus65ans (22 %) et Mortalite (18 %) sont les variables les plus discriminantes, suivies de Natalite (15 %), ce qui renforce l’idée d’un axe structuré par l’âge de la population.
+
+- Sur le deuxième axe, Ouvriers (28 %) et Employes (23 %) jouent un rôle central, soulignant l’importance des catégories socio-professionnelles dans la différenciation des territoires.
+
+Les corrélations renforcent ces liens :
+
+- Plus65ans et Mortalite sont fortement associées (r = 0.89), confirmant que le vieillissement s’accompagne d’une mortalité accrue.
+
+- Natalite et Moins25ans sont positivement corrélées (r = 0.82), reflétant des communes où jeunesse et fécondité vont de pair.
+
+- En revanche, Plus65ans et Natalite sont fortement antagonistes (r = -0.91), illustrant l’incompatibilité entre vieillissement et dynamisme démographique.
+
+## 4. Synthèse globale
+
+L’ACP révèle deux enjeux majeurs pour les politiques publiques :
+
+- Le vieillissement démographique : Certaines communes font face à une population âgée, une faible natalité et un exode des jeunes, nécessitant des mesures ciblées (services de santé, maintien des services publics).
+
+- Les disparités socio-économiques : L’opposition entre communes ouvrières et tertiaires souligne la nécessité d’adapter les stratégies de développement économique et d’inclusion sociale.
+
+- Les variables Plus65ans, Natalite, Ouvriers et Divorces émergent comme des marqueurs clés pour comprendre ces dynamiques. Une analyse complémentaire (clustering, régressions) permettrait d’affiner ces résultats et de guider l’action territoriale.
