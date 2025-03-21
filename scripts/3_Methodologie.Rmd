@@ -6,6 +6,10 @@ output:
 
 # Méthodologie
 
+## Source des données
+
+Les données utilisées dans cette étude proviennent de ...
+
 ## Justification de l'économétrie spatiale
 
 L'économétrie spatiale est justifiée par des raisons économiques et économétriques. D’un point de vue économique, la proximité spatiale joue un rôle clé dans les décisions des agents économiques. Les entreprises, par exemple, ajustent leurs stratégies en fonction de la concurrence locale, tandis que la diffusion des innovations et les effets d'agglomération influencent la productivité régionale. Les externalités spatiales, telles que l’effet de pair et les interactions entre industries voisines, ont également un impact direct sur les marchés. Ainsi, la prise en compte de la dimension spatiale est essentielle pour comprendre les dynamiques économiques locales et globales.
@@ -14,32 +18,21 @@ Sur le plan économétrique, l’omission des effets spatiaux peut introduire de
 
 ## Concepts fondamentaux en statistique spatiale
 
-### Autocorrélation et hétérogénéité spatiales
+### Autocorrélation spatiale
 
 L'autocorrélation spatiale désigne la dépendance statistique entre des observations géographiquement proches. En d'autres termes, les valeurs prises par une variable en un lieu donné sont influencées par les valeurs observées dans les localisations voisines. Cette dépendance peut être positive, lorsque des valeurs similaires se regroupent, ou négative, lorsqu’une valeur élevée en un point est associée à une valeur faible dans les zones environnantes.
 
-L'hétérogénéité spatiale, quant à elle, fait référence à la variabilité des relations économiques en fonction de la localisation. Une même variable explicative peut avoir des effets différents selon les régions. Cette non-stationnarité spatiale implique qu’il est essentiel d’examiner l’existence de régimes spatiaux distincts et d’adapter les modèles en conséquence.
-
 ### Matrice des poids spatiaux
 
-Pour quantifier la proximité spatiale entre unités géographiques, on utilise une matrice de poids spatiaux notée $W$. Cette matrice représente les relations de voisinage et permet d’introduire la structure spatiale dans les modèles économétriques. Il existe plusieurs méthodes pour la définir :
+Pour quantifier la proximité spatiale entre unités géographiques, on utilise une matrice de poids spatiaux notée $W$. Cette matrice représente les relations de voisinage et permet d’introduire la structure spatiale dans les modèles économétriques. La matrice de poids peut être une matrice de contiguité binaire ou peut tenir compte de la distance entre les zones géographiques. Cette étude utilise une matrice de poids basée sur la distance et contient des pondérations inversément proportionnelles à la distance entre les régions.
 
-\begin{itemize}
-\item \textbf{Matrice de contiguïté} : Deux régions sont considérées comme voisines si elles partagent une frontière commune.
-\item \textbf{Matrice de distance} : La pondération est inversement proportionnelle à la distance entre deux régions.
-\item \textbf{Matrice des K plus proches voisins} : Chaque observation est associée aux $K$ unités les plus proches.
-\end{itemize}
+### Mesure de la corrélation spatiale
 
-Une matrice de contiguïté binaire est définie comme suit : $$
-W_{ij} = \begin{cases} 
-1, & \text{si } i \text{ et } j \text{ sont voisins} \\
-0, & \text{sinon} 
-\end{cases}
-$$
+#### Indices de corrélation spatiale
 
-### Indices de corrélation spatiale
-
-L’un des indicateurs les plus couramment utilisés est l’indice de Moran, défini par :
+L’un des indicateurs les plus couramment utilisés est l’indice de Moran. Il évalue la similitude des valeurs d’une variable entre différentes entités géographiques (par exemple, des communes) en
+fonction de leur proximité spatiale. Il se base sur la matrice de poids
+spatiale ($W$), qui définit les relations entre ces entités. Il se calcule comme suit :
 
 $$
 I = \frac{N}{\sum_{i} \sum_{j} W_{ij}} \times \frac{\sum_{i} \sum_{j} W_{ij} (y_i - \bar{y})(y_j - \bar{y})}{\sum_{i} (y_i - \bar{y})^2}
@@ -49,17 +42,43 @@ où $y_i$ est la valeur de la variable d’intérêt en un point $i$, $\bar{y}$ 
 
 D'autres indices existent, comme la \textbf{statistique de Geary}, qui est moins sensible aux valeurs extrêmes, et les \textbf{indicateurs locaux d'autocorrélation spatiale (LISA)}, qui permettent d'identifier des clusters spatiaux spécifiques.
 
+#### Construction de la matrice de poids
+
+\
+Pour construire la matrice de poids, nous avons alors suivi ces étapes.
+\
+
+1.  Calculer les distances de Haversine entre chaque paire d’entités.
+2.  Définir un seuil de distance maximale ($d_{max}$) :
+    -   Si $d_{ij} < d_{max}$, $w_{ij} = \frac{1}{d_{ij}}$.
+    -   Sinon, $w_{ij} = 0$.
+3.  Normaliser les poids pour que chaque ligne de la matrice ait une
+    somme égale à 1 : $$
+     w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
+    $$
+
+Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
+`r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a
+permi d'obtenir une p-value de `r moran_result[["p.value"]]`. Ce qui
+permet de conclure qu'il y a effectivement une autocorrélation positive
+et significative entre les communes selon leur taux de consultations.
+
+
+#### Test de Moran (à compléter : Toussaint)
+
+Hypothèses et règle de décision.
+
 
 ## Modélisation en économétrie spatiale
 
 Voici un rappel des différents éléments utilisés dans l'ensemble des modèles d'économétrie spatiale :
 
 \begin{itemize}
-\item[\(Y\)] : Il s'agit du vecteur des observations de la variable dépendante, c'est-à-dire la variable que l'on cherche à expliquer (par exemple, le taux de chômage, les prix immobiliers, etc.).
+\item[\(Y\)] : Il s'agit du vecteur des observations de la variable dépendante, c'est-à-dire la variable que l'on cherche à expliquer (par exemple, le taux de visites, le taux de chômage, etc).
 \item[\(X\)] : C'est la matrice des variables explicatives ou indépendantes. Elle regroupe toutes les caractéristiques observées qui sont supposées influencer \textbf{Y} (comme des variables socio-économiques, démographiques ou structurelles).
 \item[\(\beta\)] : Ce vecteur de coefficients mesure l'effet direct des variables \textbf{X} sur la variable dépendante \textbf{Y}. Chaque coefficient indique l'impact d'une unité de variation dans la variable correspondante sur \textbf{Y}, en l'absence d'effets spatiaux.
 \item[\(W\)] : La matrice des poids spatiaux définit la structure de voisinage entre les unités géographiques. Chaque élément \(W_{ij}\) quantifie l'influence ou la proximité de l'unité \(j\) par rapport à l'unité \(i\). Le choix de cette matrice (par contiguïté, distance, ou K plus proches voisins) est crucial car il détermine la manière dont l'information spatiale est intégrée dans le modèle.
-\item[\(WY\)] Le terme de décalage spatial de \textbf{Y}, obtenu par le produit de la matrice \textbf{W} par le vecteur \textbf{Y}. Il représente l'influence moyenne pondérée des valeurs de \textbf{Y} dans les zones voisines et permet de capturer la dépendance spatiale directe de la variable dépendante.
+\item[\(WY\)] : Le terme de décalage spatial de \textbf{Y}, obtenu par le produit de la matrice \textbf{W} par le vecteur \textbf{Y}. Il représente l'influence moyenne pondérée des valeurs de \textbf{Y} dans les zones voisines et permet de capturer la dépendance spatiale directe de la variable dépendante.
 \item[\(WX\)] : Il s'agit du terme de décalage spatial des variables explicatives. Concrètement, il représente une version pondérée des variables \textbf{X} dans les zones voisines, où les pondérations sont définies par la matrice \textbf{W}. Ce terme permet de mesurer l'effet indirect (ou spillover) des caractéristiques des voisins sur \textbf{Y}.
 \item[\(\varepsilon\)] : C'est le terme d'erreur classique, qui capture les influences non observées ou aléatoires sur \textbf{Y}. Il est généralement supposé être indépendant et identiquement distribué (iid).
 \item[\(\rho\)] : Utilisé dans les modèles qui intègrent directement l'effet des valeurs voisines de \textbf{Y} (comme dans les modèles SAR et SDM). Ce paramètre mesure la force de l'interaction entre la valeur de \textbf{Y} d'une unité et les valeurs de \textbf{Y} des unités voisines. Un \(\rho\) positif indique une autocorrélation positive (les zones avec des valeurs élevées de \textbf{Y} tendent à être entourées de zones à valeurs élevées, et inversement).
@@ -69,6 +88,8 @@ Voici un rappel des différents éléments utilisés dans l'ensemble des modèle
 
 ### Modèles principaux
 
+(Reformuler certaines interprétations pour ne pas faire ressortir les modèles non abordés : Toussaint)
+
 Le modèle général est défini comme suit :
 
 $$
@@ -76,6 +97,7 @@ Y = \rho W Y + X \beta + \theta W X + u, \quad u = \lambda W u + \varepsilon
 $$
 
 \textbf{SAR (Spatial AutoRegressive Model)} :
+
 Le modèle SAR introduit une dépendance spatiale directement sur la variable dépendante \( Y \). L'idée est que la valeur de \( Y \) en un lieu donné dépend des valeurs observées dans les zones voisines. Mathématiquement, il s'écrit :
 $$
 Y = \rho W Y + X \beta + \varepsilon
@@ -89,6 +111,7 @@ $$
 \end{itemize}
 
 \textbf{SEM (Spatial Error Model)} :
+
 Le modèle SEM est utilisé lorsque la dépendance spatiale affecte les erreurs du modèle plutôt que la variable dépendante elle-même. Il est défini par :
 $$
 Y = X \beta + u, \quad u = \lambda W u + \varepsilon
@@ -99,19 +122,8 @@ $$
 \item Il est utilisé lorsque la corrélation spatiale détectée dans un modèle classique provient d’erreurs spatialement autocorrélées, plutôt que d’une interaction directe entre observations.
 \end{itemize}
 
-\textbf{SDM (Spatial Durbin Model)} :
-Le modèle SDM est une extension du modèle SAR. Il prend en compte non seulement la dépendance de \( Y \) aux observations voisines, mais aussi l'effet des variables explicatives des régions voisines. Il est défini par :
-$$
-Y = \rho W Y + X \beta + \theta W X + \varepsilon
-$$
-\underline{\textbf{Interprétation :}}
-\begin{itemize}
-\item Si \( \theta = 0 \), le modèle SDM devient un SAR classique.
-\item Si \( \rho = 0 \), il devient un modèle SLX (voir ci-dessous).
-\item Il permet de tester si des variables exogènes influencent \( Y \) au-delà des frontières administratives.
-\end{itemize}
-
 \textbf{SLX (Spatial Lag of X Model)} :
+
 Le modèle SLX est plus simple que SAR et SDM, car il suppose que la variable dépendante \( Y \) n’est pas directement influencée par les valeurs voisines, mais uniquement par les variables explicatives des zones voisines. Il est écrit comme suit :
 $$
 Y = X \beta + \theta W X + \varepsilon
@@ -124,7 +136,20 @@ où \( W X \) capture l'effet des variables explicatives des unités voisines.
 \item Il mesure uniquement l'effet de "spillover" (d'effet de débordement) des facteurs explicatifs.
 \end{itemize}
 
-\textbf{Comparaison des modèles}
+\textbf{SDM (Spatial Durbin Model)} :
+
+Le modèle SDM est une extension du modèle SAR. Il prend en compte non seulement la dépendance de \( Y \) aux observations voisines, mais aussi l'effet des variables explicatives des régions voisines. Il est défini par :
+$$
+Y = \rho W Y + X \beta + \theta W X + \varepsilon
+$$
+\underline{\textbf{Interprétation :}}
+\begin{itemize}
+\item Si \( \theta = 0 \), le modèle SDM devient un SAR classique.
+\item Si \( \rho = 0 \), il devient un modèle SLX (voir ci-dessous).
+\item Il permet de tester si des variables exogènes influencent \( Y \) au-delà des frontières administratives.
+\end{itemize}
+
+\textbf{Comparaison des modèles} (Mettre SDM à la fin dans le tableau : Toussaint)
 
 \begin{table}[h]
     \centering
@@ -144,11 +169,3 @@ où \( W X \) capture l'effet des variables explicatives des unités voisines.
     \caption{Comparaison des modèles spatiaux}
     \label{tab:comparaison_modeles}
 \end{table}
-
-
-
-## Limites et difficultés
-
-Le point sur les limites et difficultés en économétrie spatiale se concentre sur plusieurs aspects. D’abord, la présence de données manquantes pose un défi majeur, car les observations spatiales ne sont pas toujours complètes. Pour y remédier, des méthodes comme l’imputation par krigeage (une technique d’interpolation géostatistique) ou l’estimation par maximum de vraisemblance adaptée aux données incomplètes sont utilisées.
-
-Ensuite, d’autres difficultés incluent le choix de la matrice de poids spatiaux, qui influence fortement les résultats des modèles, et l’hétérogénéité spatiale, qui peut nécessiter des techniques avancées comme la régression géographiquement pondérée (GWR). Enfin, l’erreur écologique et le problème du MAUP (Modifiable Areal Unit Problem) compliquent l’interprétation des résultats, car les conclusions peuvent varier selon le niveau d’agrégation des données.

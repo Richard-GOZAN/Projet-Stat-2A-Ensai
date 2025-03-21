@@ -10,9 +10,6 @@ output:
 data <- read.csv("../data/data.csv", sep = ",", dec=".")
 ```
 
-
-
-
 ```{r }
 # # Création des variables agrégées
 # 

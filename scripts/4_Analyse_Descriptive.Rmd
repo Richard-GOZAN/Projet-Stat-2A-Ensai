@@ -109,8 +109,9 @@ write.csv(data, "../data/data.csv", row.names = FALSE)
 
 # Analyse descriptive
 
-1. Description de la population d'étude 
+## Description de la population
 
+### Pyramide des ages
 
 Notre population d'étude est une population assez homogène en matière d'âge. Cependant plus on dépasse les 75 ans et moins on rencontre de personnes. D'autres part notre popuplation est fortement masculine avec une forte proportion des hommes quelle que soit la tranche d'âge à l'exception des tranches du troisième âge. 
 
@@ -121,8 +122,6 @@ library(tidyr)
 df = data
 colnames(df) <- gsub("homme_", "hommes_", colnames(df))
 colnames(df) <- gsub("hommes_70_47$", "hommes_70_74", colnames(df))
-
-
 
 # Sélectionner les colonnes de la pyramide des âges
 age_groups <- c("0_4", "5_9", "10_14", "15_19", "20_24", "25_29", "30_34", "35_39",
@@ -145,7 +144,6 @@ pyramide <- data.frame(
 # Convertir Age en facteur ordonné pour garantir le bon ordre
 pyramide$Age <- factor(pyramide$Age, levels = age_groups, ordered = TRUE)
 
-
 ggplot(pyramide, aes(x=Age, y=Population, fill=Sexe)) +
   geom_bar(stat="identity", width=0.8) +
   coord_flip() +  # Pour afficher en pyramide
@@ -160,82 +158,7 @@ ggplot(pyramide, aes(x=Age, y=Population, fill=Sexe)) +
 
 ```
 
-
-Dans cette partie, nous allons réaliser quelques statistiques
-descriptives sur nos données.
-
-## Analyse univariée
-
-### Taux et Nombre de visites
-
-L'analyse des statistiques descriptives sur le nombre de consultations
-annuelles de médecin généraliste entre 2018 et 2022 révèle une
-distribution fortement asymétrique à droite, avec une grande dispersion
-des données. La moyenne de 19130 consultations, nettement supérieure à
-la médiane de 9127, indique la présence de valeurs extrêmes tirant la
-distribution vers le haut. Cette asymétrie est confirmée par l'écart
-considérable entre le minimum de 1037 et le maximum de 765833
-consultations par an.
-
-```{r, fig.align='center', fig.cap= "Distributiion du nombre et du taux de consultations"}
-library(ggplot2)
-library(patchwork)
-
-# Premier graphique pour nb_visite
-plot1 <- ggplot(data) +
-  aes(x = nb_visite) +
-  geom_histogram(bins = 30L, fill = "gray") +
-  theme_minimal() +
-  ylab("Nombre de communes") +
-  xlab("Nombre de consultations")
-
-# Deuxième graphique pour taux_visites_19_ans_ou_plus
-plot2 <- ggplot(data) +
-  aes(x = taux_visites_19_ans_ou_plus) +
-  geom_histogram(bins = 30L, fill = "gray") +
-  theme_minimal() +
-  ylab("Nombre de communes") +
-  xlab("Taux de consultations")
-
-# Combinaison des deux graphiques
-plot1 + plot2
-```
-
-La moitié des médecins généralistes effectuent entre 5993 et 17290
-consultations annuellement, ce qui suggère une variabilité importante
-dans la charge de travail. La médiane de 9127 consultations par an,
-équivalant à environ 25 consultations par jour ouvrable, semble plus
-représentative de l'activité typique d'un médecin généraliste que la
-moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
-lumière la diversité des pratiques et des charges de travail parmi les
-médecins généralistes, avec potentiellement quelques cas atypiques
-présentant un volume de consultations exceptionnellement élevé.
-
-Le nombre de visites pouvant potentiellement être influencé par la
-taille de la commune et donc par sa population, nous avons éliminer cet
-effet en calculant le taux de consultations qui n'est autre que le
-nombre de consultations moyennes par personnes.
-
-```{r }
-# Stats desc sur le nombre de visites
-stats <- summary(data$nb_visite) 
-
-# Sous forme de data frame
-summary_df <- data.frame(
-  Statistique = names(stats),
-  Valeur = as.numeric(stats)
-  ) %>%
-  pivot_wider(names_from = Statistique, values_from = Valeur) 
-
-# Génération du tableau en LaTeX
-summary_df %>% kable(format = "latex", 
-                     booktabs = TRUE,
-                     caption = "Résumé statistique du nombre de visites") %>%
-  kable_styling(latex_options = c("striped",
-                                  "HOLD_position"))
-```
-
-### Taux de mortalité et de Natalité
+### Taux de natalité et taux de mortalité
 
 Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distributions permet de constater que la natalité est de façon générale élevée par rapport à la mortalité dans les communes étudiées.
 
@@ -354,9 +277,81 @@ g4 <- ggplot(data, aes(x = femmes_60_plus, y = taux_natalite)) +
 # ----  Affichage en grille (2x2) ----
 grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
 ```
+
 Les résultats nous montrent un lien croissant pour les tranches d'âge 0-24 et 25-45 ans montrant ainsi que dans ces tranches d'âge si le pourcentage des femmes diminuent (quer l'on pourrait assimiler à une mort des femmes) alors le taux de natalité diminue. Par ailleurs ceux de la tranche 45-60 semble n'avoir aucun lien sur le taux de natalité. Enfin il a été constaté un lien négatif pour la tranche d'âge 60 ans et plus.
 
-## Analyse bivariée
+## Taux et nombre de consultation
+
+(Insérer les cartes à ce niveau : Richard doit refaire les cartes et les insérer)
+
+L'analyse des statistiques descriptives sur le nombre de consultations
+annuelles de médecin généraliste entre 2018 et 2022 révèle une
+distribution fortement asymétrique à droite, avec une grande dispersion
+des données. La moyenne de 19130 consultations, nettement supérieure à
+la médiane de 9127, indique la présence de valeurs extrêmes tirant la
+distribution vers le haut. Cette asymétrie est confirmée par l'écart
+considérable entre le minimum de 1037 et le maximum de 765833
+consultations par an.
+
+```{r, fig.align='center', fig.cap= "Distributiion du nombre et du taux de consultations"}
+library(ggplot2)
+library(patchwork)
+
+# Premier graphique pour nb_visite
+plot1 <- ggplot(data) +
+  aes(x = nb_visite) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ylab("Nombre de communes") +
+  xlab("Nombre de consultations")
+
+# Deuxième graphique pour taux_visites_19_ans_ou_plus
+plot2 <- ggplot(data) +
+  aes(x = taux_visites_19_ans_ou_plus) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ylab("Nombre de communes") +
+  xlab("Taux de consultations")
+
+# Combinaison des deux graphiques
+plot1 + plot2
+```
+
+La moitié des médecins généralistes effectuent entre 5993 et 17290
+consultations annuellement, ce qui suggère une variabilité importante
+dans la charge de travail. La médiane de 9127 consultations par an,
+équivalant à environ 25 consultations par jour ouvrable, semble plus
+représentative de l'activité typique d'un médecin généraliste que la
+moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
+lumière la diversité des pratiques et des charges de travail parmi les
+médecins généralistes, avec potentiellement quelques cas atypiques
+présentant un volume de consultations exceptionnellement élevé.
+
+Le nombre de visites pouvant potentiellement être influencé par la
+taille de la commune et donc par sa population, nous avons éliminer cet
+effet en calculant le taux de consultations qui n'est autre que le
+nombre de consultations moyennes par personnes.
+
+```{r }
+# Stats desc sur le nombre de visites
+stats <- summary(data$nb_visite) 
+
+# Sous forme de data frame
+summary_df <- data.frame(
+  Statistique = names(stats),
+  Valeur = as.numeric(stats)
+  ) %>%
+  pivot_wider(names_from = Statistique, values_from = Valeur) 
+
+# Génération du tableau en LaTeX
+summary_df %>% kable(format = "latex", 
+                     booktabs = TRUE,
+                     caption = "Résumé statistique du nombre de visites") %>%
+  kable_styling(latex_options = c("striped",
+                                  "HOLD_position"))
+```
+
+## Taux de consultation et quelques variables démographiques et socio-économiques
 
 Nous allons ici, voir s'il y a un lien à priori entre le taux de
 consultation et certaines de nos variables explicatives. Ainsi, nous
@@ -431,7 +426,15 @@ data_age %>% kable(format = "latex",
 
 ### Taux de consultation et CSP
 
-```{r fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle"}
+Aucune catégorie ne semble montrer une relation linéaire évidente avec
+le taux de visite. Par ailleurs, pour toutes les catégories
+socio-professionnelles, la majorité des communes se situent dans une
+plage de proportions faibles, ce qui limite la variabilité observable
+dans les relations. Une analyse statistique supplémentaire, comme le
+calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
+relations observées visuellement.
+
+```{r fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines catégories socioprofessionnelle"}
 # Chargement les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
@@ -480,67 +483,7 @@ grid.arrange(plot1, plot2, plot3, plot4, ncol = 2)
 grid.arrange(plot5, plot6, plot7, plot8, ncol = 2)
 ```
 
-
-Aucune catégorie ne semble montrer une relation linéaire évidente avec
-le taux de visite. Par ailleurs, pour toutes les catégories
-socio-professionnelles, la majorité des communes se situent dans une
-plage de proportions faibles, ce qui limite la variabilité observable
-dans les relations. Une analyse statistique supplémentaire, comme le
-calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
-relations observées visuellement.
-
-### Analyse de corrélation
-
-
-Les résultats de la corrélation de Pearson sont consignées dans le
-tableau suivant :
-
-```{r}
-# Fonction de conversion
-conversion_en_numeric <- function(data, columns) {
-  resultat <- data %>%
-    mutate(across(all_of(columns), as.numeric))
-  return (resultat)
-}
-# Liste des variables à tester avec taux_de_consultation
-variables <- c("population_municipale_2021_x", "part_des_pers_agees_de_75_ans_ou_2021", 
-               "population_de_15_ans_ou_selon_la_csp_2021_retraites", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
-
-data <- conversion_en_numeric(data, variables)
-
-
-# Initialisation du tableau pour stocker les résultats
-resultats <- data.frame(Variable = character(), Correlation = numeric(), P_value = numeric())
-
-# Calcul de la corrélation pour chaque variable et tester la significativité
-for (var in variables) {
-  test <- cor.test(data$taux_visites_19_ans_ou_plus, data[[var]], method = "pearson")
-  resultats <- rbind(resultats, data.frame(
-    Variable = var,
-    Correlation = test$estimate,
-    P_value = test$p.value
-  ))
-}
-
-# Format du tableau avec la significativité
-resultats$Significatif <- ifelse(resultats$P_value < 0.05, "Oui", "Non")
-
-# Génération du tableau en LaTeX
-resultats %>% kable(format = "latex", 
-                     booktabs = TRUE,
-                     caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")%>%
-  kable_styling(latex_options = c("striped",
-                                  "HOLD_position"))
-
-```
-
-Les résultats nous montrent que le taux de consultation est positivement
-corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la
-corrélation est faible. Par ailleurs, la corrélation est négative avec
-la part des personnes agées de plus de 75 ans. Cela dit, plus la part
-des plus de 75 ans augmente moins est le taux de consultations dans une
-commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
-ceux qui ne se consultent pas assez.
+(Trouver un titre pour cette section et analyser : Alex)
 
 ```{r, fig.align='center', fig.cap= "Corrélations entre le nombre de visite et quelques variables"}
 # Sélectionner uniquement les variables d'intérêt
@@ -596,179 +539,5 @@ ggplot(cor_data, aes(x = reorder(Variable, Correlation), y = Correlation, fill =
 ```
 
 
-## Autocorrélation
+## Analyse spatiale (Alex)
 
-L’autocorrélation spatiale est une mesure essentielle pour analyser la
-dépendance entre des observations géographiques. Dans notre étude nos
-données sont des données portant sur des communes. Ainsi il peut exister
-une dépendance entre nos taux de consultations du fait de la proximité
-des communes ou de l'appartenance à un même département ou région. Ainsi
-nous allons mesurer cette dépendance en évaluant l'autocorrélation
-spatiale. Dans ce contexte, **l’indice de Moran** est largement utilisé
-pour quantifier cette dépendance en fournissant une mesure globale de
-l’autocorrélation spatiale.
-
-### Définition de l’indice de Moran
-
-L’indice de Moran ($I$) évalue la similitude des valeurs d’une variable
-entre différentes entités géographiques (par exemple, des communes) en
-fonction de leur proximité spatiale. Il se base sur la matrice de poids
-spatiale ($W$), qui définit les relations entre ces entités.
-
-### Formule de l’indice de Moran
-
-La formule mathématique de l’indice de Moran est la suivante :
-
-$$
-I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
-$$
-
-Où :
-
--   $n$ : Nombre total d’entités spatiales (Ici, le nombre de communes).
-
--   $x_i, x_j$ : Valeurs observées de la variable pour les entités $i$
-    et $j$ (Ici le taux de consultations)
-
--   $\bar{x}$ : Moyenne de la variable $x$.
-
--   $w_{ij}$ : Poids spatial définissant la relation entre $i$ et $j$.
-
-La matrice de $W$ peut être constuit sur la base du voisinage entre les
-deux communes ou soit de la distance entre les deux communes. Dans le
-premier cas alors $w_{ij}$ $w_{ij} = 1$ si $i$ et $j$ sont voisins et
-$w_{ij} = 0$ sinon. Dans le second cas $w_{ij} = d_{ij}$. Nous allons
-dans notre cas utiliser une matrice de poids basée sur la distance,
-notamment celle d'Haversine.
-
-### Matrice de poids basée sur la distance de Haversine
-
-La distance de Haversine est une mesure de la distance entre deux points
-sur une sphère, basée sur leurs coordonnées géographiques ($latitude$ et
-$longitude$). Elle est particulièrement utile pour les données
-géographiques projetées sur une surface sphérique, comme la Terre.
-
-
-### Formule de la distance de Haversine
-
-Si l'on considère deux points ($i$) et ($j$), la distance ($d_{ij}$)
-entre ces deux points sur la surface d'une sphère de rayon ($r$) est
-donnée par :
-
-$$
- d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
-$$
-
-
-Où : 
-
-- $r$ : Rayon de la Terre (environ 6371 km).
-
--   $\phi_i, \phi_j$ : Latitudes des points $i$ et $j$ (en radians).
-
--   $\lambda_i, \lambda_j$ : Longitudes des points $i$ et $j$ (en radians). Après calcul nous avons ces statistiques sur nos distances.
-
-```{r}
-# Charger les bibliothèques nécessaires
-
-#  (latitude, longitude)
-library(spdep)     # Pour les fonctions de pondération spatiale et test de Moran
-library(geosphere) # Pour les calculs de distances géodésiques
-
-# Vérification que les colonnes latitude et longitude existent dans `data`
-if (!("latitude" %in% names(data)) || !("longitude" %in% names(data))) {
-  stop("Les colonnes 'latitude' et 'longitude' doivent exister dans la base de données.")
-}
-
-# Vérification des valeurs manquantes dans les coordonnées
-if (anyNA(data$latitude) || anyNA(data$longitude)) {
-  stop("Les colonnes 'latitude' et 'longitude' ne doivent pas contenir de valeurs manquantes.")
-}
-
-# Création de la matrice des coordonnées
-coords <- data.frame(
-  lat = data$latitude,
-  lon = data$longitude
-)
-
-# Calcul des distances géodésiques (en mètres) avec la méthode de Vincenty
-dist_matrix <- distm(coords, fun = distVincentySphere)/1000
-
-# Gérer les distances nulles ou infinies
-if (any(diag(dist_matrix) != 0)) {
-  diag(dist_matrix) <- 0  # Auto-distance définie comme 0
-}
-if (any(is.infinite(dist_matrix))) {
-  stop("La matrice des distances contient des valeurs infinies, vérifiez les coordonnées.")
-}
-
-# Résumé statistique de toutes les distances
-distance_values <- as.vector(dist_matrix)
-#summary(distance_values)
-```
-
-Une visualtion de la densité de nos distance nous donne ceci, indiquant une forte asymétrie à gauche de la distribution. En d'autres termes,les communes étudiées sont assez rapprochées les unes des autres pour la plupart. 
-
-```{r fig.align='center', fig.cap="Densité des distances"}
-dist_df <- data.frame(Distance = as.vector(dist_matrix))
-# Tracer la densité
-ggplot(dist_df, aes(x = Distance)) +
-  geom_density(fill = "blue", alpha = 0.4) +
-  theme_minimal() +
-  labs(x = "Distance", y = "Densité")
-
-```
-
-### Construction de la matrice de poids
-
-\
-Pour construire la matrice de poids, nous avons alors suivi ces étapes.
-\
-
-1.  Calculer les distances de Haversine entre chaque paire d’entités.
-2.  Définir un seuil de distance maximale ($d_{max}$) :
-    -   Si $d_{ij} < d_{max}$, $w_{ij} = \frac{1}{d_{ij}}$.
-    -   Sinon, $w_{ij} = 0$.
-3.  Normaliser les poids pour que chaque ligne de la matrice ait une
-    somme égale à 1 : $$
-     w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
-    $$
-
-```{r}
-# Créer la matrice de poids (inverse des distances)
-weight_matrix <- 1 / dist_matrix
-diag(weight_matrix) <- 0  # Aucun poids pour soi-même
-
-# Gérer les cas où les distances sont nulles ou infinies
-weight_matrix[is.infinite(weight_matrix)] <- 0
-
-# Créer l'objet spatial de pondération
-W <- mat2listw(weight_matrix, style = "W")
-
-# Vérifier que la variable à analyser existe et ne contient pas de NA
-if (!("taux_visites_19_ans_ou_plus" %in% names(data))) {
-  stop("La colonne 'taux_visites_19_ans_ou_plus' doit exister dans la base de données.")
-}
-values <- data$taux_visites_19_ans_ou_plus
-
-if (anyNA(values)) {
-  stop("La colonne 'taux_visites_19_ans_ou_plus' ne doit pas contenir de valeurs manquantes.")
-}
-
-# Calcul de l'indice de Moran
-moran_result <- moran.test(values, W, zero.policy = TRUE)
-
-# Génération du tableau en LaTeX
-moran_result[["estimate"]] %>% kable(format = "latex", 
-                     booktabs = TRUE,
-                     caption = "Résultats du test de Moran") %>%
-  kable_styling(latex_options = c("striped",
-                                  "HOLD_position"))
-```
-
-
-Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
-`r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a
-permi d'obtenir une p-value de `r moran_result[["p.value"]]`. Ce qui
-permet de conclure qu'il y a effectivement une autocorrélation positive
-et significative entre les communes selon leur taux de consultations.
