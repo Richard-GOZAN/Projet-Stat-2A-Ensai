@@ -539,5 +539,189 @@ ggplot(cor_data, aes(x = reorder(Variable, Correlation), y = Correlation, fill =
 ```
 
 
-## Analyse spatiale (Alex)
+## Analyse spatiale
+
+```{r }
+# Importation des données
+data <- read.csv("../data/data.csv", sep = ",", dec=".")
+```
+
+```{r }
+# # Création des variables agrégées
+# 
+# # Création de la variable indiquant le nombre de femmes en âge de procréer 
+# data$femmes_15_49 <- rowSums(data[, paste0("femmes_", c("15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))], na.rm=TRUE)
+```
+
+
+```{r }
+# # Installation des packages nécessaires
+# library(lme4)
+# 
+# # Modèle de régression de Poisson avec effets aléatoires non spatiaux
+# modele_non_spatial <- glmer(nb_visite ~ (1 | code) + population_municipale_2021 + nb_de_pers_agees_de_65_ans_ou_2021 + femmes_15_49 + taille_menage_moyenne, 
+#                             family = poisson(link = "log"), data = data)
+# 
+# # Résumé du modèle non spatial
+# summary(modele_non_spatial)
+```
+
+
+```{r}
+library(geosphere)
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
+
+```{r}
+# Identification des paires de communes où la distance dépasse 2000 km
+indices <- which(distance_matrix > 2000, arr.ind = TRUE)
+
+# Extraire la colonne des indices des lignes
+ligne_indices <- indices[, 1]
+
+# Supprimer les doublons
+ligne_indices_unique <- unique(ligne_indices)
+
+# Récupération des lignes concernées
+indices_concernes <- ligne_indices_unique[1:7]
+```
+
+```{r}
+# Mise à jour des coordonnées géographiques
+data[1973, c(93, 94)] <- c(2.775222, 50.41792)
+data[72, c(93, 94)] <- c(6.231506, 44.09108)
+data[399, c(93, 94)] <- c(1.560560, 45.16898)
+data[1264, c(93, 94)] <- c(-1.486812, 47.29624)
+data[1947, c(93, 94)] <- c(1.623721, 50.48337)
+data[2124, c(93, 94)] <- c(2.916621, 42.74637)
+data[2746, c(93, 94)] <- c(2.376579, 43.49010)
+```
+
+
+```{r}
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
+
+```{r}
+d_max <- 500
+
+# Calcul de la matrice de poids
+matrice_poids <- ifelse(distance_matrix <= d_max & distance_matrix > 0, 1 / distance_matrix, 0)
+  
+# Normalisation par ligne
+matrice_poids_norm <- matrice_poids / rowSums(matrice_poids)
+# y <- rowSums(matrice_poids_norm)
+# y
+# 
+# sum(y > 0 & y <= 1)
+# nrow(data)
+# 
+# i <- which((y = 0 | y > 1), arr.ind = TRUE)
+```
+
+
+```{r}
+library(spdep)
+
+### Matrice de voisinage
+dist.w <- mat2listw(matrice_poids, style = "W", row.names=NULL)
+```
+Après une analyse de nos données en ne tenant pas compte de l'effet spatial, nous allons à présent poursuivre avec une analyse qui tient compte de celui-ci. Nous allons ici faire une analyse basée sur le diagramme de Moran. Le diagramme de Moran permet d'analyser la structure spatiale du taux de consultations. Il est constitué d'un nuage de points où l'axe des abscisses représente les valeurs centrées du taux de consultations (\(yy\)), et l'axe des ordonnées montre les valeurs moyennes du taux de consultations pour les zones voisines (\(Wyy\)), avec \(W\) étant la matrice de poids normalisée. En raison de la centration de \(yy\) et de la normalisation de \(W\), la moyenne empirique de \(Wyy\) est égale à zéro.
+
+Le diagramme inclut aussi une droite de régression linéaire entre \(Wyy\) et \(yy\), ainsi que les lignes \(y=0\) et \(Wyy=0\), qui divisent l'espace en quatre quadrants.
+
+- **Quadrant 1 (haut à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, entourées de zones présentant également un taux de consultations élevé (autocorrélation spatiale positive, structure **high-high**).
+- **Quadrant 3 (bas à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, entourées de zones présentant un taux de consultations également faible (autocorrélation spatiale positive, structure **low-low**).
+- **Quadrant 2 (bas à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, mais entourées de zones présentant un taux de consultations plus faible (autocorrélation spatiale négative, structure **high-low**).
+- **Quadrant 4 (haut à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, mais entourées de zones avec un taux de consultations plus élevé (autocorrélation spatiale négative, structure **low-high**).
+
+La densité des points dans chaque quadrant permet de visualiser la structure spatiale dominante du taux de consultations. Ce diagramme aide aussi à identifier les zones atypiques, qui ne suivent pas la structure spatiale générale, facilitant ainsi l'analyse des résultats que vous obtiendrez par la suite. Vu le noimbre de nos communes la mise sur le graphique des noms de toutes les communes allaient être compliqué. POur cela, nous avons choisi au hasard 4 communes par cadrants. Ainsi, Ce diagramme de Moran illustre la corrélation spatiale des taux de consultation par commune et ceux des communes voisines. La tendance générale, représentée par la droite de régression rouge, montre une relation positive entre ces taux, confirmant ainsi une autocorrélation spatiale. Autrement dit, les communes ayant un taux élevé de consultations ont tendance à être entourées par d’autres communes avec un taux similaire, et inversement.
+
+Dans le quadrant HH (Haut-Haut), représenté en rouge, on retrouve des communes comme Saint-Saulve, Le Bouscat et Bruay-la-Buissière. Celles-ci affichent un taux de consultation élevé et sont entourées par des communes présentant également des taux élevés. Cela indique une concentration géographique des consultations médicales, qui peut s'expliquer par une offre de soins plus développée ou une demande locale particulièrement forte.
+
+Le quadrant HL (Haut-Bas), en violet, comprend des communes comme Saint-Jacques-de-la-Lande et Le Portel. Ces communes ont un taux élevé de consultations, mais sont entourées de communes où les taux sont plus faibles. Ce contraste peut suggérer que ces villes disposent d’une offre de soins plus attractive que leurs voisines, attirant ainsi des patients des alentours.
+
+À l’inverse, dans le quadrant LH (Bas-Haut), en vert, on trouve des communes comme Aix-en-Provence, Ribécourt-Dreslincourt et L'Isle-Adam. Ces communes affichent un faible taux de consultation, tandis que leurs voisines présentent des taux plus élevés. Ce phénomène peut s’expliquer par le fait que les habitants de ces villes se rendent dans les communes avoisinantes pour leurs consultations, soit en raison d’un manque d’infrastructures médicales locales, soit par préférence pour des services situés ailleurs.
+
+Enfin, le quadrant LL (Bas-Bas), en orange, inclut des communes comme Saint-Jean-le-Blanc, Romorantin-Lanthenay et Le Breuil. Ces villes ont un faible taux de consultation et sont entourées de communes où les taux sont également bas. Cela peut indiquer une accessibilité réduite aux soins de santé, une moindre densité médicale, ou encore une faible demande locale pour des consultations.
+
+En résumé, cette analyse met en évidence des disparités territoriales dans la répartition des consultations médicales. Certaines communes concentrent les services et attirent les patients des alentours, tandis que d'autres souffrent d’un accès limité aux soins, renforçant ainsi les inégalités spatiales en matière de santé.
+
+
+```{r fig.cap="Moran Plot avec visibilités de quelques communes", fig.align='center'}
+library(spdep)
+# Calcul du taux moyen des voisins
+data$taux_voisins <- lag.listw(dist.w, data$taux_visites)
+
+
+# Moyennes pour séparer les quadrants
+mean_x <- mean(data$taux_visites, na.rm = TRUE)
+mean_y <- mean(data$taux_voisins, na.rm = TRUE)
+
+# Attribution des quadrants
+data <- data %>%
+  mutate(quadrant = case_when(
+    taux_visites >= mean_x & taux_voisins >= mean_y ~ "HH",
+    taux_visites >= mean_x & taux_voisins < mean_y ~ "HL",
+    taux_visites < mean_x & taux_voisins >= mean_y ~ "LH",
+    taux_visites < mean_x & taux_voisins < mean_y ~ "LL"
+  ))
+
+# Sélection de 4 communes atypiques par quadrant
+set.seed(123)  # Pour la reproductibilité
+communes_atypiques <- data %>%
+  group_by(quadrant) %>%
+  slice_sample(n = 4)
+
+# Création du Moran Plot avec labels améliorés
+ggplot(data, aes(x = taux_visites, y = taux_voisins)) +
+  geom_point(color = "blue", alpha = 0.6) + 
+  geom_vline(xintercept = mean_x, linetype = "dashed") +
+  geom_hline(yintercept = mean_y, linetype = "dashed") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  geom_text_repel(data = communes_atypiques, 
+                  aes(label = libelle_x, color = quadrant), 
+                  size = 3, max.overlaps = 100, fontface = "bold") +
+  labs(
+       x = "Taux de consultations par commune",
+       y = "Taux de consultation moyen des communes voisines") +
+  theme_minimal() +
+  scale_color_manual(values = c("HH" = "red", "HL" = "purple", "LH" = "green", "LL" = "orange"))
+```
+
+### Autocorélation Locale
+
+```{r}
+# Calcul du LISA (Moran Local)
+lisa_results <- localmoran(data$taux_visites, dist.w)
+
+# Ajouter les résultats aux données
+data$LISA_I <- lisa_results[,1]  # Indice de Moran local<
+data$p_value <- lisa_results[,5] # Valeur p
+
+# Moyenne des taux de consultation
+mean_consult <- mean(data$taux_visites)
+
+# Quadrants de LISA
+data$quadrant <- with(data, ifelse(taux_visites > mean_consult & LISA_I > 0, "HH",
+                                   ifelse(taux_visites < mean_consult & LISA_I > 0, "LH",
+                                   ifelse(taux_visites > mean_consult & LISA_I < 0, "HL",
+                                   "LL"))))
+
+ggplot(data, aes(x = taux_visites, y = LISA_I, color = quadrant)) +
+  geom_point(alpha = 0.6, size = 3) +
+  scale_color_manual(values = c("HH" = "red", "LH" = "green", "HL" = "purple", "LL" = "orange")) +
+  geom_text_repel(aes(label = ifelse(p_value < 0.1, as.character(libelle_x), "")), size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = mean_consult, linetype = "dashed") +
+  ggtitle("Analyse LISA (Moran Local) des taux de consultation") +
+  theme_minimal()
+
+```
+
+En se basant sur l'analyse par cluster fourni pour le LISA (local Indicator or Spatial Association), nous pouvons remarquer que le cluster HH est celui regroupant le plus de communes suivi du cluster LH. Ceci dit une grande partie des communes ont des taux élevées et entourées par des communes de taux élevées ou encore des taux bas et entourées par des communes de taux élevées. 
+
+
 
