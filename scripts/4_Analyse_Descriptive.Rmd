@@ -21,6 +21,13 @@ library(spdep)
 library(geosphere)
 ```
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
 
 ```{r }
 # Importation des données de démonstration
@@ -625,16 +632,14 @@ library(spdep)
 ### Matrice de voisinage
 dist.w <- mat2listw(matrice_poids, style = "W", row.names=NULL)
 ```
-Après une analyse de nos données en ne tenant pas compte de l'effet spatial, nous allons à présent poursuivre avec une analyse qui tient compte de celui-ci. Nous allons ici faire une analyse basée sur le diagramme de Moran. Le diagramme de Moran permet d'analyser la structure spatiale du taux de consultations. Il est constitué d'un nuage de points où l'axe des abscisses représente les valeurs centrées du taux de consultations (\(yy\)), et l'axe des ordonnées montre les valeurs moyennes du taux de consultations pour les zones voisines (\(Wyy\)), avec \(W\) étant la matrice de poids normalisée. En raison de la centration de \(yy\) et de la normalisation de \(W\), la moyenne empirique de \(Wyy\) est égale à zéro.
-
-Le diagramme inclut aussi une droite de régression linéaire entre \(Wyy\) et \(yy\), ainsi que les lignes \(y=0\) et \(Wyy=0\), qui divisent l'espace en quatre quadrants.
+Après une analyse de nos données en ne tenant pas compte de l'effet spatial, nous allons à présent poursuivre avec une analyse qui tient compte de celui-ci. Nous allons ici faire une analyse basée sur le diagramme de Moran. AInsi d'après les ex plications données au niveau de la partie méthodologie, nous aurons les 4 quadrant suivants. 
 
 - **Quadrant 1 (haut à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, entourées de zones présentant également un taux de consultations élevé (autocorrélation spatiale positive, structure **high-high**).
 - **Quadrant 3 (bas à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, entourées de zones présentant un taux de consultations également faible (autocorrélation spatiale positive, structure **low-low**).
 - **Quadrant 2 (bas à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, mais entourées de zones présentant un taux de consultations plus faible (autocorrélation spatiale négative, structure **high-low**).
 - **Quadrant 4 (haut à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, mais entourées de zones avec un taux de consultations plus élevé (autocorrélation spatiale négative, structure **low-high**).
 
-La densité des points dans chaque quadrant permet de visualiser la structure spatiale dominante du taux de consultations. Ce diagramme aide aussi à identifier les zones atypiques, qui ne suivent pas la structure spatiale générale, facilitant ainsi l'analyse des résultats que vous obtiendrez par la suite. Vu le noimbre de nos communes la mise sur le graphique des noms de toutes les communes allaient être compliqué. POur cela, nous avons choisi au hasard 4 communes par cadrants. Ainsi, Ce diagramme de Moran illustre la corrélation spatiale des taux de consultation par commune et ceux des communes voisines. La tendance générale, représentée par la droite de régression rouge, montre une relation positive entre ces taux, confirmant ainsi une autocorrélation spatiale. Autrement dit, les communes ayant un taux élevé de consultations ont tendance à être entourées par d’autres communes avec un taux similaire, et inversement.
+ Vu le nombre de nos communes la mise sur le graphique des noms de toutes les communes allaient être compliqué. Pour cela, nous avons choisi au hasard 4 communes par cadrants. Ainsi, Ce diagramme de Moran illustre la corrélation spatiale des taux de consultation par commune et ceux des communes voisines. La tendance générale, représentée par la droite de régression rouge, montre une relation positive entre ces taux, confirmant ainsi une autocorrélation spatiale. Autrement dit, les communes ayant un taux élevé de consultations ont tendance à être entourées par d’autres communes avec un taux similaire, et inversement.
 
 Dans le quadrant HH (Haut-Haut), représenté en rouge, on retrouve des communes comme Saint-Saulve, Le Bouscat et Bruay-la-Buissière. Celles-ci affichent un taux de consultation élevé et sont entourées par des communes présentant également des taux élevés. Cela indique une concentration géographique des consultations médicales, qui peut s'expliquer par une offre de soins plus développée ou une demande locale particulièrement forte.
 
@@ -649,6 +654,10 @@ En résumé, cette analyse met en évidence des disparités territoriales dans l
 
 ```{r fig.cap="Moran Plot avec visibilités de quelques communes", fig.align='center'}
 library(spdep)
+library(dplyr)
+library(ggplot2)
+library(ggrepel)
+
 # Calcul du taux moyen des voisins
 data$taux_voisins <- lag.listw(dist.w, data$taux_visites)
 
@@ -690,7 +699,7 @@ ggplot(data, aes(x = taux_visites, y = taux_voisins)) +
 
 ### Autocorélation Locale
 
-```{r}
+```{r fig.cap="Clusters sur la base du LISA", fig.align='center'}
 # Calcul du LISA (Moran Local)
 lisa_results <- localmoran(data$taux_visites, dist.w)
 
