@@ -108,54 +108,10 @@
 l'étude}\label{cadre-conceptuel-de-luxe9tude}
 
 Dans cette partie, nous allons définir certainses notions clés qui
-apparaissent dans notre étude entre autres, le nombre de visites, le
-nombre de visites espérés ainsi que le taux de visite.
+apparaissent dans notre étude : le taux de visite et la notion de
+voisin.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  La notion de voisin
-\end{enumerate}
-
-Après avoir choisi l'échelle d'agrégation et effectué une analyse
-descriptive, il devient indispensable de définir le voisinage d'un objet
-spatial pour quantifier l'influence réciproque entre entités. La
-définition formelle se traduit par la détermination d'un ensemble de
-couples \((i,j)\) d'objets spatiaux, avec la contrainte qu'un objet ne
-peut être voisin de lui-même, c'est-à-dire que pour tout \(i\),
-\((i,i)\) n'est pas considéré.
-
-Une méthode classique consiste à construire une matrice de voisinage
-binaire \(W\) définie par : \[
-W_{ij} = \begin{cases} 
-1, & \text{si } i \text{ et } j \text{ sont considérés comme voisins} \\
-0, & \text{sinon}
-\end{cases}
-\] Les méthodes pour définir les voisins sont diverses :
-
-\begin{itemize}
-  \item \textbf{Basée sur la distance :}  
-  On utilise la distance euclidienne,
-  $$
-  d(i,j) = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2},
-  $$
-  pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante.
-  
-  \item \textbf{Basée sur la contiguïté :}  
-  Pour des données surfaciques (comme des zones administratives), les voisins sont définis en fonction du partage d'une frontière commune. On distingue par exemple la contiguïté \emph{Rook} (deux zones sont voisines si elles partagent un segment de frontière) et la contiguïté \emph{Queen} (elles sont voisines si elles partagent au moins un point).
-  
-  \item \textbf{Basée sur l'optimisation d'une trajectoire :}  
-  Une autre approche consiste à ordonner les points selon un chemin optimisé (par exemple, le plus court chemin ou le cycle hamiltonien dans le problème du voyageur de commerce). Les voisins d'un point sont alors définis comme les points qui se suivent immédiatement dans cet ordre.
-\end{itemize}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Taux de visite
-\end{enumerate}
+\subsubsection{Taux de visite}\label{taux-de-visite}
 
 Le taux de visite n'est rien d'autre que le nombre moyen de visite dans
 chaque commune. IL est calculé en divisant le nombre de visite par la
@@ -168,23 +124,82 @@ moyenne.
 où \(\tau_i\) et \(n_i\) sont respectivement le taux et le nombre de
 visite de la commune \(i\).
 
+\subsubsection{La notion de voisin}\label{la-notion-de-voisin}
+
+Il est indispensable de définir le voisinage d'un objet spatial pour
+quantifier l'influence réciproque entre entités. La définition formelle
+se traduit par la détermination d'un ensemble de couples \((i,j)\)
+d'objets spatiaux, avec la contrainte qu'un objet ne peut être voisin de
+lui-même, c'est-à-dire que pour tout \(i\), \((i,i)\) n'est pas
+considéré.
+
+Une méthode classique consiste à construire une matrice de voisinage
+binaire \(W\) définie par : \[
+W_{ij} = \begin{cases} 
+1, & \text{si } i \text{ et } j \text{ sont considérés comme voisins} \\
+0, & \text{sinon}
+\end{cases}
+\] Les méthodes pour définir les voisins sont diverses :
+
+\begin{itemize}
+  \item \textbf{Basée sur la distance :}  
+  On utilise par exemple la distance euclidienne,
+  $$
+  d(i,j) = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2},
+  $$
+pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante. Dans le cadre de cette étude, nous utiliserons la distance de Haversine, compte tenu des données utilisées (longitude et latitude)
+
+\item \textbf{Basée sur la contiguïté :}  
+  Pour des données surfaciques (comme des zones administratives), les voisins sont définis en fonction du partage d'une frontière commune. On distingue par exemple la contiguïté \emph{Rook} (deux zones sont voisines si elles partagent un segment de frontière) et la contiguïté \emph{Queen} (elles sont voisines si elles partagent au moins un point).
+  
+  \item \textbf{Basée sur l'optimisation d'une trajectoire :}  
+  Une autre approche consiste à ordonner les points selon un chemin optimisé (par exemple, le plus court chemin ou le cycle hamiltonien dans le problème du voyageur de commerce). Les voisins d'un point sont alors définis comme les points qui se suivent immédiatement dans cet ordre.
+\end{itemize}
+
+\subsubsection{Distance de Haversine}\label{distance-de-haversine}
+
+La distance de Haversine est une mesure de la distance entre deux points
+sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\)
+et \(longitude\)). Elle est particulièrement utile pour les données
+géographiques projetées sur une surface sphérique, comme la Terre.
+
+Si l'on considère deux points (\(i\)) et (\(j\)), la distance
+(\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon
+(\(r\)) est donnée par :
+
+\[
+ d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
+\]
+
+Où :
+
+\begin{itemize}
+\item
+  \(r\) : Rayon de la Terre (environ 6371 km).
+\item
+  \(\phi_i, \phi_j\) : Latitudes des points \(i\) et \(j\) (en radians).
+\item
+  \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en
+  radians). Après calcul nous avons ces statistiques sur nos distances.
+\end{itemize}
+
 \subsection{Revue de littérature}\label{revue-de-littuxe9rature}
 
 La modélisation des visites dans les hôpitaux est cruciale pour
 comprendre les dynamiques de la santé publique et optimiser la gestion
 des ressources médicales. En 2023, les services d'urgences en France ont
 enregistré environ 20,9 millions de passages, marquant une légère
-diminution par rapport à 2022 (\textbf{egora2023?}). Parallèlement,
-l'accès aux consultations médicales spécialisées demeure préoccupant. En
-2024, le délai moyen pour obtenir un rendez-vous chez un dermatologue
-était de 36 jours, l'un des plus longs parmi les spécialités médicales
-(\textbf{bfmtv2024?}). Ces difficultés d'accès aux soins ont conduit un
-nombre croissant de patients à se tourner vers les services d'urgences
-pour des consultations non urgentes, accentuant ainsi la saturation de
-ces services. Dans ce contexte, il est crucial de comprendre les
-facteurs qui influencent le nombre de consultations médicales, afin
-d'allouer les ressources de manière optimale sur le plan matériel,
-humain et financier, tout en prévenant des situations de surcharge des
+diminution par rapport à 2022 (Egora 2023). Parallèlement, l'accès aux
+consultations médicales spécialisées demeure préoccupant. En 2024, le
+délai moyen pour obtenir un rendez-vous chez un dermatologue était de 36
+jours, l'un des plus longs parmi les spécialités médicales (BFMTV 2024).
+Ces difficultés d'accès aux soins ont conduit un nombre croissant de
+patients à se tourner vers les services d'urgences pour des
+consultations non urgentes, accentuant ainsi la saturation de ces
+services. Dans ce contexte, il est crucial de comprendre les facteurs
+qui influencent le nombre de consultations médicales, afin d'allouer les
+ressources de manière optimale sur le plan matériel, humain et
+financier, tout en prévenant des situations de surcharge des
 établissements de santé.
 
 De nombreuses études ont montré que le nombre de consultations médicales
@@ -279,9 +294,19 @@ en raison de l'accessibilité limitée à des médecins généralistes.
 
 \phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-bfmtv2024}
+BFMTV. 2024. {``Généraliste, Dermatologue, Pédiatre : Quel Est Le Délai
+Pour Obtenir Un Rendez-Vous Chez Le Médecin En 2024 ?''}
+\url{https://www.bfmtv.com/tech/vie-numerique/sur-doctolib-la-moitie-des-consultations-de-generalistes-sont-obtenues-en-moins-de-3-jours_AD-202404230604.html}.
+
 \bibitem[\citeproctext]{ref-statcan2022}
 Canada, Statistique. 2022. {``Fréquence Des Consultations Médicales Et
 Facteurs Sociodémographiques.''} \url{https://www150.statcan.gc.ca}.
+
+\bibitem[\citeproctext]{ref-egora2023}
+Egora. 2023. {``Hôpital : La Part d'ambulatoire Augmente de 6,5 \% , Les
+Séjours Diminuent.''}
+\url{https://www.egora.fr/actus-pro/hopitaux/hopital-la-part-dambulatoire-augmente-de-65-les-sejours-diminuent}.
 
 \bibitem[\citeproctext]{ref-irdes2020}
 Irdes. 2020. {``Inégalités Spatiales d'accessibilité Aux Soins

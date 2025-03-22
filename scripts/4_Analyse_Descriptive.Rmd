@@ -99,9 +99,6 @@ data <- data %>%
 
 #skim(data)
 
-
-
-
 ## Exportation de la base finale 
 write.csv(data, "../data/data.csv", row.names = FALSE)
 

@@ -8,7 +8,11 @@ output:
 
 ## Source des données
 
-Les données utilisées dans cette étude proviennent de ...
+L’étude repose sur des données issues du Système National des Données de Santé (SNDS), couvrant la période 2018-2022 et portant sur environ 5000 communes. Ces données permettent d’analyser le nombre de consultations en médecine de ville en tenant compte des disparités territoriales et des caractéristiques locales.
+
+Les informations utilisées concernent principalement le volume des consultations médicales et leur répartition géographique. Des données complémentaires sur le contexte communal, telles que la densité de population et l’accessibilité aux soins, permettent d’affiner l’analyse. L’intégration de ces éléments facilite une approche spatiale de la modélisation, essentielle pour détecter d’éventuelles inégalités d’accès aux soins.
+
+L’ensemble des données a été anonymisé et traité conformément aux normes en vigueur, garantissant ainsi la confidentialité des informations exploitées. Cette base constitue une ressource précieuse pour mieux comprendre les dynamiques d’accès aux soins en médecine de ville et proposer des modèles adaptés aux spécificités territoriales.
 
 ## Justification de l'économétrie spatiale
 
@@ -57,17 +61,56 @@ Pour construire la matrice de poids, nous avons alors suivi ces étapes.
      w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
     $$
 
-Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
-`r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a
-permi d'obtenir une p-value de `r moran_result[["p.value"]]`. Ce qui
-permet de conclure qu'il y a effectivement une autocorrélation positive
-et significative entre les communes selon leur taux de consultations.
+#### Test significativité de l'indice de Moran :
 
+Le test de significativité de l’indice de Moran permet d’évaluer si une variable présente une autocorrélation spatiale significative, c’est-à-dire si les valeurs observées dans des zones proches ont tendance à être similaires ou non.
 
-#### Test de Moran (à compléter : Toussaint)
+\textbf{Hypothèses du test}
 
-Hypothèses et règle de décision.
+\begin{itemize}
+    \item \textbf{Hypothèse nulle} \( H_0 \) : Il n’y a \textbf{pas d’autocorrélation spatiale} significative. Les valeurs observées sont distribuées de manière aléatoire dans l’espace.
+    \item \textbf{Hypothèse alternative} \( H_1 \) : Il existe une \textbf{autocorrélation spatiale} significative (positive ou négative).
+\end{itemize}
 
+\textbf{Statistique de test}
+
+L’Indice de Moran standardisé suit approximativement une distribution normale sous \( H_0 \). La statistique de test est donnée par :
+
+$$
+    Z = \frac{I - E(I)}{\text{Var}(I)}
+$$
+
+où :
+\begin{itemize}
+    \item \( I \) est l’Indice de Moran calculé sur les données,
+    \item \( E(I) \) est l’espérance théorique de \( I \) sous \( H_0 \),
+    \item \( \text{Var}(I) \) est la variance théorique de \( I \).
+\end{itemize}
+
+L’espérance sous \( H_0 \) pour un échantillon de taille \( n \) est donnée par :
+
+$$
+    E(I) = -\frac{1}{n - 1}
+$$
+
+\textbf{Règle de décision}
+
+On compare la statistique \( Z \) à une loi normale centrée réduite \( \mathcal{N}(0,1) \). Pour un seuil de significativité \( \alpha \) (ex. 5 \%), on utilise les quantiles de la loi normale :
+
+\begin{itemize}
+    \item Si \( Z > z_{1-\alpha/2} \) ou \( Z < -z_{1-\alpha/2} \), on \textbf{rejette \( H_0 \)} et on conclut qu’il existe une autocorrélation spatiale significative.
+    \item Si \( Z \in [-z_{1-\alpha/2}, z_{1-\alpha/2}] \), on \textbf{ne rejette pas \( H_0 \)}, et on considère que la distribution spatiale est aléatoire.
+\end{itemize}
+
+\textbf{Interprétation de l’Indice de Moran}
+
+\begin{itemize}
+    \item \( I > 0 \) et significatif : Autocorrélation spatiale \textbf{positive} (les zones proches ont des valeurs similaires).
+    \item \( I < 0 \) et significatif : Autocorrélation spatiale \textbf{négative} (les zones proches ont des valeurs opposées).
+    \item \( I \approx 0 \) et non significatif : Absence d’autocorrélation spatiale, les valeurs sont distribuées de manière aléatoire.
+\end{itemize}
+
+Ce test est couramment utilisé en analyse spatiale pour identifier des regroupements de valeurs similaires, par exemple dans les études de santé publique, d’aménagement du territoire ou d’économie régionale.
 
 ## Modélisation en économétrie spatiale
 
@@ -87,8 +130,6 @@ Voici un rappel des différents éléments utilisés dans l'ensemble des modèle
 \end{itemize}
 
 ### Modèles principaux
-
-(Reformuler certaines interprétations pour ne pas faire ressortir les modèles non abordés : Toussaint)
 
 Le modèle général est défini comme suit :
 
@@ -124,7 +165,7 @@ $$
 
 \textbf{SLX (Spatial Lag of X Model)} :
 
-Le modèle SLX est plus simple que SAR et SDM, car il suppose que la variable dépendante \( Y \) n’est pas directement influencée par les valeurs voisines, mais uniquement par les variables explicatives des zones voisines. Il est écrit comme suit :
+Le modèle SLX est plus facile à estimer, car il suppose que la variable dépendante \( Y \) n’est pas directement influencée par les valeurs voisines, mais uniquement par les variables explicatives des zones voisines. Il est écrit comme suit :
 $$
 Y = X \beta + \theta W X + \varepsilon
 $$
@@ -132,7 +173,7 @@ où \( W X \) capture l'effet des variables explicatives des unités voisines.
 
 \underline{\textbf{Interprétation :}}
 \begin{itemize}
-\item Contrairement aux modèles SAR et SDM, il n’y a pas d’effet direct des valeurs voisines de \( Y \).
+\item Il n’y a pas d’effet direct des valeurs voisines de \( Y \).
 \item Il mesure uniquement l'effet de "spillover" (d'effet de débordement) des facteurs explicatifs.
 \end{itemize}
 
@@ -143,13 +184,14 @@ $$
 Y = \rho W Y + X \beta + \theta W X + \varepsilon
 $$
 \underline{\textbf{Interprétation :}}
+
 \begin{itemize}
 \item Si \( \theta = 0 \), le modèle SDM devient un SAR classique.
 \item Si \( \rho = 0 \), il devient un modèle SLX (voir ci-dessous).
 \item Il permet de tester si des variables exogènes influencent \( Y \) au-delà des frontières administratives.
 \end{itemize}
 
-\textbf{Comparaison des modèles} (Mettre SDM à la fin dans le tableau : Toussaint)
+\textbf{Comparaison des modèles}
 
 \begin{table}[h]
     \centering
@@ -161,9 +203,9 @@ $$
         \hline
         \textbf{SEM}  & Non  & Non  & Oui \\
         \hline
-        \textbf{SDM}  & Oui  & Oui  & Non \\
-        \hline
         \textbf{SLX}  & Non  & Oui  & Non \\
+        \hline
+        \textbf{SDM}  & Oui  & Oui  & Non \\
         \hline
     \end{tabular}
     \caption{Comparaison des modèles spatiaux}
