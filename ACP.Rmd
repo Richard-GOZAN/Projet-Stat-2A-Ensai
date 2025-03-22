@@ -131,10 +131,4 @@ Les corrélations renforcent ces liens :
 
 ## 4. Synthèse globale
 
-L’ACP révèle deux enjeux majeurs pour les politiques publiques :
-
-- Le vieillissement démographique : Certaines communes font face à une population âgée, une faible natalité et un exode des jeunes, nécessitant des mesures ciblées (services de santé, maintien des services publics).
-
-- Les disparités socio-économiques : L’opposition entre communes ouvrières et tertiaires souligne la nécessité d’adapter les stratégies de développement économique et d’inclusion sociale.
-
-- Les variables Plus65ans, Natalite, Ouvriers et Divorces émergent comme des marqueurs clés pour comprendre ces dynamiques. Une analyse complémentaire (clustering, régressions) permettrait d’affiner ces résultats et de guider l’action territoriale.
+L’ACP révèle deux axes structurants : (1) un gradient démographique opposant communes vieillissantes (forte mortalité, familles sans enfants de moins de 25 ans) aux communes jeunes (natalité élevée, population de moins de 25 ans), expliquant 44.2 % de la variance ; (2) un gradient socio-économique distinguant territoires ouvriers (taux de divorce élevé) des territoires tertiaires (employés, population dense), expliquant 24.3 % de la variance. Les variables Plus65ans, Natalite, Ouvriers et Employes émergent comme marqueurs clés, avec des corrélations antagonistes fortes. Ces oppositions dessinent une cartographie claire des territoires, combinant enjeux démographiques et fractures socio-professionnelles.
