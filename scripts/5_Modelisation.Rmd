@@ -10,6 +10,51 @@ output:
 data <- read.csv("../data/data.csv", sep = ",", dec=".")
 ```
 
+
+```{r}
+# Renommer la colonne de population totale
+colnames(data)[which(colnames(data) == "population_municipale_2021_x")] <- "population_totale"
+
+# Regroupement des âges
+data$pop_0_24 <- rowSums(data[, c("homme_0_4", "femmes_0_4", "hommes_5_9", "femmes_5_9", 
+                                  "hommes_10_14", "femmes_10_14", "hommes_15_19", "femmes_15_19", 
+                                  "hommes_20_24", "femmes_20_24")], na.rm = TRUE)
+
+data$pop_25_64 <- rowSums(data[, c("hommes_25_29", "femmes_25_29", "hommes_30_34", "femmes_30_34", 
+                                   "hommes_35_39", "femmes_35_39", "hommes_40_44", "femmes_40_44", 
+                                   "hommes_45_49", "femmes_45_49", "hommes_50_54", "femmes_50_54", 
+                                   "hommes_55_59", "femmes_55_59", "hommes_60_64", "femmes_60_64")], na.rm = TRUE)
+
+data$pop_65_plus <- rowSums(data[, c("homme_65_69", "femmes_65_69", "hommes_70_47", "femmes_70_74", 
+                                     "hommes_75_79", "femmes_75_79", "hommes_80_84", "femmes_80_84", 
+                                     "hommes_85_89", "femmes_85_89", "hommes_90_94", "femmes_90_94", 
+                                     "hommes_95_plus", "femmes_95_plus")], na.rm = TRUE)
+
+# Calcul des pourcentages
+data$pct_pop_0_24 <- (data$pop_0_24 / data$population_totale) * 100
+data$pct_pop_25_64 <- (data$pop_25_64 / data$population_totale) * 100
+data$pct_pop_65_plus <- (data$pop_65_plus / data$population_totale) * 100
+
+data$pct_union_libre <- data$part_d_en_concubinage_ou_union_libre # Déjà en pourcentage
+
+data$pct_ouvriers <- (data$population_de_15_ans_ou_selon_la_csp_2021_ouvriers / data$population_totale) * 100
+
+data$pct_sans_emploi <- (data$population_de_15_ans_ou_selon_la_csp_2021_autres_personnes_sans_activite_professionnelle /
+                        (data$pop_0_24 + data$pop_25_64)) * 100
+
+data$pct_fam_3_enfants_plus <- data$part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021 # Déjà en pourcentage
+
+# Création de la base finale
+data_modelisation <- data[, c("code", "libelle_x", "pct_pop_0_24", "pct_pop_25_64", "pct_pop_65_plus",
+                              "pct_union_libre", "pct_ouvriers", "pct_sans_emploi", "pct_fam_3_enfants_plus",
+                              "taux_de_natalite_annuel_moyen_2015_2021", "taux_de_mortalite_annuel_moyen_2015_2021")]
+
+# Sauvegarde en CSV
+write.csv(data_modelisation, "../data/data_modelisation.csv", row.names = FALSE)
+```
+
+
+
 ```{r }
 # # Création des variables agrégées
 # 

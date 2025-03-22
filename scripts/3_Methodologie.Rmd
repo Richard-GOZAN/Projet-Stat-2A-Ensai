@@ -22,6 +22,47 @@ Sur le plan économétrique, l’omission des effets spatiaux peut introduire de
 
 L'autocorrélation spatiale désigne la dépendance statistique entre des observations géographiquement proches. En d'autres termes, les valeurs prises par une variable en un lieu donné sont influencées par les valeurs observées dans les localisations voisines. Cette dépendance peut être positive, lorsque des valeurs similaires se regroupent, ou négative, lorsqu’une valeur élevée en un point est associée à une valeur faible dans les zones environnantes.
 
+### Diagramme de Moran
+
+Le diagramme de Moran est un outil permettant d’analyser la structure spatiale d’une variable. Il représente un nuage de points où :  
+
+- L’axe des abscisses affiche les valeurs centrées de la variable d’intérêt \( y \).  
+- L’axe des ordonnées affiche les valeurs moyennes de cette variable pour les observations voisines \( W y \), où \( W \) est la matrice de poids normalisée.  
+
+#### Interprétation  
+
+En raison du centrage de \( y \) et de la normalisation de \( W \), la moyenne empirique de \( W y \) est égale à zéro.  
+
+- **Si les observations sont distribuées aléatoirement dans l’espace**, il n’existe pas de relation particulière entre \( y \) et \( W y \). La pente de la droite de régression linéaire est alors proche de zéro, et les observations sont réparties de manière uniforme dans les quadrants.  
+- **Si une structure spatiale existe**, la pente de la régression linéaire est différente de zéro, indiquant une corrélation entre \( y \) et \( W y \).  
+
+Le diagramme est divisé en **quatre quadrants** définis par les lignes \( y = 0 \) et \( W y = 0 \), correspondant à différents types d’association spatiale :  
+
+1. **Quadrant 1 (haut à droite, High-High)**  
+   - Valeurs élevées de la variable \( y \) entourées par des valeurs également élevées.  
+   - Indique une **autocorrélation spatiale positive**.  
+   - Peut refléter des zones homogènes où les valeurs sont naturellement élevées.  
+
+2. **Quadrant 3 (bas à gauche, Low-Low)**  
+   - Valeurs faibles de \( y \) entourées par des valeurs également faibles.  
+   - Indique une **autocorrélation spatiale positive**.  
+   - Suggère la présence de zones où les valeurs sont homogènement basses.  
+
+3. **Quadrant 2 (bas à droite, High-Low)**  
+   - Valeurs élevées de \( y \) entourées par des valeurs faibles.  
+   - Indique une **autocorrélation spatiale négative**.  
+   - Peut signaler une hétérogénéité spatiale locale, où certaines observations diffèrent fortement de leur voisinage.  
+
+4. **Quadrant 4 (haut à gauche, Low-High)**  
+   - Valeurs faibles de \( y \) entourées par des valeurs élevées.  
+   - Indique une **autocorrélation spatiale négative**.  
+   - Peut traduire des zones de contraste spatial marquées.  
+
+#### Utilité du Diagramme de Moran  
+
+Le diagramme de Moran permet d’identifier les structures spatiales dominantes en observant la répartition des points dans les quadrants. Il aide également à détecter les observations atypiques qui s’écartent du modèle spatial général et à confirmer l’existence d’une autocorrélation spatiale en complément de l’indice de Moran, qui quantifie cette relation. Cet outil visuel est ainsi essentiel pour explorer la dépendance spatiale et comprendre les structures spatiales sous-jacentes d’une variable. 
+
+
 ### Matrice des poids spatiaux
 
 Pour quantifier la proximité spatiale entre unités géographiques, on utilise une matrice de poids spatiaux notée $W$. Cette matrice représente les relations de voisinage et permet d’introduire la structure spatiale dans les modèles économétriques. La matrice de poids peut être une matrice de contiguité binaire ou peut tenir compte de la distance entre les zones géographiques. Cette étude utilise une matrice de poids basée sur la distance et contient des pondérations inversément proportionnelles à la distance entre les régions.
