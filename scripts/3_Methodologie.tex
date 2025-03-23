@@ -77,7 +77,19 @@ L'étude repose sur des données issues du Système National des Données de
 Santé (SNDS), couvrant la période 2018-2022 et portant sur environ 5000
 communes. Ces données permettent d'analyser le nombre de consultations
 en médecine de ville en tenant compte des disparités territoriales et
-des caractéristiques locales.
+des caractéristiques locales. Nous avons trois bases essentielles. La
+première source est une base démographique contenant des données
+détaillées sur la répartition de la population par sexe et par tranche
+d'âge, ainsi que des indicateurs généraux tels que la population
+municipale et la structure des ménages. La deuxième source est une base
+généralisée intégrant des informations socio-économiques, notamment sur
+les statuts matrimoniaux, les catégories socioprofessionnelles et le
+marché de l'emploi. Cette base permet d'étudier la composition sociale
+des communes et d'évaluer certains phénomènes tels que le taux
+d'activité ou la prévalence des unions libres. Enfin, une troisième base
+a été utilisée pour compléter les données géographiques, en particulier
+pour renseigner les latitudes et longitudes manquantes de certaines
+communes.
 
 Les informations utilisées concernent principalement le volume des
 consultations médicales et leur répartition géographique. Des données
@@ -93,32 +105,78 @@ exploitées. Cette base constitue une ressource précieuse pour mieux
 comprendre les dynamiques d'accès aux soins en médecine de ville et
 proposer des modèles adaptés aux spécificités territoriales.
 
-\subsection{Justification de l'économétrie
-spatiale}\label{justification-de-luxe9conomuxe9trie-spatiale}
+\subsection{Traitement réalisés sur la base de
+données}\label{traitement-ruxe9alisuxe9s-sur-la-base-de-donnuxe9es}
 
-L'économétrie spatiale est justifiée par des raisons économiques et
-économétriques. D'un point de vue économique, la proximité spatiale joue
-un rôle clé dans les décisions des agents économiques. Les entreprises,
-par exemple, ajustent leurs stratégies en fonction de la concurrence
-locale, tandis que la diffusion des innovations et les effets
-d'agglomération influencent la productivité régionale. Les externalités
-spatiales, telles que l'effet de pair et les interactions entre
-industries voisines, ont également un impact direct sur les marchés.
-Ainsi, la prise en compte de la dimension spatiale est essentielle pour
-comprendre les dynamiques économiques locales et globales.
+Après la fusion des bases de données, un ensemble de traitements a été
+réalisé afin de structurer les informations et garantir la cohérence des
+analyses. La première étape a consisté à nettoyer et harmoniser les noms
+des variables pour faciliter leur manipulation. Ce travail a inclus la
+suppression des accents, le remplacement des espaces et caractères
+spéciaux par des underscores et la conversion en minuscules. De plus,
+certaines incohérences ont été corrigées, notamment des erreurs
+typographiques dans les intitulés des tranches d'âge.
 
-Sur le plan économétrique, l'omission des effets spatiaux peut
-introduire des biais dans les estimations, rendant les modèles
-classiques inefficaces. L'autocorrélation spatiale des résidus (tout
-comme l'autocorrélation temporelle des résidus) est un problème
-récurrent, pouvant fausser l'inférence statistique si elle n'est pas
-correctement modélisée. De plus, l'hypothèse d'indépendance des
-observations, souvent supposée dans les modèles classiques, est rarement
-vérifiée lorsque des interactions spatiales existent. En intégrant des
-structures de dépendance spatiale, les modèles économétriques spatiaux
-permettent d'améliorer la précision des estimations et de mieux
-comprendre les relations entre unités géographiques, évitant ainsi les
-erreurs d'interprétation liées à des phénomènes locaux ou régionaux.
+Une fois cette normalisation effectuée, les différentes bases ont été
+fusionnées. Une jointure interne a été réalisée entre les bases
+démographiques et socio-économiques en utilisant le code unique des
+communes, ce qui a permis de conserver uniquement les communes présentes
+dans les deux sources. Ensuite, une jointure gauche avec la base des
+coordonnées géographiques a été effectuée pour compléter les
+informations manquantes sur la latitude et la longitude des communes
+concernées. Lors de cette étape, une attention particulière a été portée
+pour éviter la duplication des données et sélectionner les valeurs les
+plus pertinentes en cas de conflit entre plusieurs sources.
+
+L'étape suivante a consisté à structurer et créer de nouvelles variables
+analytiques. En ce qui concerne la répartition de la population, les
+différentes tranches d'âge disponibles ont été regroupées en trois
+grandes catégories : 0-24 ans, 25-64 ans et 65 ans et plus. Ce
+regroupement permet d'obtenir une vision synthétique de la structure
+démographique tout en conservant des distinctions essentielles entre les
+jeunes, les actifs et les seniors. Pour chacune de ces nouvelles
+catégories, un indicateur de proportion a été calculé en rapportant la
+population de chaque groupe à la population totale de la commune.
+
+Un travail spécifique a été réalisé pour enrichir l'analyse
+socio-économique. Le pourcentage des personnes en union libre a été
+calculé à partir des données disponibles sur les statuts matrimoniaux,
+et la part des ouvriers a été estimée en rapportant cette catégorie à la
+population totale. Le pourcentage des personnes sans emploi a été évalué
+en prenant comme référence la population âgée de 0 à 64 ans, excluant
+ainsi les retraités pour obtenir un indicateur plus pertinent sur la
+population active. De plus, un indicateur mesurant la proportion des
+familles avec trois enfants ou plus a été créé afin d'étudier la
+dynamique familiale dans les communes étudiées.
+
+Un des traitements majeurs effectués a été la création d'une variable
+inédite : le taux de consultation. Cette variable, qui n'existait pas
+initialement dans la base, a été construite en rapportant le nombre
+total de consultations enregistrées dans chaque commune à la population
+municipale. Cette mesure permet d'évaluer la fréquence des consultations
+médicales ou administratives en fonction de la taille de la population
+et constitue un indicateur clé pour analyser l'accessibilité et
+l'utilisation des services sur le territoire étudié. Une version
+spécifique de cet indicateur a également été calculée pour la population
+de 19 ans et plus, en excluant les plus jeunes afin de mieux capter les
+tendances de consultation chez les adultes.
+
+Enfin, un effort particulier a été porté sur la visualisation des
+données, notamment avec la construction d'une pyramide des âges. Pour
+cela, les effectifs masculins et féminins ont été extraits et
+réorganisés par tranche d'âge afin de respecter la convention des
+pyramides démographiques, affichant les populations masculines en
+valeurs négatives et les populations féminines en valeurs positives.
+Cette représentation permet d'identifier les déséquilibres entre les
+classes d'âge et de mieux comprendre la structure démographique des
+communes analysées.
+
+Une fois ces traitements finalisés, la base de données enrichie a été
+exportée sous un format exploitable, intégrant l'ensemble des nouvelles
+variables créées ainsi que les indicateurs de taux de natalité et de
+mortalité. Ce travail de préparation assure une qualité optimale des
+données et permet de mener des analyses détaillées sur la dynamique
+démographique et socio-économique des communes étudiées.
 
 \subsection{Concepts fondamentaux en statistique
 spatiale}\label{concepts-fondamentaux-en-statistique-spatiale}
@@ -133,6 +191,115 @@ valeurs observées dans les localisations voisines. Cette dépendance peut
 être positive, lorsque des valeurs similaires se regroupent, ou
 négative, lorsqu'une valeur élevée en un point est associée à une valeur
 faible dans les zones environnantes.
+
+\subsubsection{Diagramme de Moran}\label{diagramme-de-moran}
+
+Le diagramme de Moran est un outil permettant d'analyser la structure
+spatiale d'une variable. Il représente un nuage de points où :
+
+\begin{itemize}
+\tightlist
+\item
+  L'axe des abscisses affiche les valeurs centrées de la variable
+  d'intérêt \(y\).\\
+\item
+  L'axe des ordonnées affiche les valeurs moyennes de cette variable
+  pour les observations voisines \(W y\), où \(W\) est la matrice de
+  poids normalisée.
+\end{itemize}
+
+\paragraph{Interprétation}\label{interpruxe9tation}
+
+En raison du centrage de \(y\) et de la normalisation de \(W\), la
+moyenne empirique de \(W y\) est égale à zéro.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Si les observations sont distribuées aléatoirement dans
+  l'espace}, il n'existe pas de relation particulière entre \(y\) et
+  \(W y\). La pente de la droite de régression linéaire est alors proche
+  de zéro, et les observations sont réparties de manière uniforme dans
+  les quadrants.\\
+\item
+  \textbf{Si une structure spatiale existe}, la pente de la régression
+  linéaire est différente de zéro, indiquant une corrélation entre \(y\)
+  et \(W y\).
+\end{itemize}
+
+Le diagramme est divisé en \textbf{quatre quadrants} définis par les
+lignes \(y = 0\) et \(W y = 0\), correspondant à différents types
+d'association spatiale :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Quadrant 1 (haut à droite, High-High)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Valeurs élevées de la variable \(y\) entourées par des valeurs
+    également élevées.\\
+  \item
+    Indique une \textbf{autocorrélation spatiale positive}.\\
+  \item
+    Peut refléter des zones homogènes où les valeurs sont naturellement
+    élevées.
+  \end{itemize}
+\item
+  \textbf{Quadrant 3 (bas à gauche, Low-Low)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Valeurs faibles de \(y\) entourées par des valeurs également
+    faibles.\\
+  \item
+    Indique une \textbf{autocorrélation spatiale positive}.\\
+  \item
+    Suggère la présence de zones où les valeurs sont homogènement
+    basses.
+  \end{itemize}
+\item
+  \textbf{Quadrant 2 (bas à droite, High-Low)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Valeurs élevées de \(y\) entourées par des valeurs faibles.\\
+  \item
+    Indique une \textbf{autocorrélation spatiale négative}.\\
+  \item
+    Peut signaler une hétérogénéité spatiale locale, où certaines
+    observations diffèrent fortement de leur voisinage.
+  \end{itemize}
+\item
+  \textbf{Quadrant 4 (haut à gauche, Low-High)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Valeurs faibles de \(y\) entourées par des valeurs élevées.\\
+  \item
+    Indique une \textbf{autocorrélation spatiale négative}.\\
+  \item
+    Peut traduire des zones de contraste spatial marquées.
+  \end{itemize}
+\end{enumerate}
+
+\paragraph{Utilité du Diagramme de
+Moran}\label{utilituxe9-du-diagramme-de-moran}
+
+Le diagramme de Moran permet d'identifier les structures spatiales
+dominantes en observant la répartition des points dans les quadrants. Il
+aide également à détecter les observations atypiques qui s'écartent du
+modèle spatial général et à confirmer l'existence d'une autocorrélation
+spatiale en complément de l'indice de Moran, qui quantifie cette
+relation. Cet outil visuel est ainsi essentiel pour explorer la
+dépendance spatiale et comprendre les structures spatiales sous-jacentes
+d'une variable.
 
 \subsubsection{Matrice des poids
 spatiaux}\label{matrice-des-poids-spatiaux}
