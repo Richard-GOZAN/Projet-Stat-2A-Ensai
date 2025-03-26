@@ -141,6 +141,20 @@ dist.w <- mat2listw(matrice_poids, style = "W", row.names=NULL)
 dist.w
 ```
 
+# Modélisation
+
+## Choix des variables utilisées dans la modélisation
+
+Une Analyse en Composantes Principales (ACP) a été effectuée afin d'identifier les variables qui s'associent et faire un choix plus judicieux et orienté des variables. En se servant les résultats de l'ACP (voir annexe) et en se basant sur les différentes variables illustrées par la revue de littérature, on s'intéressera aux parts des populations de 25 à 64 ans et celle de 65 ans et plus, à la part des populations en union libre, à la part des ouvriers, des sans emploi, au taux de natalité annuel moyen, à la part des populations ayant au moins trois (03) enfants de moins de 25 ans. Ces variables sont toutes prises en taux et nous permettebt de modéliser le taux de visites de médecen généraliste.
+
+## Test de Moran
+
+## Comparaison des modèles estimés
+
+## Optimisation du modèle par sélection de variables
+
+
+
 ```{r}
 attach(data)
 
