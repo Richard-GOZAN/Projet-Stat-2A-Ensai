@@ -8,15 +8,15 @@ bibliography: references.bib
 
 ## Cadre conceptuel de l'étude
 
-Dans cette partie, nous allons définir certainses notions clés qui apparaissent dans notre étude : le taux de visite et la notion de voisin.
+Dans cette partie, nous allons définir certaines notions clés qui apparaissent dans notre étude : le taux de visites et la notion de voisin.
 
-### Taux de visite
+### Taux de visites
 
-Le taux de visite n'est rien d'autre que le nombre moyen de visite dans chaque commune. IL est calculé en divisant le nombre de visite par la population de la commune en question. En d'autres termes, il s'agit du nombre de visites que chaque habitant de la commune a effectué en moyenne. 
+Le taux de visites n'est rien d'autre que le nombre moyen de visites dans chaque commune. Il est calculé en divisant le nombre de visites par la population de la commune en question. En d'autres termes, il s'agit du nombre de visites que chaque habitant de la commune a effectué en moyenne. 
 
 $$\tau_i = \frac{n_i}{P_i}$$
 
-où $\tau_i$ et $n_i$ sont respectivement le taux et le nombre de visite de la commune $i$. 
+où $\tau_i$ et $n_i$ sont respectivement le taux et le nombre de visites de la commune $i$. 
 
 ###  La notion de voisin
 
@@ -36,7 +36,7 @@ Les méthodes pour définir les voisins sont diverses :
   $$
   d(i,j) = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2},
   $$
-pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante. Dans le cadre de cette étude, nous utiliserons la distance de Haversine, compte tenu des données utilisées (longitude et latitude)
+pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante. Dans le cadre de cette étude, nous utiliserons la distance de Haversine, compte tenu des données utilisées (longitude et latitude).
 
 \item \textbf{Basée sur la contiguïté :}  
   Pour des données surfaciques (comme des zones administratives), les voisins sont définis en fonction du partage d'une frontière commune. On distingue par exemple la contiguïté \emph{Rook} (deux zones sont voisines si elles partagent un segment de frontière) et la contiguïté \emph{Queen} (elles sont voisines si elles partagent au moins un point).
@@ -61,13 +61,13 @@ $$
 $$
 
 
-Où : 
+Avec : 
 
-- $r$ : Rayon de la Terre (environ 6371 km).
+- $r$ : le rayon de la terre (environ 6371 km).
 
--   $\phi_i, \phi_j$ : Latitudes des points $i$ et $j$ (en radians).
+-   $\phi_i, \phi_j$ : les latitudes des points $i$ et $j$ (en radians).
 
--   $\lambda_i, \lambda_j$ : Longitudes des points $i$ et $j$ (en radians). Après calcul nous avons ces statistiques sur nos distances.
+-   $\lambda_i, \lambda_j$ : les longitudes des points $i$ et $j$ (en radians).
 
 ## Revue de littérature
 

@@ -26,6 +26,14 @@ Sur le plan économétrique, l’omission des effets spatiaux peut introduire de
 
 L'autocorrélation spatiale désigne la dépendance statistique entre des observations géographiquement proches. En d'autres termes, les valeurs prises par une variable en un lieu donné sont influencées par les valeurs observées dans les localisations voisines. Cette dépendance peut être positive, lorsque des valeurs similaires se regroupent, ou négative, lorsqu’une valeur élevée en un point est associée à une valeur faible dans les zones environnantes.
 
+Trois (03) formes d'interaction spatiale se dégagent du modèle spatial de base :
+
+\begin{itemize}
+  \item une interaction endogène : la décision économique d’un agent ou d’une zone géographique va dépendre de la décision de ses voisins;
+  \item une interaction exogène : la décision économique d’un agent va dépendre des caractéristiques observables de ses voisins;
+  \item une corrélation spatiale des effets : liée à de mêmes caractéristiques inobservées entre les agents.
+\end{itemize}
+
 ### Diagramme de Moran
 
 Le diagramme de Moran est un outil permettant d’analyser la structure spatiale d’une variable. Il représente un nuage de points où :  
@@ -33,87 +41,57 @@ Le diagramme de Moran est un outil permettant d’analyser la structure spatiale
 - L’axe des abscisses affiche les valeurs centrées de la variable d’intérêt \( y \).  
 - L’axe des ordonnées affiche les valeurs moyennes de cette variable pour les observations voisines \( W y \), où \( W \) est la matrice de poids normalisée.  
 
-#### Interprétation  
+\underline{\textbf{Utilité du Diagramme de Moran}}  \\
 
-En raison du centrage de \( y \) et de la normalisation de \( W \), la moyenne empirique de \( W y \) est égale à zéro.  
-
-- **Si les observations sont distribuées aléatoirement dans l’espace**, il n’existe pas de relation particulière entre \( y \) et \( W y \). La pente de la droite de régression linéaire est alors proche de zéro, et les observations sont réparties de manière uniforme dans les quadrants.  
-- **Si une structure spatiale existe**, la pente de la régression linéaire est différente de zéro, indiquant une corrélation entre \( y \) et \( W y \).  
-
-Le diagramme est divisé en **quatre quadrants** définis par les lignes \( y = 0 \) et \( W y = 0 \), correspondant à différents types d’association spatiale :  
-
-1. **Quadrant 1 (haut à droite, High-High)**  
-   - Valeurs élevées de la variable \( y \) entourées par des valeurs également élevées.  
-   - Indique une **autocorrélation spatiale positive**.  
-   - Peut refléter des zones homogènes où les valeurs sont naturellement élevées.  
-
-2. **Quadrant 3 (bas à gauche, Low-Low)**  
-   - Valeurs faibles de \( y \) entourées par des valeurs également faibles.  
-   - Indique une **autocorrélation spatiale positive**.  
-   - Suggère la présence de zones où les valeurs sont homogènement basses.  
-
-3. **Quadrant 2 (bas à droite, High-Low)**  
-   - Valeurs élevées de \( y \) entourées par des valeurs faibles.  
-   - Indique une **autocorrélation spatiale négative**.  
-   - Peut signaler une hétérogénéité spatiale locale, où certaines observations diffèrent fortement de leur voisinage.  
-
-4. **Quadrant 4 (haut à gauche, Low-High)**  
-   - Valeurs faibles de \( y \) entourées par des valeurs élevées.  
-   - Indique une **autocorrélation spatiale négative**.  
-   - Peut traduire des zones de contraste spatial marquées.  
-
-#### Utilité du Diagramme de Moran  
-
-Le diagramme de Moran permet d’identifier les structures spatiales dominantes en observant la répartition des points dans les quadrants. Il aide également à détecter les observations atypiques qui s’écartent du modèle spatial général et à confirmer l’existence d’une autocorrélation spatiale en complément de l’indice de Moran, qui quantifie cette relation. Cet outil visuel est ainsi essentiel pour explorer la dépendance spatiale et comprendre les structures spatiales sous-jacentes d’une variable. 
+Le diagramme de Moran permet d’identifier les structures spatiales dominantes en observant la répartition des points dans des quadrants. Il aide également à détecter les observations atypiques qui s’écartent du modèle spatial général et à confirmer l’existence d’une autocorrélation spatiale en complément de l’indice de Moran, qui quantifie cette relation. Cet outil visuel est ainsi essentiel pour explorer la dépendance spatiale et comprendre les structures spatiales sous-jacentes d’une variable d'intérêt. 
 
 
 ### Matrice des poids spatiaux
 
-Pour quantifier la proximité spatiale entre unités géographiques, on utilise une matrice de poids spatiaux notée $W$. Cette matrice représente les relations de voisinage et permet d’introduire la structure spatiale dans les modèles économétriques. La matrice de poids peut être une matrice de contiguité binaire ou peut tenir compte de la distance entre les zones géographiques. Cette étude utilise une matrice de poids basée sur la distance et contient des pondérations inversément proportionnelles à la distance entre les régions.
+Pour quantifier la proximité spatiale entre unités géographiques, on utilise une matrice de poids spatiaux notée $W$. Cette matrice représente les relations de voisinage et permet d’introduire la structure spatiale dans les modèles économétriques. La matrice de poids peut être une matrice de contiguïté binaire ou peut tenir compte de la distance entre les zones géographiques. Cette étude utilise une matrice de poids basée sur la distance et contient des pondérations inversément proportionnelles à la distance entre les régions.
 
 ### Mesure de la corrélation spatiale
 
 #### Indices de corrélation spatiale
 
-L’un des indicateurs les plus couramment utilisés est l’indice de Moran. Il évalue la similitude des valeurs d’une variable entre différentes entités géographiques (par exemple, des communes) en
-fonction de leur proximité spatiale. Il se base sur la matrice de poids
-spatiale ($W$), qui définit les relations entre ces entités. Il se calcule comme suit :
+L’un des indicateurs les plus utilisés est l’indice de Moran. Il évalue la similitude des valeurs d’une variable entre différentes entités géographiques (par exemple, des communes) en
+fonction de leur proximité spatiale. Il se base sur la matrice spatiale de poids ($W$), qui définit les relations entre ces entités. Il se calcule comme suit :
 
 $$
 I = \frac{N}{\sum_{i} \sum_{j} W_{ij}} \times \frac{\sum_{i} \sum_{j} W_{ij} (y_i - \bar{y})(y_j - \bar{y})}{\sum_{i} (y_i - \bar{y})^2}
 $$
 
-où $y_i$ est la valeur de la variable d’intérêt en un point $i$, $\bar{y}$ est la moyenne de cette variable et $W_{ij}$ représente l’élément $(i, j)$ de la matrice de poids.
+où $y_i$ est la valeur de la variable d’intérêt en un point $i$, $\bar{y}$ est la moyenne empirique de cette variable et $W_{ij}$ représente l’élément $(i, j)$ de la matrice de poids.
 
 D'autres indices existent, comme la \textbf{statistique de Geary}, qui est moins sensible aux valeurs extrêmes, et les \textbf{indicateurs locaux d'autocorrélation spatiale (LISA)}, qui permettent d'identifier des clusters spatiaux spécifiques.
 
 #### Construction de la matrice de poids
 
 \
-Pour construire la matrice de poids, nous avons alors suivi ces étapes.
+Pour construire la matrice de poids, nous avons suivi ces étapes.
 \
 
 1.  Calculer les distances de Haversine entre chaque paire d’entités.
 2.  Définir un seuil de distance maximale ($d_{max}$) :
-    -   Si $d_{ij} < d_{max}$, $w_{ij} = \frac{1}{d_{ij}}$.
+    -   Si $d_{ij} < d_{max}$, $w_{ij} = \frac{1}{d_{ij}}$;
     -   Sinon, $w_{ij} = 0$.
 3.  Normaliser les poids pour que chaque ligne de la matrice ait une
     somme égale à 1 : $$
      w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
     $$
 
-#### Test significativité de l'indice de Moran :
+#### Test significativité de l'indice de Moran \\
 
 Le test de significativité de l’indice de Moran permet d’évaluer si une variable présente une autocorrélation spatiale significative, c’est-à-dire si les valeurs observées dans des zones proches ont tendance à être similaires ou non.
 
-\textbf{Hypothèses du test}
+\underline{\textbf{Hypothèses du test}}
 
 \begin{itemize}
-    \item \textbf{Hypothèse nulle} \( H_0 \) : Il n’y a \textbf{pas d’autocorrélation spatiale} significative. Les valeurs observées sont distribuées de manière aléatoire dans l’espace.
-    \item \textbf{Hypothèse alternative} \( H_1 \) : Il existe une \textbf{autocorrélation spatiale} significative (positive ou négative).
+    \item \textbf{Hypothèse nulle} \( (H_0) \) : Il n’y a \textbf{pas d’autocorrélation spatiale} significative. Les valeurs observées sont distribuées de manière aléatoire dans l’espace.
+    \item \textbf{Hypothèse alternative} \( (H_1) \) : Il existe une \textbf{autocorrélation spatiale} significative (positive ou négative).
 \end{itemize}
 
-\textbf{Statistique de test}
+\underline{\textbf{Statistique de test}}
 
 L’Indice de Moran standardisé suit approximativement une distribution normale sous \( H_0 \). La statistique de test est donnée par :
 
@@ -123,8 +101,8 @@ $$
 
 où :
 \begin{itemize}
-    \item \( I \) est l’Indice de Moran calculé sur les données,
-    \item \( E(I) \) est l’espérance théorique de \( I \) sous \( H_0 \),
+    \item \( I \) est l’Indice de Moran calculé sur les données;
+    \item \( E(I) \) est l’espérance théorique de \( I \) sous \( H_0 \);
     \item \( \text{Var}(I) \) est la variance théorique de \( I \).
 \end{itemize}
 
@@ -134,21 +112,21 @@ $$
     E(I) = -\frac{1}{n - 1}
 $$
 
-\textbf{Règle de décision}
+\underline{\textbf{Règle de décision}}
 
-On compare la statistique \( Z \) à une loi normale centrée réduite \( \mathcal{N}(0,1) \). Pour un seuil de significativité \( \alpha \) (ex. 5 \%), on utilise les quantiles de la loi normale :
+On compare la statistique \( Z \) à une loi normale centrée réduite \( \mathcal{N}(0,1) \). Pour un seuil de significativité \( \alpha \) (en général 5 \%), on utilise les quantiles de la loi normale :
 
 \begin{itemize}
     \item Si \( Z > z_{1-\alpha/2} \) ou \( Z < -z_{1-\alpha/2} \), on \textbf{rejette \( H_0 \)} et on conclut qu’il existe une autocorrélation spatiale significative.
     \item Si \( Z \in [-z_{1-\alpha/2}, z_{1-\alpha/2}] \), on \textbf{ne rejette pas \( H_0 \)}, et on considère que la distribution spatiale est aléatoire.
 \end{itemize}
 
-\textbf{Interprétation de l’Indice de Moran}
+\underline{\textbf{Interprétation de l’Indice de Moran}}
 
 \begin{itemize}
     \item \( I > 0 \) et significatif : Autocorrélation spatiale \textbf{positive} (les zones proches ont des valeurs similaires).
-    \item \( I < 0 \) et significatif : Autocorrélation spatiale \textbf{négative} (les zones proches ont des valeurs opposées).
-    \item \( I \approx 0 \) et non significatif : Absence d’autocorrélation spatiale, les valeurs sont distribuées de manière aléatoire.
+    \item \( I < 0 \) et significatif : Autocorrélation spatiale \textbf{négative} (les zones proches ont des valeurs éloignées).
+    \item \( I \approx 0 \) significativement : Absence d’autocorrélation spatiale, les valeurs sont distribuées de manière aléatoire.
 \end{itemize}
 
 Ce test est couramment utilisé en analyse spatiale pour identifier des regroupements de valeurs similaires, par exemple dans les études de santé publique, d’aménagement du territoire ou d’économie régionale.
@@ -224,7 +202,8 @@ Le modèle SDM est une extension du modèle SAR. Il prend en compte non seulemen
 $$
 Y = \rho W Y + X \beta + \theta W X + \varepsilon
 $$
-\underline{\textbf{Interprétation :}}
+
+\underline{\textbf{Interprétation :}} 
 
 \begin{itemize}
 \item Si \( \theta = 0 \), le modèle SDM devient un SAR classique.
