@@ -40,7 +40,7 @@ data$pct_union_libre <- data$part_d_en_concubinage_ou_union_libre # Déjà en po
 data$pct_ouvriers <- (data$population_de_15_ans_ou_selon_la_csp_2021_ouvriers / data$population_totale) * 100
 
 data$pct_sans_emploi <- (data$population_de_15_ans_ou_selon_la_csp_2021_autres_personnes_sans_activite_professionnelle /
-                        (data$pop_0_24 + data$pop_25_64)) * 100
+                        (data$pop_25_64)) * 100
 
 data$pct_fam_3_enfants_plus <- data$part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021 # Déjà en pourcentage
 

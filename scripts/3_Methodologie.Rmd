@@ -8,17 +8,28 @@ output:
 
 ## Source des données
 
-L’étude repose sur des données issues du Système National des Données de Santé (SNDS), couvrant la période 2018-2022 et portant sur environ 5000 communes. Ces données permettent d’analyser le nombre de consultations en médecine de ville en tenant compte des disparités territoriales et des caractéristiques locales.
+L’étude repose sur des données issues du Système National des Données de Santé (SNDS), couvrant la période 2018-2022 et portant sur environ 5000 communes. Ces données permettent d’analyser le nombre de consultations en médecine de ville en tenant compte des disparités territoriales et des caractéristiques locales. Nous avons trois bases essentielles. La première source est une base démographique contenant des données détaillées sur la répartition de la population par sexe et par tranche d’âge, ainsi que des indicateurs généraux tels que la population municipale et la structure des ménages. La deuxième source est une base généralisée intégrant des informations socio-économiques, notamment sur les statuts matrimoniaux, les catégories socioprofessionnelles et le marché de l’emploi. Cette base permet d’étudier la composition sociale des communes et d’évaluer certains phénomènes tels que le taux d’activité ou la prévalence des unions libres. Enfin, une troisième base a été utilisée pour compléter les données géographiques, en particulier pour renseigner les latitudes et longitudes manquantes de certaines communes.
 
 Les informations utilisées concernent principalement le volume des consultations médicales et leur répartition géographique. Des données complémentaires sur le contexte communal, telles que la densité de population et l’accessibilité aux soins, permettent d’affiner l’analyse. L’intégration de ces éléments facilite une approche spatiale de la modélisation, essentielle pour détecter d’éventuelles inégalités d’accès aux soins.
 
 L’ensemble des données a été anonymisé et traité conformément aux normes en vigueur, garantissant ainsi la confidentialité des informations exploitées. Cette base constitue une ressource précieuse pour mieux comprendre les dynamiques d’accès aux soins en médecine de ville et proposer des modèles adaptés aux spécificités territoriales.
 
-## Justification de l'économétrie spatiale
 
-L'économétrie spatiale est justifiée par des raisons économiques et économétriques. D’un point de vue économique, la proximité spatiale joue un rôle clé dans les décisions des agents économiques. Les entreprises, par exemple, ajustent leurs stratégies en fonction de la concurrence locale, tandis que la diffusion des innovations et les effets d'agglomération influencent la productivité régionale. Les externalités spatiales, telles que l’effet de pair et les interactions entre industries voisines, ont également un impact direct sur les marchés. Ainsi, la prise en compte de la dimension spatiale est essentielle pour comprendre les dynamiques économiques locales et globales.
+## Traitement réalisés sur la base de données
 
-Sur le plan économétrique, l’omission des effets spatiaux peut introduire des biais dans les estimations, rendant les modèles classiques inefficaces. L’autocorrélation spatiale des résidus (tout comme l'autocorrélation temporelle des résidus) est un problème récurrent, pouvant fausser l’inférence statistique si elle n'est pas correctement modélisée. De plus, l’hypothèse d’indépendance des observations, souvent supposée dans les modèles classiques, est rarement vérifiée lorsque des interactions spatiales existent. En intégrant des structures de dépendance spatiale, les modèles économétriques spatiaux permettent d'améliorer la précision des estimations et de mieux comprendre les relations entre unités géographiques, évitant ainsi les erreurs d’interprétation liées à des phénomènes locaux ou régionaux.
+Après la fusion des bases de données, un ensemble de traitements a été réalisé afin de structurer les informations et garantir la cohérence des analyses. La première étape a consisté à nettoyer et harmoniser les noms des variables pour faciliter leur manipulation. Ce travail a inclus la suppression des accents, le remplacement des espaces et caractères spéciaux par des underscores et la conversion en minuscules. De plus, certaines incohérences ont été corrigées, notamment des erreurs typographiques dans les intitulés des tranches d’âge.
+
+Une fois cette normalisation effectuée, les différentes bases ont été fusionnées. Une jointure interne a été réalisée entre les bases démographiques et socio-économiques en utilisant le code unique des communes, ce qui a permis de conserver uniquement les communes présentes dans les deux sources. Ensuite, une jointure gauche avec la base des coordonnées géographiques a été effectuée pour compléter les informations manquantes sur la latitude et la longitude des communes concernées. Lors de cette étape, une attention particulière a été portée pour éviter la duplication des données et sélectionner les valeurs les plus pertinentes en cas de conflit entre plusieurs sources.
+
+L’étape suivante a consisté à structurer et créer de nouvelles variables analytiques. En ce qui concerne la répartition de la population, les différentes tranches d’âge disponibles ont été regroupées en trois grandes catégories : 0-24 ans, 25-64 ans et 65 ans et plus. Ce regroupement permet d’obtenir une vision synthétique de la structure démographique tout en conservant des distinctions essentielles entre les jeunes, les actifs et les seniors. Pour chacune de ces nouvelles catégories, un indicateur de proportion a été calculé en rapportant la population de chaque groupe à la population totale de la commune.
+
+Un travail spécifique a été réalisé pour enrichir l’analyse socio-économique. Le pourcentage des personnes en union libre a été calculé à partir des données disponibles sur les statuts matrimoniaux, et la part des ouvriers a été estimée en rapportant cette catégorie à la population totale. Le pourcentage des personnes sans emploi a été évalué en prenant comme référence la population âgée de 0 à 64 ans, excluant ainsi les retraités pour obtenir un indicateur plus pertinent sur la population active. De plus, un indicateur mesurant la proportion des familles avec trois enfants ou plus a été créé afin d’étudier la dynamique familiale dans les communes étudiées.
+
+Un des traitements majeurs effectués a été la création d’une variable inédite : le taux de consultation. Cette variable, qui n’existait pas initialement dans la base, a été construite en rapportant le nombre total de consultations enregistrées dans chaque commune à la population municipale. Cette mesure permet d’évaluer la fréquence des consultations médicales ou administratives en fonction de la taille de la population et constitue un indicateur clé pour analyser l’accessibilité et l’utilisation des services sur le territoire étudié. Une version spécifique de cet indicateur a également été calculée pour la population de 19 ans et plus, en excluant les plus jeunes afin de mieux capter les tendances de consultation chez les adultes.
+
+Enfin, un effort particulier a été porté sur la visualisation des données, notamment avec la construction d’une pyramide des âges. Pour cela, les effectifs masculins et féminins ont été extraits et réorganisés par tranche d’âge afin de respecter la convention des pyramides démographiques, affichant les populations masculines en valeurs négatives et les populations féminines en valeurs positives. Cette représentation permet d’identifier les déséquilibres entre les classes d’âge et de mieux comprendre la structure démographique des communes analysées.
+
+Une fois ces traitements finalisés, la base de données enrichie a été exportée sous un format exploitable, intégrant l’ensemble des nouvelles variables créées ainsi que les indicateurs de taux de natalité et de mortalité. Ce travail de préparation assure une qualité optimale des données et permet de mener des analyses détaillées sur la dynamique démographique et socio-économique des communes étudiées.
 
 ## Concepts fondamentaux en statistique spatiale
 
@@ -80,7 +91,12 @@ Pour construire la matrice de poids, nous avons suivi ces étapes.
      w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
     $$
 
+<<<<<<< HEAD
 #### Test significativité de l'indice de Moran \\
+=======
+
+#### Test significativité de l'indice de Moran :
+>>>>>>> 46c51413a0705f22b132a606667fa65a73b21dca
 
 Le test de significativité de l’indice de Moran permet d’évaluer si une variable présente une autocorrélation spatiale significative, c’est-à-dire si les valeurs observées dans des zones proches ont tendance à être similaires ou non.
 
@@ -92,6 +108,7 @@ Le test de significativité de l’indice de Moran permet d’évaluer si une va
 \end{itemize}
 
 \underline{\textbf{Statistique de test}}
+
 
 L’Indice de Moran standardisé suit approximativement une distribution normale sous \( H_0 \). La statistique de test est donnée par :
 

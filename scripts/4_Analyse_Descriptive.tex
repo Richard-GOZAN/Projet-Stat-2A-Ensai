@@ -111,7 +111,7 @@
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
-\usepackage{bookmark}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
@@ -151,9 +151,22 @@
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(knitr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: le package 'knitr' a été compilé avec la version R 4.3.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(kableExtra)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## Warning: le package 'kableExtra' a été compilé avec la version R 4.3.3
+\end{verbatim}
 
 \begin{verbatim}
 ## 
@@ -174,11 +187,19 @@
 \end{Shaded}
 
 \begin{verbatim}
+## Warning: le package 'ggplot2' a été compilé avec la version R 4.3.3
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: le package 'tibble' a été compilé avec la version R 4.3.3
+\end{verbatim}
+
+\begin{verbatim}
 ## -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
-## v forcats   1.0.0     v readr     2.1.5
-## v ggplot2   3.5.1     v stringr   1.5.1
-## v lubridate 1.9.4     v tibble    3.2.1
-## v purrr     1.0.4
+## v forcats   1.0.0     v readr     2.1.4
+## v ggplot2   3.5.1     v stringr   1.5.0
+## v lubridate 1.9.3     v tibble    3.2.1
+## v purrr     1.0.1
 \end{verbatim}
 
 \begin{verbatim}
@@ -186,7 +207,7 @@
 ## x dplyr::filter()          masks stats::filter()
 ## x kableExtra::group_rows() masks dplyr::group_rows()
 ## x dplyr::lag()             masks stats::lag()
-## i Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+## i Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
 \end{verbatim}
 
 \begin{Shaded}
@@ -194,6 +215,10 @@
 \FunctionTok{library}\NormalTok{(summarytools)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## Warning: le package 'summarytools' a été compilé avec la version R 4.3.3
+\end{verbatim}
 
 \begin{verbatim}
 ## 
@@ -223,17 +248,37 @@
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(purrr)}
 \FunctionTok{library}\NormalTok{(skimr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: le package 'skimr' a été compilé avec la version R 4.3.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(spdep)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
+## Warning: le package 'spdep' a été compilé avec la version R 4.3.3
+\end{verbatim}
+
+\begin{verbatim}
 ## Le chargement a nécessité le package : spData
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: le package 'spData' a été compilé avec la version R 4.3.3
+\end{verbatim}
+
+\begin{verbatim}
 ## To access larger datasets in this package, install the spDataLarge
 ## package with: `install.packages('spDataLarge',
 ## repos='https://nowosad.github.io/drat/', type='source')`
 ## Le chargement a nécessité le package : sf
-## Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE
+## Linking to GEOS 3.11.2, GDAL 3.6.2, PROJ 9.2.0; sf_use_s2() is TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -242,12 +287,19 @@
 \end{Highlighting}
 \end{Shaded}
 
-\section{Analyse descriptive}\label{analyse-descriptive}
+\begin{verbatim}
+## Warning: le package 'geosphere' a été compilé avec la version R 4.3.3
+\end{verbatim}
 
+\hypertarget{analyse-descriptive}{%
+\section{Analyse descriptive}\label{analyse-descriptive}}
+
+\hypertarget{description-de-la-population}{%
 \subsection{Description de la
-population}\label{description-de-la-population}
+population}\label{description-de-la-population}}
 
-\subsubsection{Pyramide des ages}\label{pyramide-des-ages}
+\hypertarget{pyramide-des-ages}{%
+\subsubsection{Pyramide des ages}\label{pyramide-des-ages}}
 
 Notre population d'étude est une population assez homogène en matière
 d'âge. Cependant plus on dépasse les 75 ans et moins on rencontre de
@@ -264,8 +316,9 @@ l'exception des tranches du troisième âge.
 \caption{Pyramide des âges}\label{fig:unnamed-chunk-3}
 \end{figure}
 
+\hypertarget{taux-de-natalituxe9-et-taux-de-mortalituxe9}{%
 \subsubsection{Taux de natalité et taux de
-mortalité}\label{taux-de-natalituxe9-et-taux-de-mortalituxe9}
+mortalité}\label{taux-de-natalituxe9-et-taux-de-mortalituxe9}}
 
 Dans les commmunes étudiées, le taux de natalité et de mortalité sont un
 peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en
@@ -284,19 +337,19 @@ distributions permet de constater que la natalité est de façon générale
 \caption{Taux de Natalité et Taux de Mortalité}\label{fig:unnamed-chunk-4}
 \end{figure}
 
-En vue de mieux de mieux voir peut être l'effet de la mortalité sur la
-natalité, nous allons nous intéresser alors à une analyse de la
-corrélation entre les deux taux par groupe d'age. Nous avons considérer
-les groupes d'âge suivants : 0-24, 25-44, 45-60, 60 et plus en fonction
-des variables disponibles et ausi à partir de l'information sur l'âge
-des femmes en âge de procréer qui est de l'ordre de 25-45 et des
-personnes âgées dont l'âge est de plus 60 ans. Ne disposant pas du taux
-de mortalité dans chaque groupe, alors nous avons dans notre analyse
-opté plutôt pour le pourcentage des femmes de chaque groupe en partant
-du principe que la natalité est très souvent liée aux femmes et du fait
-que nous pouvons analyser une diminution du pourcentage comme étant dû à
-une mortalité. Ainsi sur la base de cette nouvelle hypothèse, voici nos
-nouveaux résultats.
+En vue de mieux voir peut être l'effet de la mortalité sur la natalité,
+nous allons nous intéresser alors à une analyse de la corrélation entre
+les deux taux par groupe d'age. Nous avons considérer les groupes d'âge
+suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables
+disponibles et ausi à partir de l'information sur l'âge des femmes en
+âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont
+l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans
+chaque groupe, alors nous avons dans notre analyse opté plutôt pour le
+pourcentage des femmes de chaque groupe en partant du principe que la
+natalité est très souvent liée aux femmes et du fait que nous pouvons
+analyser une diminution du pourcentage comme étant dû à une mortalité.
+Ainsi sur la base de cette nouvelle hypothèse, voici nos nouveaux
+résultats.
 
 \begin{figure}
 
@@ -315,20 +368,20 @@ la tranche 45-60 semble n'avoir aucun lien sur le taux de natalité.
 Enfin il a été constaté un lien négatif pour la tranche d'âge 60 ans et
 plus.
 
-\subsection{Taux et nombre de
-consultation}\label{taux-et-nombre-de-consultation}
+\hypertarget{taux-et-nombre-de-visites}{%
+\subsection{Taux et nombre de visites}\label{taux-et-nombre-de-visites}}
 
 (Insérer les cartes à ce niveau : Richard doit refaire les cartes et les
 insérer)
 
-L'analyse des statistiques descriptives sur le nombre de consultations
+L'analyse des statistiques descriptives sur le nombre de visites
 annuelles de médecin généraliste entre 2018 et 2022 révèle une
 distribution fortement asymétrique à droite, avec une grande dispersion
-des données. La moyenne de 19130 consultations, nettement supérieure à
-la médiane de 9127, indique la présence de valeurs extrêmes tirant la
+des données. La moyenne de 19130 visites, nettement supérieure à la
+médiane de 9127, indique la présence de valeurs extrêmes tirant la
 distribution vers le haut. Cette asymétrie est confirmée par l'écart
-considérable entre le minimum de 1037 et le maximum de 765833
-consultations par an.
+considérable entre le minimum de 1037 et le maximum de 765833 visites
+par an.
 
 \begin{figure}
 
@@ -336,7 +389,7 @@ consultations par an.
 
 }
 
-\caption{Distributiion du nombre et du taux de consultations}\label{fig:unnamed-chunk-6}
+\caption{Distributiion du nombre et du taux de visites}\label{fig:unnamed-chunk-6}
 \end{figure}
 
 La moitié des médecins généralistes effectuent entre 5993 et 17290
@@ -367,36 +420,37 @@ Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max.\\
 \end{tabular}
 \end{table}
 
-\subsection{Taux de consultation et quelques variables démographiques et
-socio-économiques}\label{taux-de-consultation-et-quelques-variables-duxe9mographiques-et-socio-uxe9conomiques}
+\hypertarget{taux-de-visites-et-quelques-variables-duxe9mographiques-et-socio-uxe9conomiques}{%
+\subsection{Taux de visites et quelques variables démographiques et
+socio-économiques}\label{taux-de-visites-et-quelques-variables-duxe9mographiques-et-socio-uxe9conomiques}}
 
-Nous allons ici, voir s'il y a un lien à priori entre le taux de
-consultation et certaines de nos variables explicatives. Ainsi, nous
-avons d'abord réalisé une analyse descriptive bivariée puis nous avons
-calculé la corrélation de Pearson pour évaluer le lien linéaire entre le
-taux de consulation et des variables telles que la population totale, la
-part des personnes agées (75 ans et plus), la part de quelques CSP
-(ouvriers et retraités).
+Nous allons ici, voir s'il y a un lien à priori entre le taux de visites
+et certaines de nos variables explicatives. Ainsi, nous avons d'abord
+réalisé une analyse descriptive bivariée puis nous avons calculé la
+corrélation de Pearson pour évaluer le lien linéaire entre le taux de
+consulation et des variables telles que la population totale, la part
+des personnes agées (75 ans et plus), la part de quelques CSP (ouvriers
+et retraités).
 
-\subsubsection{Taux de consultation et population
-totale}\label{taux-de-consultation-et-population-totale}
+\hypertarget{taux-de-visites-et-population-totale}{%
+\subsubsection{Taux de visites et population
+totale}\label{taux-de-visites-et-population-totale}}
 
 En divisant les communes en trois groupes égaux (ou presque égaux) en
 fonction de la population totale, il ressort un lien clair entre la
-taille des communes françaises et le taux de consultations médicales,
-mettant en évidence une tendance où les grandes communes (\textgreater{}
-8974 habitants) affichent un taux moyen de consultations supérieur
-(1,526810) par rapport aux communes moyennes (1,456356) et petites
-(1,383861). Cette observation suggère que l'accès facilité aux
-infrastructures médicales dans les zones urbaines contribue à une
-utilisation accrue des services de santé. En revanche, les petites
-communes, probablement plus isolées et moins dotées en praticiens,
-semblent rencontrer des barrières structurelles limitant la fréquence
-des consultations.
+taille des communes françaises et le taux de visites médicales, mettant
+en évidence une tendance où les grandes communes (\textgreater{} 8974
+habitants) affichent un taux moyen de visites supérieur (1,526810) par
+rapport aux communes moyennes (1,456356) et petites (1,383861). Cette
+observation suggère que l'accès facilité aux infrastructures médicales
+dans les zones urbaines contribue à une utilisation accrue des services
+de santé. En revanche, les petites communes, probablement plus isolées
+et moins dotées en praticiens, semblent rencontrer des barrières
+structurelles limitant la fréquence des visites.
 
 \begin{table}[H]
 \centering
-\caption{\label{tab:unnamed-chunk-8}Taux de consultations selon la taille de la commune}
+\caption{\label{tab:unnamed-chunk-8}Taux de visites selon la taille de la commune}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
@@ -409,14 +463,15 @@ Moyenne (4849 - 8974) & 1.456356\\
 \end{tabular}
 \end{table}
 
-\subsubsection{Taux de consultation et population
-âgée}\label{taux-de-consultation-et-population-uxe2guxe9e}
+\hypertarget{taux-de-visites-et-population-uxe2guxe9e}{%
+\subsubsection{Taux de visites et population
+âgée}\label{taux-de-visites-et-population-uxe2guxe9e}}
 
 L'analyse met en évidence que les communes françaises avec une
 population âgée significative (population âgée de 75 ans et plus est
 supérieure à la médiane soit plus de 670 habitants âgés de 75 ans et
-plus) présentent un taux moyen de consultations inférieur (1,410213)
-comparé aux communes où la population âgée est moindre (1,501111). Cette
+plus) présentent un taux moyen de visistes inférieur (1,410213) comparé
+aux communes où la population âgée est moindre (1,501111). Cette
 observation peut refléter des défis spécifiques aux populations plus
 âgées, tels que des obstacles physiques ou logistiques pour accéder aux
 soins médicaux, ou encore une moindre propension à consulter
@@ -431,7 +486,7 @@ vieillissantes.
 
 \begin{table}[H]
 \centering
-\caption{\label{tab:unnamed-chunk-9}Taux de consultations selon la population âgée}
+\caption{\label{tab:unnamed-chunk-9}Taux de visites selon la population âgée}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
@@ -443,11 +498,11 @@ Oui (> 670) & 1.410213\\
 \end{tabular}
 \end{table}
 
-\subsubsection{Taux de consultation et
-CSP}\label{taux-de-consultation-et-csp}
+\hypertarget{taux-de-visites-et-csp}{%
+\subsubsection{Taux de visites et CSP}\label{taux-de-visites-et-csp}}
 
 Aucune catégorie ne semble montrer une relation linéaire évidente avec
-le taux de visite. Par ailleurs, pour toutes les catégories
+le taux de visites. Par ailleurs, pour toutes les catégories
 socio-professionnelles, la majorité des communes se situent dans une
 plage de proportions faibles, ce qui limite la variabilité observable
 dans les relations. Une analyse statistique supplémentaire, comme le
@@ -460,18 +515,12 @@ relations observées visuellement.
 
 }
 
-\caption{Relations entre le taux de consultatiosn et certaines catégories socioprofessionnelle}\label{fig:unnamed-chunk-10-1}
-\end{figure}
-\begin{figure}
-
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-10-2} 
-
-}
-
-\caption{Relations entre le taux de consultatiosn et certaines catégories socioprofessionnelle}\label{fig:unnamed-chunk-10-2}
+\caption{Relations entre le taux de visites et certaines catégories socioprofessionnelles (variables standarisées)}\label{fig:unnamed-chunk-10}
 \end{figure}
 
-(Trouver un titre pour cette section et analyser : Alex)
+\hypertarget{trouver-un-titre-pour-cette-section-et-analyser-alex}{%
+\subsubsection{(Trouver un titre pour cette section et analyser :
+Alex)}\label{trouver-un-titre-pour-cette-section-et-analyser-alex}}
 
 \begin{figure}
 
@@ -482,23 +531,14 @@ relations observées visuellement.
 \caption{Corrélations entre le nombre de visite et quelques variables}\label{fig:unnamed-chunk-11}
 \end{figure}
 
-\subsection{Analyse spatiale}\label{analyse-spatiale}
+\hypertarget{analyse-spatiale}{%
+\subsection{Analyse spatiale}\label{analyse-spatiale}}
 
 Après une analyse de nos données en ne tenant pas compte de l'effet
 spatial, nous allons à présent poursuivre avec une analyse qui tient
 compte de celui-ci. Nous allons ici faire une analyse basée sur le
-diagramme de Moran. Le diagramme de Moran permet d'analyser la structure
-spatiale du taux de consultations. Il est constitué d'un nuage de points
-où l'axe des abscisses représente les valeurs centrées du taux de
-consultations (\(yy\)), et l'axe des ordonnées montre les valeurs
-moyennes du taux de consultations pour les zones voisines (\(Wyy\)),
-avec \(W\) étant la matrice de poids normalisée. En raison de la
-centration de \(yy\) et de la normalisation de \(W\), la moyenne
-empirique de \(Wyy\) est égale à zéro.
-
-Le diagramme inclut aussi une droite de régression linéaire entre
-\(Wyy\) et \(yy\), ainsi que les lignes \(y=0\) et \(Wyy=0\), qui
-divisent l'espace en quatre quadrants.
+diagramme de Moran. Ainsi d'après les explications données au niveau de
+la partie méthodologie, nous aurons les 4 quadrants suivants.
 
 \begin{itemize}
 \tightlist
@@ -524,24 +564,19 @@ divisent l'espace en quatre quadrants.
   négative, structure \textbf{low-high}).
 \end{itemize}
 
-La densité des points dans chaque quadrant permet de visualiser la
-structure spatiale dominante du taux de consultations. Ce diagramme aide
-aussi à identifier les zones atypiques, qui ne suivent pas la structure
-spatiale générale, facilitant ainsi l'analyse des résultats que vous
-obtiendrez par la suite. Vu le noimbre de nos communes la mise sur le
-graphique des noms de toutes les communes allaient être compliqué. POur
-cela, nous avons choisi au hasard 4 communes par cadrants. Ainsi, Ce
-diagramme de Moran illustre la corrélation spatiale des taux de
-consultation par commune et ceux des communes voisines. La tendance
-générale, représentée par la droite de régression rouge, montre une
-relation positive entre ces taux, confirmant ainsi une autocorrélation
-spatiale. Autrement dit, les communes ayant un taux élevé de
-consultations ont tendance à être entourées par d'autres communes avec
-un taux similaire, et inversement.
+Vu le nombre de nos communes, la mise sur le graphique des noms de
+toutes les communes allait être compliquée. Pour cela, nous avons choisi
+au hasard 4 communes par cadrant. Ainsi, Ce diagramme de Moran illustre
+la corrélation spatiale des taux de consultation par commune et ceux des
+communes voisines. La tendance générale, représentée par la droite de
+régression rouge, montre une relation positive entre ces taux,
+confirmant ainsi une autocorrélation spatiale. Autrement dit, les
+communes ayant un taux élevé de consultations ont tendance à être
+entourées par d'autres communes avec un taux similaire, et inversement.
 
 Dans le quadrant HH (Haut-Haut), représenté en rouge, on retrouve des
 communes comme Saint-Saulve, Le Bouscat et Bruay-la-Buissière. Celles-ci
-affichent un taux de consultation élevé et sont entourées par des
+affichent un taux de consultations élevé et sont entourées par des
 communes présentant également des taux élevés. Cela indique une
 concentration géographique des consultations médicales, qui peut
 s'expliquer par une offre de soins plus développée ou une demande locale
@@ -556,7 +591,7 @@ des alentours.
 
 À l'inverse, dans le quadrant LH (Bas-Haut), en vert, on trouve des
 communes comme Aix-en-Provence, Ribécourt-Dreslincourt et L'Isle-Adam.
-Ces communes affichent un faible taux de consultation, tandis que leurs
+Ces communes affichent un faible taux de consultations, tandis que leurs
 voisines présentent des taux plus élevés. Ce phénomène peut s'expliquer
 par le fait que les habitants de ces villes se rendent dans les communes
 avoisinantes pour leurs consultations, soit en raison d'un manque
@@ -565,9 +600,9 @@ services situés ailleurs.
 
 Enfin, le quadrant LL (Bas-Bas), en orange, inclut des communes comme
 Saint-Jean-le-Blanc, Romorantin-Lanthenay et Le Breuil. Ces villes ont
-un faible taux de consultation et sont entourées de communes où les taux
-sont également bas. Cela peut indiquer une accessibilité réduite aux
-soins de santé, une moindre densité médicale, ou encore une faible
+un faible taux de consultations et sont entourées de communes où les
+taux sont également bas. Cela peut indiquer une accessibilité réduite
+aux soins de santé, une moindre densité médicale, ou encore une faible
 demande locale pour des consultations.
 
 En résumé, cette analyse met en évidence des disparités territoriales
@@ -578,29 +613,30 @@ inégalités spatiales en matière de santé.
 
 \begin{figure}
 
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-21-1} 
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-19-1} 
 
 }
 
-\caption{Moran Plot avec visibilités de quelques communes}\label{fig:unnamed-chunk-21}
+\caption{Moran Plot avec visibilités de quelques communes}\label{fig:unnamed-chunk-19}
 \end{figure}
 
-\subsubsection{Autocorélation Locale}\label{autocoruxe9lation-locale}
-
-\begin{figure}
-
-{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-22-1} 
-
-}
-
-\caption{Clusters sur la base du LISA}\label{fig:unnamed-chunk-22}
-\end{figure}
+\hypertarget{autocoruxe9lation-locale}{%
+\subsubsection{Autocorélation locale}\label{autocoruxe9lation-locale}}
 
 En se basant sur l'analyse par cluster fourni pour le LISA (local
 Indicator or Spatial Association), nous pouvons remarquer que le cluster
 HH est celui regroupant le plus de communes suivi du cluster LH. Ceci
 dit une grande partie des communes ont des taux élevées et entourées par
-des communes de taux élevées ou encore des taux bas et entourées par des
-communes de taux élevées.
+des communes avec des taux élevés ou encore des taux bas et entourées
+par des communes ayant des taux élevés.
+
+\begin{figure}
+
+{\centering \includegraphics{4_Analyse_Descriptive_files/figure-latex/unnamed-chunk-20-1} 
+
+}
+
+\caption{Clusters sur la base du LISA}\label{fig:unnamed-chunk-20}
+\end{figure}
 
 \end{document}

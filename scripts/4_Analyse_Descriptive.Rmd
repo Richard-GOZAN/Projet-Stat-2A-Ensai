@@ -21,7 +21,7 @@ library(spdep)
 library(geosphere)
 ```
 
-```{r setup, include=FALSE}
+```{r setup2, include=FALSE}
 knitr::opts_chunk$set(
 	echo = FALSE,
 	message = FALSE,
@@ -164,7 +164,7 @@ ggplot(pyramide, aes(x=Age, y=Population, fill=Sexe)) +
 
 ### Taux de natalité et taux de mortalité
 
-Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distributions permet de constater que la natalité est de façon générale élevée par rapport à la mortalité dans les communes étudiées.
+Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distributions permet de constater que la natalité est de façon générale élevée par rapport à la mortalité dans les communes étudiées. 
 
 ```{r fig.align='center', fig.cap= "Taux de Natalité et Taux de Mortalité"}
 # Vérification et conversion des variables avant de tracer
@@ -217,10 +217,9 @@ p4 <- ggplot(data) +
 #  Affichage de tous les graphiques ensemble
 library(gridExtra)
 grid.arrange(p1, p2, p3, p4, ncol = 2)
-
 ```
 
-En vue de mieux de mieux voir peut être l'effet de la mortalité sur la natalité, nous allons nous intéresser alors à une analyse de la corrélation entre les deux taux par groupe d'age. Nous avons considérer les groupes d'âge suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables disponibles et ausi à partir de l'information sur l'âge des femmes en âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans chaque groupe, alors nous avons dans notre analyse opté plutôt pour le pourcentage des femmes de chaque groupe en partant du principe que la natalité est très souvent liée aux femmes et du fait que nous pouvons analyser une diminution du pourcentage comme étant dû à une mortalité. Ainsi sur la base de cette nouvelle hypothèse, voici nos nouveaux résultats.
+En vue de mieux voir peut être l'effet de la mortalité sur la natalité, nous allons nous intéresser alors à une analyse de la corrélation entre les deux taux par groupe d'age. Nous avons considérer les groupes d'âge suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables disponibles et ausi à partir de l'information sur l'âge des femmes en âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans chaque groupe, alors nous avons dans notre analyse opté plutôt pour le pourcentage des femmes de chaque groupe en partant du principe que la natalité est très souvent liée aux femmes et du fait que nous pouvons analyser une diminution du pourcentage comme étant dû à une mortalité. Ainsi sur la base de cette nouvelle hypothèse, voici nos nouveaux résultats. 
 
 ```{r fig.align='center', fig.cap= "Taux de Natalité et Pourcentage des femmes dans chaque groupe"}
 # Charger les bibliothèques nécessaires
@@ -284,20 +283,21 @@ grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
 
 Les résultats nous montrent un lien croissant pour les tranches d'âge 0-24 et 25-45 ans montrant ainsi que dans ces tranches d'âge si le pourcentage des femmes diminuent (quer l'on pourrait assimiler à une mort des femmes) alors le taux de natalité diminue. Par ailleurs ceux de la tranche 45-60 semble n'avoir aucun lien sur le taux de natalité. Enfin il a été constaté un lien négatif pour la tranche d'âge 60 ans et plus.
 
-## Taux et nombre de consultation
+## Taux et nombre de visites
 
 (Insérer les cartes à ce niveau : Richard doit refaire les cartes et les insérer)
 
-L'analyse des statistiques descriptives sur le nombre de consultations
+L'analyse des statistiques descriptives sur le nombre de visites
 annuelles de médecin généraliste entre 2018 et 2022 révèle une
 distribution fortement asymétrique à droite, avec une grande dispersion
-des données. La moyenne de 19130 consultations, nettement supérieure à
+des données. La moyenne de 19130 visites, nettement supérieure à
 la médiane de 9127, indique la présence de valeurs extrêmes tirant la
 distribution vers le haut. Cette asymétrie est confirmée par l'écart
 considérable entre le minimum de 1037 et le maximum de 765833
-consultations par an.
+visites par an. 
 
-```{r, fig.align='center', fig.cap= "Distributiion du nombre et du taux de consultations"}
+
+```{r, fig.align='center', fig.cap= "Distributiion du nombre et du taux de visites"}
 library(ggplot2)
 library(patchwork)
 
@@ -329,14 +329,14 @@ représentative de l'activité typique d'un médecin généraliste que la
 moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
 lumière la diversité des pratiques et des charges de travail parmi les
 médecins généralistes, avec potentiellement quelques cas atypiques
-présentant un volume de consultations exceptionnellement élevé.
+présentant un volume de consultations exceptionnellement élevé. 
 
 Le nombre de visites pouvant potentiellement être influencé par la
 taille de la commune et donc par sa population, nous avons éliminer cet
 effet en calculant le taux de consultations qui n'est autre que le
-nombre de consultations moyennes par personnes.
+nombre de consultations moyennes par personnes. 
 
-```{r }
+```{r, fig.align='center'}
 # Stats desc sur le nombre de visites
 stats <- summary(data$nb_visite) 
 
@@ -355,25 +355,25 @@ summary_df %>% kable(format = "latex",
                                   "HOLD_position"))
 ```
 
-## Taux de consultation et quelques variables démographiques et socio-économiques
+## Taux de visites et quelques variables démographiques et socio-économiques
 
 Nous allons ici, voir s'il y a un lien à priori entre le taux de
-consultation et certaines de nos variables explicatives. Ainsi, nous
+visites et certaines de nos variables explicatives. Ainsi, nous
 avons d'abord réalisé une analyse descriptive bivariée puis nous avons
 calculé la corrélation de Pearson pour évaluer le lien linéaire entre le
 taux de consulation et des variables telles que la population totale, la
 part des personnes agées (75 ans et plus), la part de quelques CSP
 (ouvriers et retraités).
 
-### Taux de consultation et population totale
+### Taux de visites et population totale
 
-En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort un lien clair entre la taille des communes françaises et le taux de consultations médicales, mettant en évidence une tendance où les grandes communes (> 8974 habitants) affichent un taux moyen de consultations supérieur (1,526810) par rapport aux communes moyennes (1,456356) et petites (1,383861). Cette observation suggère que l'accès facilité aux infrastructures médicales dans les zones urbaines contribue à une utilisation accrue des services de santé. En revanche, les petites communes, probablement plus isolées et moins dotées en praticiens, semblent rencontrer des barrières structurelles limitant la fréquence des consultations.
+En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort un lien clair entre la taille des communes françaises et le taux de visites médicales, mettant en évidence une tendance où les grandes communes (> 8974 habitants) affichent un taux moyen de visites supérieur (1,526810) par rapport aux communes moyennes (1,456356) et petites (1,383861). Cette observation suggère que l'accès facilité aux infrastructures médicales dans les zones urbaines contribue à une utilisation accrue des services de santé. En revanche, les petites communes, probablement plus isolées et moins dotées en praticiens, semblent rencontrer des barrières structurelles limitant la fréquence des visites. 
 
-```{r}
+```{r , fig.align='center'}
 # Calcul des quantiles
 quantiles <- quantile(data$population_municipale_2021_x, probs = c(1/3, 2/3), na.rm = TRUE)
 
-# Créeation des classes avec les bornes des intervalles
+# Création des classes avec les bornes des intervalles
 data_pop <- data %>%
   mutate(taille_commune = case_when(
     population_municipale_2021_x <= quantiles[1] ~ paste0("Petite (<= ", round(quantiles[1]), ")"),
@@ -386,16 +386,16 @@ data_pop <- data %>%
 # Génération du tableau en LaTeX
 data_pop %>% kable(format = "latex", 
                      booktabs = TRUE,
-                     caption = "Taux de consultations selon la taille de la commune") %>%
+                     caption = "Taux de visites selon la taille de la commune") %>%
   kable_styling(latex_options = c("striped",
                                   "HOLD_position"))
 ```
 
-### Taux de consultation et population âgée
+### Taux de visites et population âgée
 
-L'analyse met en évidence que les communes françaises avec une population âgée significative (population âgée de 75 ans et plus est supérieure à la médiane soit plus de 670 habitants âgés de 75 ans et plus) présentent un taux moyen de consultations inférieur (1,410213) comparé aux communes où la population âgée est moindre (1,501111). Cette observation peut refléter des défis spécifiques aux populations plus âgées, tels que des obstacles physiques ou logistiques pour accéder aux soins médicaux, ou encore une moindre propension à consulter régulièrement en raison d'habitudes ou de conditions de santé chroniques. Ces résultats soulignent un paradoxe apparent, car les besoins en soins médicaux des personnes âgées sont en général plus importants, ce qui pourrait indiquer une inadéquation entre l'offre médicale et les besoins spécifiques de cette tranche d'âge. Cela met en lumière un enjeu crucial pour les politiques de santé visant à améliorer l'accès et l'utilisation des services médicaux pour les populations vieillissantes.
+L'analyse met en évidence que les communes françaises avec une population âgée significative (population âgée de 75 ans et plus est supérieure à la médiane soit plus de 670 habitants âgés de 75 ans et plus) présentent un taux moyen de visistes inférieur (1,410213) comparé aux communes où la population âgée est moindre (1,501111). Cette observation peut refléter des défis spécifiques aux populations plus âgées, tels que des obstacles physiques ou logistiques pour accéder aux soins médicaux, ou encore une moindre propension à consulter régulièrement en raison d'habitudes ou de conditions de santé chroniques. Ces résultats soulignent un paradoxe apparent, car les besoins en soins médicaux des personnes âgées sont en général plus importants, ce qui pourrait indiquer une inadéquation entre l'offre médicale et les besoins spécifiques de cette tranche d'âge. Cela met en lumière un enjeu crucial pour les politiques de santé visant à améliorer l'accès et l'utilisation des services médicaux pour les populations vieillissantes. 
 
-```{r}
+```{r , fig.align='center'}
 # Calcul de la médiane
 mediane <- median(data$nb_de_pers_agees_de_75_ans_ou_plus_2021, na.rm = TRUE)
 
@@ -411,7 +411,7 @@ data_age <- data %>%
 # Génération du tableau en LaTeX
 data_age %>% kable(format = "latex", 
                      booktabs = TRUE,
-                     caption = "Taux de consultations selon la population âgée") %>%
+                     caption = "Taux de visites selon la population âgée") %>%
   kable_styling(latex_options = c("striped",
                                   "HOLD_position"))
 
@@ -428,26 +428,26 @@ data_age %>% kable(format = "latex",
 
 ```
 
-### Taux de consultation et CSP
+### Taux de visites et CSP
 
 Aucune catégorie ne semble montrer une relation linéaire évidente avec
-le taux de visite. Par ailleurs, pour toutes les catégories
+le taux de visites. Par ailleurs, pour toutes les catégories
 socio-professionnelles, la majorité des communes se situent dans une
 plage de proportions faibles, ce qui limite la variabilité observable
 dans les relations. Une analyse statistique supplémentaire, comme le
 calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
 relations observées visuellement.
 
-```{r fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines catégories socioprofessionnelle"}
+```{r fig.align='center', fig.cap="Relations entre le taux de visites et certaines catégories socioprofessionnelles (variables standarisées)"}
 # Chargement les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
 
 # Standarisation des variables pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables
-#data_csp <- data %>%
-  #mutate(across(c(taux_visites, 13:20), scale))
+data_csp <- data %>%
+  mutate(across(c(taux_visites, 13:20), scale))
 
-data_csp <- data
+#data_csp <- data
 
 # Création les graphiques
 plot1 <- ggplot(data_csp, aes(x = population_de_15_ans_ou_selon_la_csp_2021_agriculteurs_exploitants, y = taux_visites)) +
@@ -483,10 +483,10 @@ plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
   labs(title = "", x = "Sans activites", y = "Taux de visites")
 
 # Affichage des graphiques ensemble
-grid.arrange(plot1, plot2, plot3, plot4, ncol = 2)
-grid.arrange(plot5, plot6, plot7, plot8, ncol = 2)
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 4)
 ```
 
+### (Trouver un titre pour cette section et analyser : Alex)
 (Trouver un titre pour cette section et analyser : Alex)
 
 ```{r, fig.align='center', fig.cap= "Corrélations entre le nombre de visite et quelques variables"}
@@ -542,34 +542,12 @@ ggplot(cor_data, aes(x = reorder(Variable, Correlation), y = Correlation, fill =
 
 ```
 
-
 ## Analyse spatiale
 
 ```{r }
 # Importation des données
 data <- read.csv("../data/data.csv", sep = ",", dec=".")
 ```
-
-```{r }
-# # Création des variables agrégées
-# 
-# # Création de la variable indiquant le nombre de femmes en âge de procréer 
-# data$femmes_15_49 <- rowSums(data[, paste0("femmes_", c("15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))], na.rm=TRUE)
-```
-
-
-```{r }
-# # Installation des packages nécessaires
-# library(lme4)
-# 
-# # Modèle de régression de Poisson avec effets aléatoires non spatiaux
-# modele_non_spatial <- glmer(nb_visite ~ (1 | code) + population_municipale_2021 + nb_de_pers_agees_de_65_ans_ou_2021 + femmes_15_49 + taille_menage_moyenne, 
-#                             family = poisson(link = "log"), data = data)
-# 
-# # Résumé du modèle non spatial
-# summary(modele_non_spatial)
-```
-
 
 ```{r}
 library(geosphere)
@@ -602,7 +580,6 @@ data[2124, c(93, 94)] <- c(2.916621, 42.74637)
 data[2746, c(93, 94)] <- c(2.376579, 43.49010)
 ```
 
-
 ```{r}
 coords <- data.frame(lon = data$longitude, lat = data$latitude)
 distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
@@ -632,27 +609,27 @@ library(spdep)
 ### Matrice de voisinage
 dist.w <- mat2listw(matrice_poids, style = "W", row.names=NULL)
 ```
-Après une analyse de nos données en ne tenant pas compte de l'effet spatial, nous allons à présent poursuivre avec une analyse qui tient compte de celui-ci. Nous allons ici faire une analyse basée sur le diagramme de Moran. AInsi d'après les ex plications données au niveau de la partie méthodologie, nous aurons les 4 quadrant suivants. 
+Après une analyse de nos données en ne tenant pas compte de l'effet spatial, nous allons à présent poursuivre avec une analyse qui tient compte de celui-ci. Nous allons ici faire une analyse basée sur le diagramme de Moran. Ainsi d'après les explications données au niveau de la partie méthodologie, nous aurons les 4 quadrants suivants. 
 
 - **Quadrant 1 (haut à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, entourées de zones présentant également un taux de consultations élevé (autocorrélation spatiale positive, structure **high-high**).
 - **Quadrant 3 (bas à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, entourées de zones présentant un taux de consultations également faible (autocorrélation spatiale positive, structure **low-low**).
 - **Quadrant 2 (bas à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, mais entourées de zones présentant un taux de consultations plus faible (autocorrélation spatiale négative, structure **high-low**).
 - **Quadrant 4 (haut à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, mais entourées de zones avec un taux de consultations plus élevé (autocorrélation spatiale négative, structure **low-high**).
 
- Vu le nombre de nos communes la mise sur le graphique des noms de toutes les communes allaient être compliqué. Pour cela, nous avons choisi au hasard 4 communes par cadrants. Ainsi, Ce diagramme de Moran illustre la corrélation spatiale des taux de consultation par commune et ceux des communes voisines. La tendance générale, représentée par la droite de régression rouge, montre une relation positive entre ces taux, confirmant ainsi une autocorrélation spatiale. Autrement dit, les communes ayant un taux élevé de consultations ont tendance à être entourées par d’autres communes avec un taux similaire, et inversement.
+Vu le nombre de nos communes, la mise sur le graphique des noms de toutes les communes allait être compliquée. Pour cela, nous avons choisi au hasard 4 communes par cadrant. Ainsi, Ce diagramme de Moran illustre la corrélation spatiale des taux de consultation par commune et ceux des communes voisines. La tendance générale, représentée par la droite de régression rouge, montre une relation positive entre ces taux, confirmant ainsi une autocorrélation spatiale. Autrement dit, les communes ayant un taux élevé de consultations ont tendance à être entourées par d’autres communes avec un taux similaire, et inversement. 
 
-Dans le quadrant HH (Haut-Haut), représenté en rouge, on retrouve des communes comme Saint-Saulve, Le Bouscat et Bruay-la-Buissière. Celles-ci affichent un taux de consultation élevé et sont entourées par des communes présentant également des taux élevés. Cela indique une concentration géographique des consultations médicales, qui peut s'expliquer par une offre de soins plus développée ou une demande locale particulièrement forte.
+Dans le quadrant HH (Haut-Haut), représenté en rouge, on retrouve des communes comme Saint-Saulve, Le Bouscat et Bruay-la-Buissière. Celles-ci affichent un taux de consultations élevé et sont entourées par des communes présentant également des taux élevés. Cela indique une concentration géographique des consultations médicales, qui peut s'expliquer par une offre de soins plus développée ou une demande locale particulièrement forte. 
 
-Le quadrant HL (Haut-Bas), en violet, comprend des communes comme Saint-Jacques-de-la-Lande et Le Portel. Ces communes ont un taux élevé de consultations, mais sont entourées de communes où les taux sont plus faibles. Ce contraste peut suggérer que ces villes disposent d’une offre de soins plus attractive que leurs voisines, attirant ainsi des patients des alentours.
+Le quadrant HL (Haut-Bas), en violet, comprend des communes comme Saint-Jacques-de-la-Lande et Le Portel. Ces communes ont un taux élevé de consultations, mais sont entourées de communes où les taux sont plus faibles. Ce contraste peut suggérer que ces villes disposent d’une offre de soins plus attractive que leurs voisines, attirant ainsi des patients des alentours. 
 
-À l’inverse, dans le quadrant LH (Bas-Haut), en vert, on trouve des communes comme Aix-en-Provence, Ribécourt-Dreslincourt et L'Isle-Adam. Ces communes affichent un faible taux de consultation, tandis que leurs voisines présentent des taux plus élevés. Ce phénomène peut s’expliquer par le fait que les habitants de ces villes se rendent dans les communes avoisinantes pour leurs consultations, soit en raison d’un manque d’infrastructures médicales locales, soit par préférence pour des services situés ailleurs.
+À l’inverse, dans le quadrant LH (Bas-Haut), en vert, on trouve des communes comme Aix-en-Provence, Ribécourt-Dreslincourt et L'Isle-Adam. Ces communes affichent un faible taux de consultations, tandis que leurs voisines présentent des taux plus élevés. Ce phénomène peut s’expliquer par le fait que les habitants de ces villes se rendent dans les communes avoisinantes pour leurs consultations, soit en raison d’un manque d’infrastructures médicales locales, soit par préférence pour des services situés ailleurs. 
 
-Enfin, le quadrant LL (Bas-Bas), en orange, inclut des communes comme Saint-Jean-le-Blanc, Romorantin-Lanthenay et Le Breuil. Ces villes ont un faible taux de consultation et sont entourées de communes où les taux sont également bas. Cela peut indiquer une accessibilité réduite aux soins de santé, une moindre densité médicale, ou encore une faible demande locale pour des consultations.
+Enfin, le quadrant LL (Bas-Bas), en orange, inclut des communes comme Saint-Jean-le-Blanc, Romorantin-Lanthenay et Le Breuil. Ces villes ont un faible taux de consultations et sont entourées de communes où les taux sont également bas. Cela peut indiquer une accessibilité réduite aux soins de santé, une moindre densité médicale, ou encore une faible demande locale pour des consultations. 
 
 En résumé, cette analyse met en évidence des disparités territoriales dans la répartition des consultations médicales. Certaines communes concentrent les services et attirent les patients des alentours, tandis que d'autres souffrent d’un accès limité aux soins, renforçant ainsi les inégalités spatiales en matière de santé.
 
 
-```{r fig.cap="Moran Plot avec visibilités de quelques communes", fig.align='center'}
+```{r, fig.cap="Moran Plot avec visibilités de quelques communes", fig.align='center'}
 library(spdep)
 library(dplyr)
 library(ggplot2)
@@ -697,9 +674,10 @@ ggplot(data, aes(x = taux_visites, y = taux_voisins)) +
   scale_color_manual(values = c("HH" = "red", "HL" = "purple", "LH" = "green", "LL" = "orange"))
 ```
 
-### Autocorélation Locale
+### Autocorélation locale
+En se basant sur l'analyse par cluster fourni pour le LISA (local Indicator or Spatial Association), nous pouvons remarquer que le cluster HH est celui regroupant le plus de communes suivi du cluster LH. Ceci dit une grande partie des communes ont des taux élevées et entourées par des communes avec des taux élevés ou encore des taux bas et entourées par des communes ayant des taux élevés. 
 
-```{r fig.cap="Clusters sur la base du LISA", fig.align='center'}
+```{r , fig.cap="Clusters sur la base du LISA", fig.align='center'}
 # Calcul du LISA (Moran Local)
 lisa_results <- localmoran(data$taux_visites, dist.w)
 
@@ -727,7 +705,6 @@ ggplot(data, aes(x = taux_visites, y = LISA_I, color = quadrant)) +
 
 ```
 
-En se basant sur l'analyse par cluster fourni pour le LISA (local Indicator or Spatial Association), nous pouvons remarquer que le cluster HH est celui regroupant le plus de communes suivi du cluster LH. Ceci dit une grande partie des communes ont des taux élevées et entourées par des communes de taux élevées ou encore des taux bas et entourées par des communes de taux élevées. 
 
 
 
