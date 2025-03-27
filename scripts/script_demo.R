@@ -8,6 +8,7 @@ library(gridExtra)
 library(purrr)
 library(skimr)
 
+
 # Importation des données de démonstration
 
 demo <- read.csv("data/demof2.csv", sep = ";", dec=",")
@@ -453,4 +454,50 @@ selected_variables = [
   'longitude', 'latitude' 
 ]
 
-  
+data = df
+
+# Charger les données
+data <- read.csv("data.csv")
+
+# Vérifier le type de la colonne cible
+str(data$taux_visites)
+
+# Nettoyer le nom des colonnes au cas où il y aurait des espaces cachés
+colnames(data) <- trimws(colnames(data))
+
+# Convertir taux_visites en numérique si nécessaire
+data$taux_visites <- as.numeric(as.character(data$taux_visites))
+
+# Vérifier après conversion
+str(data$taux_visites)
+
+# Sélectionner uniquement les colonnes numériques
+
+numeric_vars <- data[sapply(data, is.numeric)]
+
+colnames(numeric_vars)
+data$taux_visites <- as.numeric(as.character(data$taux_visites))
+# Initialiser un dataframe pour stocker les résultats
+results <- data.frame(Variable = character(), Correlation = numeric(), P_value = numeric(), Significance = character())
+
+# Effectuer le test de corrélation pour chaque variable
+for (var in colnames(data)) {
+  if (var != "taux_visites") {  # Exclure la variable cible elle-même
+    test <- cor.test(data[[var]], data$taux_visites, use = "pairwise.complete.obs", method = "pearson")
+    significance <- ifelse(test$p.value < 0.01, "***", 
+                           ifelse(test$p.value < 0.05, "**", 
+                                  ifelse(test$p.value < 0.1, "*", "ns")))
+    
+    # Ajouter les résultats au tableau
+    results <- rbind(results, data.frame(Variable = var, 
+                                         Correlation = test$estimate, 
+                                         P_value = test$p.value, 
+                                         Significance = significance))
+  }
+}
+
+# Trier par ordre de corrélation absolue
+results <- results[order(abs(results$Correlation), decreasing = TRUE), ]
+
+# Afficher le tableau
+print(results)
