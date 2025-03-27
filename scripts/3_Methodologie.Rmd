@@ -91,12 +91,7 @@ Pour construire la matrice de poids, nous avons suivi ces étapes.
      w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
     $$
 
-<<<<<<< HEAD
-#### Test significativité de l'indice de Moran \\
-=======
-
 #### Test significativité de l'indice de Moran :
->>>>>>> 46c51413a0705f22b132a606667fa65a73b21dca
 
 Le test de significativité de l’indice de Moran permet d’évaluer si une variable présente une autocorrélation spatiale significative, c’est-à-dire si les valeurs observées dans des zones proches ont tendance à être similaires ou non.
 
