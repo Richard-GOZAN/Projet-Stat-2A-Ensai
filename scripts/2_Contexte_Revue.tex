@@ -107,22 +107,22 @@
 \subsection{Cadre conceptuel de
 l'étude}\label{cadre-conceptuel-de-luxe9tude}
 
-Dans cette partie, nous allons définir certainses notions clés qui
-apparaissent dans notre étude : le taux de visite et la notion de
+Dans cette partie, nous allons définir certaines notions clés qui
+apparaissent dans notre étude : le taux de visites et la notion de
 voisin.
 
-\subsubsection{Taux de visite}\label{taux-de-visite}
+\subsubsection{Taux de visites}\label{taux-de-visites}
 
-Le taux de visite n'est rien d'autre que le nombre moyen de visite dans
-chaque commune. IL est calculé en divisant le nombre de visite par la
-population de la commune en question. En d'autres termes, il s'agit du
-nombre de visites que chaque habitant de la commune a effectué en
+Le taux de visites n'est rien d'autre que le nombre moyen de visites
+dans chaque commune. Il est calculé en divisant le nombre de visites par
+la population de la commune en question. En d'autres termes, il s'agit
+du nombre de visites que chaque habitant de la commune a effectué en
 moyenne.
 
 \[\tau_i = \frac{n_i}{P_i}\]
 
 où \(\tau_i\) et \(n_i\) sont respectivement le taux et le nombre de
-visite de la commune \(i\).
+visites de la commune \(i\).
 
 \subsubsection{La notion de voisin}\label{la-notion-de-voisin}
 
@@ -147,7 +147,7 @@ W_{ij} = \begin{cases}
   $$
   d(i,j) = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2},
   $$
-pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante. Dans le cadre de cette étude, nous utiliserons la distance de Haversine, compte tenu des données utilisées (longitude et latitude)
+pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante. Dans le cadre de cette étude, nous utiliserons la distance de Haversine, compte tenu des données utilisées (longitude et latitude).
 
 \item \textbf{Basée sur la contiguïté :}  
   Pour des données surfaciques (comme des zones administratives), les voisins sont définis en fonction du partage d'une frontière commune. On distingue par exemple la contiguïté \emph{Rook} (deux zones sont voisines si elles partagent un segment de frontière) et la contiguïté \emph{Queen} (elles sont voisines si elles partagent au moins un point).
@@ -171,16 +171,17 @@ Si l'on considère deux points (\(i\)) et (\(j\)), la distance
  d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
 \]
 
-Où :
+Avec :
 
 \begin{itemize}
 \item
-  \(r\) : Rayon de la Terre (environ 6371 km).
+  \(r\) : le rayon de la terre (environ 6371 km).
 \item
-  \(\phi_i, \phi_j\) : Latitudes des points \(i\) et \(j\) (en radians).
+  \(\phi_i, \phi_j\) : les latitudes des points \(i\) et \(j\) (en
+  radians).
 \item
-  \(\lambda_i, \lambda_j\) : Longitudes des points \(i\) et \(j\) (en
-  radians). Après calcul nous avons ces statistiques sur nos distances.
+  \(\lambda_i, \lambda_j\) : les longitudes des points \(i\) et \(j\)
+  (en radians).
 \end{itemize}
 
 \subsection{Revue de littérature}\label{revue-de-littuxe9rature}
@@ -210,7 +211,9 @@ personnes âgées, en particulier celles de 65 à 79 ans, consultent plus
 fréquemment en raison de la prévalence accrue de maladies chroniques et
 du suivi médical nécessaire à leur prise en charge. En revanche, les
 jeunes adultes, en bonne santé, présentent une utilisation plus
-sporadique des services médicaux.
+sporadique des services médicaux. En d'autres termes, la fréquence de
+consulatations augmentent avec l'âge. (Ministère de la Santé et des
+Services sociaux Québec 2014).
 
 Le sexe constitue également un facteur différenciant : les femmes
 consultent plus fréquemment que les hommes, en raison de besoins
@@ -218,7 +221,8 @@ spécifiques en santé reproductive et d'une plus grande propension à
 rechercher des soins préventifs. À l'inverse, les hommes, notamment dans
 les catégories socio-professionnelles les plus actives, tendent à
 sous-utiliser les services de soins, ce qui peut entraîner des
-diagnostics plus tardifs et des complications médicales accrues.
+diagnostics plus tardifs et des complications médicales accrues
+(publique 2024).
 
 Le statut socio-économique et le niveau d'éducation influencent
 également de manière significative l'accès aux soins. Les individus à
@@ -228,7 +232,7 @@ des assurances complémentaires qui allègent les coûts des soins. À
 l'inverse, les personnes en situation de précarité rencontrent des
 obstacles financiers, administratifs et culturels qui limitent leur
 recours aux soins, malgré des besoins souvent accrus en raison de
-conditions de vie plus précaires.
+conditions de vie plus précaires (Santé 2023).
 
 Le niveau d'éducation joue un rôle clé dans la fréquentation des
 services de santé. Une meilleure instruction est associée à une
@@ -236,7 +240,8 @@ meilleure connaissance des risques sanitaires et à une adoption plus
 proactive des comportements de prévention, entraînant un recours plus
 fréquent aux soins médicaux. À l'inverse, un faible niveau d'éducation
 est souvent corrélé à un moindre suivi médical et à une utilisation plus
-tardive des services de soins, notamment en cas de complications.
+tardive des services de soins, notamment en cas de complications (Canada
+2022).
 
 La perception de la santé et l'accès géographique aux soins sont
 d'autres facteurs déterminants. Les individus qui jugent leur état de
@@ -311,6 +316,21 @@ Séjours Diminuent.''}
 \bibitem[\citeproctext]{ref-irdes2020}
 Irdes. 2020. {``Inégalités Spatiales d'accessibilité Aux Soins
 Médicaux.''} \url{https://www.irdes.fr}.
+
+\bibitem[\citeproctext]{ref-msss2013}
+Ministère de la Santé et des Services sociaux Québec. 2014.
+{``Proportion de La Population de 12 Ans Et Plus Ayant Consulté Un
+Médecin1 Au Cours Des 12 Derniers Mois, Selon Le Sexe Et Selon Le Groupe
+d'âge, Québec, 2013-2014.''}
+\url{https://www.msss.gouv.qc.ca/professionnels/statistiques-donnees-sante-bien-etre/statistiques-de-sante-et-de-bien-etre-selon-le-sexe-volet-national/consultation-d-un-medecin/}.
+
+\bibitem[\citeproctext]{ref-bag2024}
+publique, Office fédéral de la santé. 2024. {``Santé Des Femmes Et Accès
+Aux Soins En Suisse.''} \url{https://bag.admin.ch}.
+
+\bibitem[\citeproctext]{ref-bvs2023}
+Santé, BVS. 2023. {``Facteurs Influençant l'accès Aux Soins Médicaux En
+Milieu Défavorisé.''} \url{https://docs.bvsalud.org}.
 
 \end{CSLReferences}
 
