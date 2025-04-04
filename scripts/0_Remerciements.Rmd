@@ -1,0 +1,11 @@
+---
+output: 
+  pdf_document: 
+    keep_tex: true
+---
+
+# Remerciements
+
+Nous tenons tout d’abord à remercier notre tutrice, Audrey Lavenu, qui nous a accompagnés tout au long de ce projet. Son encadrement et ses précieux conseils nous ont été d’une grande aide, et nous sommes reconnaissants pour le temps qu’elle nous a accordé. Ce projet a été un véritable défi pour nous, et grâce à son soutien, nous avons pu approfondir nos connaissances et progresser dans notre travail.
+
+Nous souhaitons également exprimer notre gratitude à Monsieur Audenaert David, dont l’initiation et les rappels constants à travailler sur notre projet, même lors des semaines plus détendues, nous ont permis de rester concentrés et de mener à bien notre étude. Son implication a joué un rôle essentiel dans notre organisation et notre rigueur.

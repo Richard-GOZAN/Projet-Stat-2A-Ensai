@@ -11,44 +11,218 @@ data <- read.csv("../data/data.csv", sep = ",", dec=".")
 ```
 
 
-```{r }
-# Création des variables agrégées
+```{r}
+# Renommer la colonne de population totale
+colnames(data)[which(colnames(data) == "population_municipale_2021_x")] <- "population_totale"
 
-# Création de la variable indiquant le nombre de femmes en âge de procréer 
-data$femmes_15_49 <- rowSums(data[, paste0("femmes_", c("15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))], na.rm=TRUE)
+# Regroupement des âges
+data$pop_0_24 <- rowSums(data[, c("homme_0_4", "femmes_0_4", "hommes_5_9", "femmes_5_9", 
+                                  "hommes_10_14", "femmes_10_14", "hommes_15_19", "femmes_15_19", 
+                                  "hommes_20_24", "femmes_20_24")], na.rm = TRUE)
+
+data$pop_25_64 <- rowSums(data[, c("hommes_25_29", "femmes_25_29", "hommes_30_34", "femmes_30_34", 
+                                   "hommes_35_39", "femmes_35_39", "hommes_40_44", "femmes_40_44", 
+                                   "hommes_45_49", "femmes_45_49", "hommes_50_54", "femmes_50_54", 
+                                   "hommes_55_59", "femmes_55_59", "hommes_60_64", "femmes_60_64")], na.rm = TRUE)
+
+data$pop_65_plus <- rowSums(data[, c("homme_65_69", "femmes_65_69", "hommes_70_47", "femmes_70_74", 
+                                     "hommes_75_79", "femmes_75_79", "hommes_80_84", "femmes_80_84", 
+                                     "hommes_85_89", "femmes_85_89", "hommes_90_94", "femmes_90_94", 
+                                     "hommes_95_plus", "femmes_95_plus")], na.rm = TRUE)
+
+# Calcul des pourcentages
+data$pct_pop_0_24 <- (data$pop_0_24 / data$population_totale) * 100
+data$pct_pop_25_64 <- (data$pop_25_64 / data$population_totale) * 100
+data$pct_pop_65_plus <- (data$pop_65_plus / data$population_totale) * 100
+
+data$pct_union_libre <- data$part_d_en_concubinage_ou_union_libre # Déjà en pourcentage
+
+data$pct_ouvriers <- (data$population_de_15_ans_ou_selon_la_csp_2021_ouvriers / data$population_totale) * 100
+
+data$pct_sans_emploi <- (data$population_de_15_ans_ou_selon_la_csp_2021_autres_personnes_sans_activite_professionnelle /
+                        (data$pop_25_64)) * 100
+
+data$pct_fam_3_enfants_plus <- data$part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021 # Déjà en pourcentage
+
+# Création de la base finale
+data_modelisation <- data[, c("code", "libelle_x", "pct_pop_0_24", "pct_pop_25_64", "pct_pop_65_plus",
+                              "pct_union_libre", "pct_ouvriers", "pct_sans_emploi", "pct_fam_3_enfants_plus",
+                              "taux_de_natalite_annuel_moyen_2015_2021", "taux_de_mortalite_annuel_moyen_2015_2021")]
+
+# Sauvegarde en CSV
+write.csv(data_modelisation, "../data/data_modelisation.csv", row.names = FALSE)
+```
+
+
+
+```{r }
+# # Création des variables agrégées
+# 
+# # Création de la variable indiquant le nombre de femmes en âge de procréer 
+# data$femmes_15_49 <- rowSums(data[, paste0("femmes_", c("15_19", "20_24", "25_29", "30_34", "35_39", "40_44", "45_49"))], na.rm=TRUE)
 ```
 
 
 ```{r }
-# Installation des packages nécessaires
-library(lme4)
-
-# Modèle de régression de Poisson avec effets aléatoires non spatiaux
-modele_non_spatial <- glmer(nb_visite ~ (1 | code) + population_municipale_2021 + nb_de_pers_agees_de_65_ans_ou_2021 + femmes_15_49 + taille_menage_moyenne, 
-                            family = poisson(link = "log"), data = data)
-
-# Résumé du modèle non spatial
-summary(modele_non_spatial)
+# # Installation des packages nécessaires
+# library(lme4)
+# 
+# # Modèle de régression de Poisson avec effets aléatoires non spatiaux
+# modele_non_spatial <- glmer(nb_visite ~ (1 | code) + population_municipale_2021 + nb_de_pers_agees_de_65_ans_ou_2021 + femmes_15_49 + taille_menage_moyenne, 
+#                             family = poisson(link = "log"), data = data)
+# 
+# # Résumé du modèle non spatial
+# summary(modele_non_spatial)
 ```
 
 
+```{r}
+library(geosphere)
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
 
+```{r}
+# Identification des paires de communes où la distance dépasse 2000 km
+indices <- which(distance_matrix > 2000, arr.ind = TRUE)
 
-```{r }
+# Extraire la colonne des indices des lignes
+ligne_indices <- indices[, 1]
 
+# Supprimer les doublons
+ligne_indices_unique <- unique(ligne_indices)
+
+# Récupération des lignes concernées
+indices_concernes <- ligne_indices_unique[1:7]
+
+data[indices_concernes, c(2, 93, 94)]
+```
+
+```{r}
+# Mise à jour des coordonnées géographiques
+data[1973, c(93, 94)] <- c(2.775222, 50.41792)
+data[72, c(93, 94)] <- c(6.231506, 44.09108)
+data[399, c(93, 94)] <- c(1.560560, 45.16898)
+data[1264, c(93, 94)] <- c(-1.486812, 47.29624)
+data[1947, c(93, 94)] <- c(1.623721, 50.48337)
+data[2124, c(93, 94)] <- c(2.916621, 42.74637)
+data[2746, c(93, 94)] <- c(2.376579, 43.49010)
 ```
 
 
-```{r }
+```{r}
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
 
+```{r}
+d_max <- 500
+
+# Calcul de la matrice de poids
+matrice_poids <- ifelse(distance_matrix <= d_max & distance_matrix > 0, 1 / distance_matrix, 0)
+  
+# Normalisation par ligne
+matrice_poids_norm <- matrice_poids / rowSums(matrice_poids)
+# y <- rowSums(matrice_poids_norm)
+# y
+# 
+# sum(y > 0 & y <= 1)
+# nrow(data)
+# 
+# i <- which((y = 0 | y > 1), arr.ind = TRUE)
 ```
 
 
-```{r }
+```{r}
+library(spdep)
 
+### Matrice de voisinage
+dist.w <- mat2listw(matrice_poids, style = "W", row.names=NULL)
+dist.w
 ```
 
+# Modélisation
 
-```{r }
+## Choix des variables utilisées dans la modélisation
 
+Une Analyse en Composantes Principales (ACP) a été effectuée afin d'identifier les variables qui s'associent et faire un choix plus judicieux et orienté des variables. En se servant les résultats de l'ACP (voir annexe) et en se basant sur les différentes variables illustrées par la revue de littérature, on s'intéressera aux parts des populations de 25 à 64 ans et celle de 65 ans et plus, à la part des populations en union libre, à la part des ouvriers, des sans emploi, au taux de natalité annuel moyen, à la part des populations ayant au moins trois (03) enfants de moins de 25 ans. Ces variables sont toutes prises en taux et nous permettebt de modéliser le taux de visites de médecen généraliste.
+
+## Test de Moran
+
+## Comparaison des modèles estimés
+
+## Optimisation du modèle par sélection de variables
+
+
+
+```{r}
+attach(data)
+
+### Modèle estimé
+modele <- taux_visites ~
+  population_municipale_2021_x +
+  taux_de_natalite_annuel_moyen_2015_2021 +
+  taux_de_mortalite_annuel_moyen_2015_2021 +
+  part_des_familles_sans_enf_de_de_25_ans_2021 +
+  part_des_familles_avec_1_enf_de_de_25_ans_2021 +
+  part_d_en_concubinage_ou_union_libre
+
+### Modèle MCO
+ze.lm <- lm(modele, data=data)
+summary(ze.lm)
+
+### Test de Moran adapté sur les résidus
+matrice <- dist.w
+lm.morantest(ze.lm,matrice)
+
+### Test LM-Error et LM-Lag
+lm.RStests(ze.lm,matrice,test="all")
+
+### Modèle SEM
+library(spatialreg)
+ze.sem<-errorsarlm(modele, data=data, matrice)
+summary(ze.sem)
+
+### Test d’Hausman
+Hausman.test(ze.sem)
+
+### Modèle SAR
+ze.sar<-lagsarlm(modele, data=data, matrice)
+summary(ze.sar)
+
+### Modèle SDM
+ze.sardm<-lagsarlm(modele, data=data, matrice, type="mixed")
+summary(ze.sardm)
+
+### Test de l’hypothèse de facteur commun
+# ze.sardm : Modèle non contraint
+# ze.sem : Modèle contraint
+FC.test<-LR.sarlm(ze.sardm,ze.sem)
+print(FC.test)
+```
+
+```{r}
+# Sélection des variables pertinentes
+data_model <- data[, c("nb_visite", "population_municipale_2021_x",
+                              "taux_de_mortalite_annuel_moyen_2015_2021",
+                              "taux_de_natalite_annuel_moyen_2015_2021",
+                              "part_des_pers_agees_de_75_ans_ou_2021",
+                              "longitude", "latitude")]
+
+# Ajustement du modèle de Poisson avec effet spatial
+mod_poisson <- spaMM::fitme(
+  nb_visite ~ population_municipale_2021_x + 
+    taux_de_mortalite_annuel_moyen_2015_2021 + 
+    taux_de_natalite_annuel_moyen_2015_2021 + 
+    part_des_pers_agees_de_75_ans_ou_2021 + 
+    Matern(1 | longitude + latitude), 
+  data = data_model, 
+  family = poisson(),  # Régression de Poisson
+  fixed = list(dist.method = "Earth")  # Distance de Haversine pour l'effet spatial
+)
+
+# Affichage des résultats
+summary(mod_poisson)  # Résumé du modèle avec coefficients et p-values
+spaMM::fixef(mod_poisson)    # Coefficients estimés des variables explicatives
+spaMM::VarCorr(mod_poisson)  # Paramètres de variance et corrélation de l'effet spatial
 ```

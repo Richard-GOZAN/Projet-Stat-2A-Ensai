@@ -5,3 +5,11 @@ output:
 ---
 
 # Conclusion
+
+Notre travail nous a permis d’explorer en profondeur les dynamiques qui façonnent l’accès aux soins en médecine de ville, en tenant compte des spécificités démographiques, socio-économiques et spatiales des territoires. Loin d’être uniforme, la répartition des consultations médicales révèle des disparités marquées, mettant en évidence des zones où l’accès aux soins est facilité et d’autres où il demeure un défi.  
+
+Les résultats obtenus nous ont parfois surpris et amenés à questionner certaines idées reçues. Par exemple, le lien entre la présence d’une population âgée et le taux de consultation nous rappelle que l’accès aux soins ne se résume pas à un simple besoin médical, mais qu’il dépend aussi des contraintes quotidiennes et des réalités locales. De même, l’effet d’attraction de certaines communes sur leurs voisines souligne combien les décisions des patients sont influencées par l’offre médicale disponible autour d’eux.  
+
+Au-delà des chiffres et des modèles, cette étude met en lumière une réalité essentielle : l’accès aux soins est avant tout une question humaine, ancrée dans les choix individuels, les contraintes économiques et les caractéristiques du territoire. Derrière chaque consultation comptabilisée, il y a un individu avec ses besoins, ses préoccupations et ses contraintes.  
+
+Cette réflexion nous rappelle l’importance de poursuivre les efforts pour une répartition plus équitable des services médicaux et d’intégrer ces enjeux spatiaux dans les politiques publiques. Si nos analyses permettent d’apporter un éclairage sur ces dynamiques, elles ne sont qu’une étape dans une réflexion plus large qui, nous l’espérons, contribuera à des actions concrètes en faveur d’un meilleur accès aux soins pour tous.

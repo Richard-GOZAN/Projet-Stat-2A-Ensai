@@ -21,6 +21,13 @@ library(spdep)
 library(geosphere)
 ```
 
+```{r setup2, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
 
 ```{r }
 # Importation des données de démonstration
@@ -99,9 +106,6 @@ data <- data %>%
 
 #skim(data)
 
-
-
-
 ## Exportation de la base finale 
 write.csv(data, "../data/data.csv", row.names = FALSE)
 
@@ -109,8 +113,9 @@ write.csv(data, "../data/data.csv", row.names = FALSE)
 
 # Analyse descriptive
 
-1. Description de la population d'étude 
+## Description de la population
 
+### Pyramide des ages
 
 Notre population d'étude est une population assez homogène en matière d'âge. Cependant plus on dépasse les 75 ans et moins on rencontre de personnes. D'autres part notre popuplation est fortement masculine avec une forte proportion des hommes quelle que soit la tranche d'âge à l'exception des tranches du troisième âge. 
 
@@ -121,8 +126,6 @@ library(tidyr)
 df = data
 colnames(df) <- gsub("homme_", "hommes_", colnames(df))
 colnames(df) <- gsub("hommes_70_47$", "hommes_70_74", colnames(df))
-
-
 
 # Sélectionner les colonnes de la pyramide des âges
 age_groups <- c("0_4", "5_9", "10_14", "15_19", "20_24", "25_29", "30_34", "35_39",
@@ -145,7 +148,6 @@ pyramide <- data.frame(
 # Convertir Age en facteur ordonné pour garantir le bon ordre
 pyramide$Age <- factor(pyramide$Age, levels = age_groups, ordered = TRUE)
 
-
 ggplot(pyramide, aes(x=Age, y=Population, fill=Sexe)) +
   geom_bar(stat="identity", width=0.8) +
   coord_flip() +  # Pour afficher en pyramide
@@ -160,13 +162,181 @@ ggplot(pyramide, aes(x=Age, y=Population, fill=Sexe)) +
 
 ```
 
+### Taux de natalité et taux de mortalité
 
-Dans cette partie, nous allons réaliser quelques statistiques
-descriptives sur nos données.
+Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distributions permet de constater que la natalité est de façon générale élevée par rapport à la mortalité dans les communes étudiées. 
 
-## Analyse univariée
+```{r fig.align='center', fig.cap= "Taux de Natalité et Taux de Mortalité"}
+# Vérification et conversion des variables avant de tracer
+# Vérification et conversion du taux de mortalité
+if (class(data$taux_de_mortalite_annuel_moyen_2015_2021) != "numeric") {
+  data$taux_de_mortalite_annuel_moyen_2015_2021 <- as.numeric(as.character(data$taux_de_mortalite_annuel_moyen_2015_2021))
+}
 
-```{r }
+# Vérification et conversion du taux de natalité
+if (class(data$taux_de_natalite_annuel_moyen_2015_2021) != "numeric") {
+  data$taux_de_natalite_annuel_moyen_2015_2021 <- as.numeric(as.character(data$taux_de_natalite_annuel_moyen_2015_2021))
+}
+
+#  Histogramme du taux de mortalité
+p1 <- ggplot(data, aes(x = taux_de_mortalite_annuel_moyen_2015_2021)) +
+  geom_histogram(bins = 30, fill = "red", alpha = 0.7, color = "black") +
+  labs( 
+       x = "Taux de mortalité", 
+       y = "Nombre de communes") +
+  theme_minimal()
+
+#  Histogramme du taux de natalité
+p2 <- ggplot(data, aes(x = taux_de_natalite_annuel_moyen_2015_2021)) +
+  geom_histogram(bins = 30, fill = "blue", alpha = 0.7, color = "black") +
+  labs(
+       x = "Taux de natalité", 
+       y = "Nombre de communes") +
+  theme_minimal()
+
+#  Nuage de points pour voir la relation entre mortalité et natalité
+p3 <- ggplot(data, aes(x = taux_de_mortalite_annuel_moyen_2015_2021, 
+                     y = taux_de_natalite_annuel_moyen_2015_2021)) +
+  geom_point(alpha = 0.7, color = "purple") +
+  geom_smooth(method = "lm", color = "black", linetype = "dashed") +  # Ajout d'une tendance linéaire
+  labs(
+       x = "Taux de mortalité",
+       y = "Taux de natalité") +
+  theme_minimal()
+
+#  Courbes de densité pour mieux voir la distribution
+p4 <- ggplot(data) +
+  geom_density(aes(x = taux_de_mortalite_annuel_moyen_2015_2021, fill = "Mortalité"), alpha = 0.5, color = "red") +
+  geom_density(aes(x = taux_de_natalite_annuel_moyen_2015_2021, fill = "Natalité"), alpha = 0.5, color = "blue") +
+  labs(
+       x = "Taux",
+       y = "Densité") +
+  scale_fill_manual(values = c("Mortalité" = "red", "Natalité" = "blue"), name = "Légende") +
+  theme_minimal()
+
+#  Affichage de tous les graphiques ensemble
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+Pour essayer de mieux voir l'effet de la mortalité sur la natalité, nous allons nous intéresser alors à une analyse de la corrélation entre les deux taux par groupe d'age. Nous avons considéré les groupes d'âge suivants : 0-24, 25-44, 45-60, 60 et plus en fonction des variables disponibles et aussi à partir de l'information sur l'âge des femmes en âge de procréer qui est de l'ordre de 25-45 et des personnes âgées dont l'âge est de plus 60 ans. Ne disposant pas du taux de mortalité dans chaque groupe, nous avons dans notre analyse opté plutôt pour le pourcentage des femmes de chaque groupe en partant du principe que la natalité est beaucoup plus liée aux femmes et du fait que nous pouvons analyser une diminution du pourcentage comme étant dû à une mortalité. Ainsi sur la base de ces hypothèses, voici nos nouveaux résultats. 
+
+```{r fig.align='center', fig.cap= "Taux de Natalité et Pourcentage des femmes dans chaque groupe"}
+# Charger les bibliothèques nécessaires
+library(ggplot2)
+library(readr)
+library(reshape2)
+library(gridExtra)
+
+# Créer les groupes d'âge en sommant les colonnes correspondantes
+data$pop_femmes <- data$femmes_0_4 + data$femmes_5_9 + data$femmes_10_14 + data$femmes_15_19 + data$femmes_20_24 + 
+                    data$femmes_25_29 + data$femmes_30_34 + data$femmes_35_39 + data$femmes_40_44 + data$femmes_45_49 + 
+                    data$femmes_50_54 + data$femmes_55_59 + data$femmes_60_64 + data$femmes_65_69 + data$femmes_70_74 + 
+                    data$femmes_75_79 + data$femmes_80_84 + data$femmes_85_89 + data$femmes_90_94 + data$femmes_95_plus
+
+data$femmes_0_24 <- (data$femmes_0_4 + data$femmes_5_9 + data$femmes_10_14 + data$femmes_15_19 + data$femmes_20_24) / data$pop_femmes
+data$femmes_25_45 <- (data$femmes_25_29 + data$femmes_30_34 + data$femmes_35_39 + data$femmes_40_44) / data$pop_femmes
+data$femmes_45_60 <- (data$femmes_45_49 + data$femmes_50_54 + data$femmes_55_59) / data$pop_femmes
+data$femmes_60_plus <- (data$femmes_60_64 + data$femmes_65_69 + data$femmes_70_74 + data$femmes_75_79 + 
+                         data$femmes_80_84 + data$femmes_85_89 + data$femmes_90_94 + data$femmes_95_plus) / data$pop_femmes
+
+# Extraire le taux de natalité
+data$taux_natalite <- data$taux_de_natalite_annuel_moyen_2015_2021
+
+# ---- Création des graphiques ----
+
+g1 <- ggplot(data, aes(x = femmes_0_24, y = taux_natalite)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "blue") +
+  labs(title = "0-24 ans",
+       x = "Proportion de Femmes 0-24 ans",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+g2 <- ggplot(data, aes(x = femmes_25_45, y = taux_natalite)) +
+  geom_point(color = "red", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(title = "25-45 ans",
+       x = "Proportion de Femmes",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+g3 <- ggplot(data, aes(x = femmes_45_60, y = taux_natalite)) +
+  geom_point(color = "green", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "green") +
+  labs(title = "45-60 ans",
+       x = "Proportion de Femmes",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+g4 <- ggplot(data, aes(x = femmes_60_plus, y = taux_natalite)) +
+  geom_point(color = "purple", alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, color = "purple") +
+  labs(title = "60+ ans",
+       x = "Proportion de Femmes",
+       y = "Taux de Natalité") +
+  theme_minimal()
+
+# ----  Affichage en grille (2x2) ----
+grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
+```
+
+Les résultats nous montrent un lien croissant pour les tranches d'âge 0-24 et 25-45 ans montrant ainsi que dans ces tranches d'âge si le pourcentage des femmes diminuent (quer l'on pourrait assimiler à une mort des femmes) alors le taux de natalité diminue. Par ailleurs ceux de la tranche 45-60 semble n'avoir aucun lien sur le taux de natalité. Enfin il a été constaté un lien négatif pour la tranche d'âge 60 ans et plus.
+
+## Taux et nombre de visites
+
+(Insérer les cartes à ce niveau : Richard doit refaire les cartes et les insérer)
+
+L'analyse des statistiques descriptives sur le nombre de visites
+annuelles de médecin généraliste entre 2018 et 2022 révèle une
+distribution fortement asymétrique à droite, avec une grande dispersion
+des données. La moyenne de 19130 visites, nettement supérieure à
+la médiane de 9127, indique la présence de valeurs extrêmes tirant la
+distribution vers le haut. Cette asymétrie est confirmée par l'écart
+considérable entre le minimum de 1037 et le maximum de 765833
+visites par an. 
+
+
+```{r, fig.align='center', fig.cap= "Distributiion du nombre et du taux de visites"}
+library(ggplot2)
+library(patchwork)
+
+# Premier graphique pour nb_visite
+plot1 <- ggplot(data) +
+  aes(x = nb_visite) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ylab("Nombre de communes") +
+  xlab("Nombre de consultations")
+
+# Deuxième graphique pour taux_visites_19_ans_ou_plus
+plot2 <- ggplot(data) +
+  aes(x = taux_visites_19_ans_ou_plus) +
+  geom_histogram(bins = 30L, fill = "gray") +
+  theme_minimal() +
+  ylab("Nombre de communes") +
+  xlab("Taux de consultations")
+
+# Combinaison des deux graphiques
+plot1 + plot2
+```
+
+La moitié des médecins généralistes effectuent entre 5993 et 17290
+consultations annuellement, ce qui suggère une variabilité importante
+dans la charge de travail. La médiane de 9127 consultations par an,
+équivalant à environ 25 consultations par jour ouvrable, semble plus
+représentative de l'activité typique d'un médecin généraliste que la
+moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
+lumière la diversité des pratiques et des charges de travail parmi les
+médecins généralistes, avec potentiellement quelques cas atypiques
+présentant un volume de consultations exceptionnellement élevé. 
+
+Le nombre de visites pouvant potentiellement être influencé par la
+taille de la commune et donc par sa population, nous avons éliminer cet
+effet en calculant le taux de consultations qui n'est autre que le
+nombre de consultations moyennes par personnes. 
+
+```{r, fig.align='center'}
 # Stats desc sur le nombre de visites
 stats <- summary(data$nb_visite) 
 
@@ -183,138 +353,27 @@ summary_df %>% kable(format = "latex",
                      caption = "Résumé statistique du nombre de visites") %>%
   kable_styling(latex_options = c("striped",
                                   "HOLD_position"))
-
-
-
 ```
 
-1. Taux et Nombre de visites
-
-L'analyse des statistiques descriptives sur le nombre de consultations
-annuelles de médecin généraliste entre 2018 et 2022 révèle une
-distribution fortement asymétrique à droite, avec une grande dispersion
-des données. La moyenne de 19130 consultations, nettement supérieure à
-la médiane de 9127, indique la présence de valeurs extrêmes tirant la
-distribution vers le haut. Cette asymétrie est confirmée par l'écart
-considérable entre le minimum de 1037 et le maximum de 765833
-consultations par an.
-
-La moitié des médecins généralistes effectuent entre 5993 et 17290
-consultations annuellement, ce qui suggère une variabilité importante
-dans la charge de travail. La médiane de 9127 consultations par an,
-équivalant à environ 25 consultations par jour ouvrable, semble plus
-représentative de l'activité typique d'un médecin généraliste que la
-moyenne influencée par les valeurs extrêmes. Ces statistiques mettent en
-lumière la diversité des pratiques et des charges de travail parmi les
-médecins généralistes, avec potentiellement quelques cas atypiques
-présentant un volume de consultations exceptionnellement élevé.
-
-Le nombre de visites pouvant potentiellement être influencé par la
-taille de la commune et donc par sa population, nous avons éliminer cet
-effet en calculant le taux de consultations qui n'est autre que le
-nombre de consultations moyennes par personnes.
-
-2. Taux de mortalité et de Natalité
-
-Dans les commmunes étudiées, le taux de natalité et de mortalité sont un peu élevées avec la plupart des taux variant entre 5 et 15 pour 1000 en ce qui concerne la natalité et 0 et 20 pour 1000 pour la mortalité. On remarque une corrélation négative entre ces deux taux. Néanmoins cette corrélation n'a à priori aucun sens. Par ailleurs, l'observation des distribution permet de constater que la natalité est nde façon générale élevée par rapport à la mortalité dans les communes étudiées. 
-```{r fig.align='center', fig.cap= "Taux de Natalité et Taux de Mortalité"}
-# 📌 Vérification et conversion des variables avant de tracer
-# Vérification et conversion du taux de mortalité
-if (class(df$taux_de_mortalite_annuel_moyen_2015_2021) != "numeric") {
-  df$taux_de_mortalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_mortalite_annuel_moyen_2015_2021))
-}
-
-# Vérification et conversion du taux de natalité
-if (class(df$taux_de_natalite_annuel_moyen_2015_2021) != "numeric") {
-  df$taux_de_natalite_annuel_moyen_2015_2021 <- as.numeric(as.character(df$taux_de_natalite_annuel_moyen_2015_2021))
-}
-
-# 📌 1️⃣ Histogramme du taux de mortalité
-p1 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021)) +
-  geom_histogram(bins = 30, fill = "red", alpha = 0.7, color = "black") +
-  labs( 
-       x = "Taux de mortalité", 
-       y = "Nombre de communes") +
-  theme_minimal()
-
-# 📌 2️⃣ Histogramme du taux de natalité
-p2 <- ggplot(df, aes(x = taux_de_natalite_annuel_moyen_2015_2021)) +
-  geom_histogram(bins = 30, fill = "blue", alpha = 0.7, color = "black") +
-  labs(
-       x = "Taux de natalité", 
-       y = "Nombre de communes") +
-  theme_minimal()
-
-# 📌 3️⃣ Nuage de points pour voir la relation entre mortalité et natalité
-p3 <- ggplot(df, aes(x = taux_de_mortalite_annuel_moyen_2015_2021, 
-                     y = taux_de_natalite_annuel_moyen_2015_2021)) +
-  geom_point(alpha = 0.7, color = "purple") +
-  geom_smooth(method = "lm", color = "black", linetype = "dashed") +  # Ajout d'une tendance linéaire
-  labs(
-       x = "Taux de mortalité",
-       y = "Taux de natalité") +
-  theme_minimal()
-
-# 📌 4️⃣ Courbes de densité pour mieux voir la distribution
-p4 <- ggplot(df) +
-  geom_density(aes(x = taux_de_mortalite_annuel_moyen_2015_2021, fill = "Mortalité"), alpha = 0.5, color = "red") +
-  geom_density(aes(x = taux_de_natalite_annuel_moyen_2015_2021, fill = "Natalité"), alpha = 0.5, color = "blue") +
-  labs(
-       x = "Taux",
-       y = "Densité") +
-  scale_fill_manual(values = c("Mortalité" = "red", "Natalité" = "blue")) +
-  theme_minimal()
-
-# 📌 Affichage de tous les graphiques ensemble
-library(gridExtra)
-grid.arrange(p1, p2, p3, p4, ncol = 2)
-
-```
-
-```{r, fig.align='center', fig.cap= "Répartition du nombre et du taux de consultations"}
-library(ggplot2)
-library(patchwork)
-
-# Premier graphique pour nb_visite
-plot1 <- ggplot(data) +
-  aes(x = nb_visite) +
-  geom_histogram(bins = 30L, fill = "gray") +
-  theme_minimal() +
-  ylab("Nombre de consultations") +
-  xlab("")
-
-# Deuxième graphique pour taux_visites_19_ans_ou_plus
-plot2 <- ggplot(data) +
-  aes(x = taux_visites_19_ans_ou_plus) +
-  geom_histogram(bins = 30L, fill = "gray") +
-  theme_minimal() +
-  ylab("Taux de consultations") +
-  xlab("")
-
-# Combinaison des deux graphiques
-plot1 + plot2
-
-```
-
-
-
-## Analyse bivariée
+## Taux de visites et quelques variables démographiques et socio-économiques
 
 Nous allons ici, voir s'il y a un lien à priori entre le taux de
-consultation et certaines de nos variables explicatives. Ainsi, nous
+visites et certaines de nos variables explicatives. Ainsi, nous
 avons d'abord réalisé une analyse descriptive bivariée puis nous avons
 calculé la corrélation de Pearson pour évaluer le lien linéaire entre le
 taux de consulation et des variables telles que la population totale, la
 part des personnes agées (75 ans et plus), la part de quelques CSP
 (ouvriers et retraités).
 
-### Taux de consultation et population totale
-$\\$
-```{r}
+### Taux de visites et population totale
+
+En divisant les communes en trois groupes égaux (ou presque égaux) en fonction de la population totale, il ressort un lien clair entre la taille des communes françaises et le taux de visites médicales, mettant en évidence une tendance où les grandes communes (> 8974 habitants) affichent un taux moyen de visites supérieur (1,526810) par rapport aux communes moyennes (1,456356) et petites (1,383861). Cette observation suggère que l'accès facilité aux infrastructures médicales dans les zones urbaines contribue à une utilisation accrue des services de santé. En revanche, les petites communes, probablement plus isolées et moins dotées en praticiens, semblent rencontrer des barrières structurelles limitant la fréquence des visites. 
+
+```{r , fig.align='center'}
 # Calcul des quantiles
 quantiles <- quantile(data$population_municipale_2021_x, probs = c(1/3, 2/3), na.rm = TRUE)
 
-# Créeation des classes avec les bornes des intervalles
+# Création des classes avec les bornes des intervalles
 data_pop <- data %>%
   mutate(taille_commune = case_when(
     population_municipale_2021_x <= quantiles[1] ~ paste0("Petite (<= ", round(quantiles[1]), ")"),
@@ -327,20 +386,16 @@ data_pop <- data %>%
 # Génération du tableau en LaTeX
 data_pop %>% kable(format = "latex", 
                      booktabs = TRUE,
-                     caption = "Taux de consultations selon la taille de la commune") %>%
+                     caption = "Taux de visites selon la taille de la commune") %>%
   kable_styling(latex_options = c("striped",
                                   "HOLD_position"))
 ```
 
-En divisant les communes en trois groupes égaux (ou presque égaux) en
-fonction de la population totale, il ressort qu'en moyenne, plus la
-taille de la commune est importante plus le taux de consulations est
-élevé.
+### Taux de visites et population âgée
 
+L'analyse met en évidence que les communes françaises avec une population âgée significative (population âgée de 75 ans et plus est supérieure à la médiane soit plus de 670 habitants âgés de 75 ans et plus) présentent un taux moyen de visistes inférieur (1,410213) comparé aux communes où la population âgée est moindre (1,501111). Cette observation peut refléter des défis spécifiques aux populations plus âgées, tels que des obstacles physiques ou logistiques pour accéder aux soins médicaux, ou encore une moindre propension à consulter régulièrement en raison d'habitudes ou de conditions de santé chroniques. Ces résultats soulignent un paradoxe apparent, car les besoins en soins médicaux des personnes âgées sont en général plus importants, ce qui pourrait indiquer une inadéquation entre l'offre médicale et les besoins spécifiques de cette tranche d'âge. Cela met en lumière un enjeu crucial pour les politiques de santé visant à améliorer l'accès et l'utilisation des services médicaux pour les populations vieillissantes. 
 
-### Taux de consultation et population âgée
-
-```{r}
+```{r , fig.align='center'}
 # Calcul de la médiane
 mediane <- median(data$nb_de_pers_agees_de_75_ans_ou_plus_2021, na.rm = TRUE)
 
@@ -356,40 +411,43 @@ data_age <- data %>%
 # Génération du tableau en LaTeX
 data_age %>% kable(format = "latex", 
                      booktabs = TRUE,
-                     caption = "Taux de consultations selon la population âgée") %>%
+                     caption = "Taux de visites selon la population âgée") %>%
   kable_styling(latex_options = c("striped",
                                   "HOLD_position"))
+
+#```{r fig.align='center', fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
+#ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
+#  geom_point(color = "blue", size = 3) +          # Points bleus
+#  geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
+#  labs(
+#    x = "Part des plus de 75 ans",
+#    y = "Taux de consultation"
+#  ) +
+#  theme_minimal()
+#```
+
 ```
 
-```{r, fig.align='center', fig.cap="Relation entre taux de consultations et part des plus de 75 ans"}
-ggplot(data = data, aes(x = part_des_pers_agees_de_75_ans_ou_2021 , y = taux_visites_19_ans_ou_plus)) +
-  geom_point(color = "blue", size = 3) +          # Points bleus
-  geom_smooth(method = "lm", se = TRUE, color = "red") +  # Droite de tendance (modèle linéaire)
-  labs(
-    x = "Part des plus de 75 ans",
-    y = "Taux de consultation"
-  ) +
-  theme_minimal()
+### Taux de visites et CSP
 
-```
+Aucune catégorie ne semble montrer une relation linéaire évidente avec
+le taux de visites. Par ailleurs, pour toutes les catégories
+socio-professionnelles, la majorité des communes se situent dans une
+plage de proportions faibles, ce qui limite la variabilité observable
+dans les relations. Une analyse statistique supplémentaire, comme le
+calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
+relations observées visuellement.
 
-Les communes avec une population âgée importante (communes dont la
-population âgée de 75 ans ou plus est supérieure à la médiane) ont en
-moyenne un taux de consultations plus faible.
-
-
-### Taux de consultation et CSP
-
-```{r eval=FALSE, fig.align='center', fig.cap="Relations entre le taux de consultatiosn et certaines le nombre de certaines catégories socioprofessionnelle", include=FALSE}
+```{r fig.align='center', fig.cap="Relations entre le taux de visites et certaines catégories socioprofessionnelles (variables standarisées)"}
 # Chargement les bibliothèques nécessaires
 library(ggplot2)
 library(gridExtra)
 
 # Standarisation des variables pour prendre en compte l'effet de la taille des variables et rendre les comparaisons plus équitables
-#data_csp <- data %>%
-  #mutate(across(c(taux_visites, 13:20), scale))
+data_csp <- data %>%
+  mutate(across(c(taux_visites, 13:20), scale))
 
-data_csp <- data
+#data_csp <- data
 
 # Création les graphiques
 plot1 <- ggplot(data_csp, aes(x = population_de_15_ans_ou_selon_la_csp_2021_agriculteurs_exploitants, y = taux_visites)) +
@@ -425,74 +483,15 @@ plot8 <- ggplot(data_csp, aes_string(x = names(data)[20], y = "taux_visites")) +
   labs(title = "", x = "Sans activites", y = "Taux de visites")
 
 # Affichage des graphiques ensemble
-grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 2)
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, ncol = 4)
 ```
 
-
-Aucune catégorie ne semble montrer une relation linéaire évidente avec
-le taux de visite. Par ailleurs, pour toutes les catégories
-socio-professionnelles, la majorité des communes se situent dans une
-plage de proportions faibles, ce qui limite la variabilité observable
-dans les relations. Une analyse statistique supplémentaire, comme le
-calcul de corrélations, serait nécessaire pour confirmer ou infirmer les
-relations observées visuellement.
-
-### Analyse de corrélation
-
-
-Les résultats de la corrélation de Pearson sont consignées dans le
-tableau suivant :
-
-```{r}
-# Fonction de conversion
-conversion_en_numeric <- function(data, columns) {
-  resultat <- data %>%
-    mutate(across(all_of(columns), as.numeric))
-  return (resultat)
-}
-# Liste des variables à tester avec taux_de_consultation
-variables <- c("population_municipale_2021_x", "part_des_pers_agees_de_75_ans_ou_2021", 
-               "population_de_15_ans_ou_selon_la_csp_2021_retraites", "population_de_15_ans_ou_selon_la_csp_2021_ouvriers")
-
-data <- conversion_en_numeric(data, variables)
-
-
-# Initialisation du tableau pour stocker les résultats
-resultats <- data.frame(Variable = character(), Correlation = numeric(), P_value = numeric())
-
-# Calcul de la corrélation pour chaque variable et tester la significativité
-for (var in variables) {
-  test <- cor.test(data$taux_visites_19_ans_ou_plus, data[[var]], method = "pearson")
-  resultats <- rbind(resultats, data.frame(
-    Variable = var,
-    Correlation = test$estimate,
-    P_value = test$p.value
-  ))
-}
-
-# Format du tableau avec la significativité
-resultats$Significatif <- ifelse(resultats$P_value < 0.05, "Oui", "Non")
-
-# Génération du tableau en LaTeX
-resultats %>% kable(format = "latex", 
-                     booktabs = TRUE,
-                     caption = "Corrélations de Pearson entre le taux de consultation et les autres variables")%>%
-  kable_styling(latex_options = c("striped",
-                                  "HOLD_position"))
-
-```
-
-Les résultats nous montrent que le taux de consultation est positivement
-corrélé à la population ainsi qu'à celle de plus de 15 ans. Cependant la
-corrélation est faible. Par ailleurs, la corrélation est négative avec
-la part des personnes agées de plus de 75 ans. Cela dit, plus la part
-des plus de 75 ans augmente moins est le taux de consultations dans une
-commune. Cela peut vouloir dire que les personnes de plus de 75 ans sont
-ceux qui ne se consultent pas assez.
+### (Trouver un titre pour cette section et analyser : Alex)
+(Trouver un titre pour cette section et analyser : Alex)
 
 ```{r, fig.align='center', fig.cap= "Corrélations entre le nombre de visite et quelques variables"}
 # Sélectionner uniquement les variables d'intérêt
-# 📌 Définition des noms lisibles pour les variables
+# Définition des noms lisibles pour les variables
 nom_variables <- c(
   "taux_de_mortalite_annuel_moyen_2015_2021" = "Mortalité",
   "taux_de_natalite_annuel_moyen_2015_2021" = "Natalité",
@@ -502,36 +501,36 @@ nom_variables <- c(
   "nb_visite" = "Nombre de visites"
 )
 
-# 📌 Sélectionner les variables d'analyse
+#  Sélectionner les variables d'analyse
 variables_analyse <- names(nom_variables)
 
 df_analyse <- df[variables_analyse]
 
-# 📌 Convertir toutes les colonnes en numérique
+#  Convertir toutes les colonnes en numérique
 df_analyse <- df_analyse %>% mutate(across(everything(), as.numeric))
 
-# 📌 Supprimer les valeurs manquantes
+# Supprimer les valeurs manquantes
 df_analyse <- na.omit(df_analyse)  
 
-# 📌 Calculer les corrélations
+#  Calculer les corrélations
 cor_matrix <- cor(df_analyse, use="complete.obs")
 
-# 📌 Trier les corrélations par ordre décroissant
+# Trier les corrélations par ordre décroissant
 cor_target <- sort(cor_matrix["nb_visite", ], decreasing=TRUE)
 
-# 📌 Remplacer les noms de variables par des noms plus lisibles
+#  Remplacer les noms de variables par des noms plus lisibles
 cor_data <- data.frame(
   Variable = names(cor_target),
   Correlation = cor_target
 )
 
-# 📌 Appliquer les nouveaux noms
+# Appliquer les nouveaux noms
 cor_data$Variable <- nom_variables[cor_data$Variable]
 
-# 📌 Exclure "Nombre de visites" du graphique
+# Exclure "Nombre de visites" du graphique
 cor_data <- cor_data[cor_data$Variable != "Nombre de visites", ]
 
-# 📌 Afficher le barplot des corrélations
+# Afficher le barplot des corrélations
 ggplot(cor_data, aes(x = reorder(Variable, Correlation), y = Correlation, fill = Correlation)) +
   geom_bar(stat="identity") +
   coord_flip() +
@@ -543,180 +542,170 @@ ggplot(cor_data, aes(x = reorder(Variable, Correlation), y = Correlation, fill =
 
 ```
 
+## Analyse spatiale
 
-## Autocorrélation
-
-L’autocorrélation spatiale est une mesure essentielle pour analyser la
-dépendance entre des observations géographiques. Dans notre étude nos
-données sont des données portant sur des communes. Ainsi il peut exister
-une dépendance entre nos taux de consultations du fait de la proximité
-des communes ou de l'appartenance à un même département ou région. Ainsi
-nous allons mesurer cette dépendance en évaluant l'autocorrélation
-spatiale. Dans ce contexte, **l’indice de Moran** est largement utilisé
-pour quantifier cette dépendance en fournissant une mesure globale de
-l’autocorrélation spatiale.
-
-### Définition de l’indice de Moran
-
-L’indice de Moran ($I$) évalue la similitude des valeurs d’une variable
-entre différentes entités géographiques (par exemple, des communes) en
-fonction de leur proximité spatiale. Il se base sur la matrice de poids
-spatiale ($W$), qui définit les relations entre ces entités.
-
-### Formule de l’indice de Moran
-
-La formule mathématique de l’indice de Moran est la suivante :
-
-$$
-I = \frac{n}{\sum_{i=1}^n \sum_{j=1}^n w_{ij}} \cdot \frac{\sum_{i=1}^n \sum_{j=1}^n w_{ij} (x_i - \bar{x})(x_j - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
-$$
-
-Où :
-
--   $n$ : Nombre total d’entités spatiales (Ici, le nombre de communes).
-
--   $x_i, x_j$ : Valeurs observées de la variable pour les entités $i$
-    et $j$ (Ici le taux de consultations)
-
--   $\bar{x}$ : Moyenne de la variable $x$.
-
--   $w_{ij}$ : Poids spatial définissant la relation entre $i$ et $j$.
-
-La matrice de $W$ peut être constuit sur la base du voisinage entre les
-deux communes ou soit de la distance entre les deux communes. Dans le
-premier cas alors $w_{ij}$ $w_{ij} = 1$ si $i$ et $j$ sont voisins et
-$w_{ij} = 0$ sinon. Dans le second cas $w_{ij} = d_{ij}$. Nous allons
-dans notre cas utiliser une matrice de poids basée sur la distance,
-notamment celle d'Haversine.
-
-### Matrice de poids basée sur la distance de Haversine
-
-La distance de Haversine est une mesure de la distance entre deux points
-sur une sphère, basée sur leurs coordonnées géographiques ($latitude$ et
-$longitude$). Elle est particulièrement utile pour les données
-géographiques projetées sur une surface sphérique, comme la Terre.
-
-
-### Formule de la distance de Haversine
-
-Si l'on considère deux points ($i$) et ($j$), la distance ($d_{ij}$)
-entre ces deux points sur la surface d'une sphère de rayon ($r$) est
-donnée par :
-
-$$
- d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
-$$
-
-
-Où : 
-
-- $r$ : Rayon de la Terre (environ 6371 km).
-
--   $\phi_i, \phi_j$ : Latitudes des points $i$ et $j$ (en radians).
-
--   $\lambda_i, \lambda_j$ : Longitudes des points $i$ et $j$ (en radians). Après calcul nous avons ces statistiques sur nos distances.
-
-```{r}
-# Charger les bibliothèques nécessaires
-
-#  (latitude, longitude)
-library(spdep)     # Pour les fonctions de pondération spatiale et test de Moran
-library(geosphere) # Pour les calculs de distances géodésiques
-
-# Vérification que les colonnes latitude et longitude existent dans `data`
-if (!("latitude" %in% names(data)) || !("longitude" %in% names(data))) {
-  stop("Les colonnes 'latitude' et 'longitude' doivent exister dans la base de données.")
-}
-
-# Vérification des valeurs manquantes dans les coordonnées
-if (anyNA(data$latitude) || anyNA(data$longitude)) {
-  stop("Les colonnes 'latitude' et 'longitude' ne doivent pas contenir de valeurs manquantes.")
-}
-
-# Création de la matrice des coordonnées
-coords <- data.frame(
-  lat = data$latitude,
-  lon = data$longitude
-)
-
-# Calcul des distances géodésiques (en mètres) avec la méthode de Vincenty
-dist_matrix <- distm(coords, fun = distVincentySphere)/1000
-
-# Gérer les distances nulles ou infinies
-if (any(diag(dist_matrix) != 0)) {
-  diag(dist_matrix) <- 0  # Auto-distance définie comme 0
-}
-if (any(is.infinite(dist_matrix))) {
-  stop("La matrice des distances contient des valeurs infinies, vérifiez les coordonnées.")
-}
-
-# Résumé statistique de toutes les distances
-distance_values <- as.vector(dist_matrix)
-#summary(distance_values)
+```{r }
+# Importation des données
+data <- read.csv("../data/data.csv", sep = ",", dec=".")
 ```
 
-Une visualtion de la densité de nos distance nous donne ceci, indiquant une forte asymétrie à gauche de la distribution. En d'autres termes,les communes étudiées sont assez rapprochées les unes des autres pour la plupart. 
+```{r}
+library(geosphere)
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
 
-```{r fig.align='center', fig.cap="Densité des distances"}
-dist_df <- data.frame(Distance = as.vector(dist_matrix))
-# Tracer la densité
-ggplot(dist_df, aes(x = Distance)) +
-  geom_density(fill = "blue", alpha = 0.4) +
+```{r}
+# Identification des paires de communes où la distance dépasse 2000 km
+indices <- which(distance_matrix > 2000, arr.ind = TRUE)
+
+# Extraire la colonne des indices des lignes
+ligne_indices <- indices[, 1]
+
+# Supprimer les doublons
+ligne_indices_unique <- unique(ligne_indices)
+
+# Récupération des lignes concernées
+indices_concernes <- ligne_indices_unique[1:7]
+```
+
+```{r}
+# Mise à jour des coordonnées géographiques
+data[1973, c(93, 94)] <- c(2.775222, 50.41792)
+data[72, c(93, 94)] <- c(6.231506, 44.09108)
+data[399, c(93, 94)] <- c(1.560560, 45.16898)
+data[1264, c(93, 94)] <- c(-1.486812, 47.29624)
+data[1947, c(93, 94)] <- c(1.623721, 50.48337)
+data[2124, c(93, 94)] <- c(2.916621, 42.74637)
+data[2746, c(93, 94)] <- c(2.376579, 43.49010)
+```
+
+```{r}
+coords <- data.frame(lon = data$longitude, lat = data$latitude)
+distance_matrix <- distm(coords, fun = distHaversine) / 1000 # Pour avoir les distances en Km
+```
+
+```{r}
+d_max <- 500
+
+# Calcul de la matrice de poids
+matrice_poids <- ifelse(distance_matrix <= d_max & distance_matrix > 0, 1 / distance_matrix, 0)
+  
+# Normalisation par ligne
+matrice_poids_norm <- matrice_poids / rowSums(matrice_poids)
+# y <- rowSums(matrice_poids_norm)
+# y
+# 
+# sum(y > 0 & y <= 1)
+# nrow(data)
+# 
+# i <- which((y = 0 | y > 1), arr.ind = TRUE)
+```
+
+
+```{r}
+library(spdep)
+
+### Matrice de voisinage
+dist.w <- mat2listw(matrice_poids, style = "W", row.names=NULL)
+```
+Après une analyse de nos données en ne tenant pas compte de l'effet spatial, nous allons à présent poursuivre avec une analyse qui tient compte de celui-ci. Nous allons ici faire une analyse basée sur le diagramme de Moran. Ainsi d'après les explications données au niveau de la partie méthodologie, nous aurons les 4 quadrants suivants. 
+
+- **Quadrant 1 (haut à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, entourées de zones présentant également un taux de consultations élevé (autocorrélation spatiale positive, structure **high-high**).
+- **Quadrant 3 (bas à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, entourées de zones présentant un taux de consultations également faible (autocorrélation spatiale positive, structure **low-low**).
+- **Quadrant 2 (bas à droite)** : Les zones avec un taux de consultations plus élevé que la moyenne, mais entourées de zones présentant un taux de consultations plus faible (autocorrélation spatiale négative, structure **high-low**).
+- **Quadrant 4 (haut à gauche)** : Les zones avec un taux de consultations plus faible que la moyenne, mais entourées de zones avec un taux de consultations plus élevé (autocorrélation spatiale négative, structure **low-high**).
+
+Vu le nombre de nos communes, l'affichage sur le graphique des noms de toutes les communes serait compliqué. Pour cela, nous avons choisi au hasard 4 communes par cadrant. Ainsi, ce diagramme de Moran illustre la corrélation spatiale des taux de consultation par commune et ceux des communes voisines. La tendance générale, représentée par la droite de régression en rouge, montre une relation positive entre ces taux, confirmant ainsi une autocorrélation spatiale. Autrement dit, les communes ayant un taux élevé de consultations ont tendance à être entourées par d’autres communes avec un taux similaire, et inversement. 
+
+Dans le quadrant HH (High-High), représenté en rouge, on retrouve des communes comme Saint-Saulve, Le Bouscat et Bruay-la-Buissière. Celles-ci affichent un taux de consultations élevé et sont entourées par des communes présentant également des taux élevés. Cela indique une concentration géographique des consultations médicales, qui peut s'expliquer par une offre de soins plus développée ou une demande locale particulièrement forte. 
+
+Le quadrant HL (High-Low), en violet, comprend des communes comme Saint-Jacques-de-la-Lande et Le Portel. Ces communes ont un taux élevé de consultations, mais sont entourées de communes où les taux sont plus faibles. Ce contraste peut suggérer que ces villes disposent d’une offre de soins plus attractive que leurs voisines, attirant ainsi des patients des alentours. 
+
+À l’inverse, dans le quadrant LH (Low-High), en vert, on trouve des communes comme Aix-en-Provence, Ribécourt-Dreslincourt et L'Isle-Adam. Ces communes affichent un faible taux de consultations, tandis que leurs voisines présentent des taux plus élevés. Ce phénomène peut s’expliquer par le fait que les habitants de ces villes se rendent dans les communes voisines pour leurs consultations, soit en raison d’un manque d’infrastructures médicales locales, soit par préférence pour des services situés ailleurs. 
+
+Enfin, le quadrant LL (Low-Low), en orange, inclut des communes comme Saint-Jean-le-Blanc, Romorantin-Lanthenay et Le Breuil. Ces villes ont un faible taux de consultations et sont entourées de communes où les taux sont également bas. Cela peut indiquer une accessibilité réduite aux soins de santé, une moindre densité médicale, ou encore une faible demande locale pour des consultations. 
+
+En résumé, cette analyse met en évidence des disparités territoriales dans la répartition des consultations médicales. Certaines communes concentrent les services et attirent les patients des alentours, tandis que d'autres souffrent d’un accès limité aux soins, renforçant ainsi les inégalités spatiales en matière de santé.
+
+
+```{r, fig.cap="Moran Plot avec visibilités de quelques communes", fig.align='center'}
+library(spdep)
+library(dplyr)
+library(ggplot2)
+library(ggrepel)
+
+# Calcul du taux moyen des voisins
+data$taux_voisins <- lag.listw(dist.w, data$taux_visites)
+
+
+# Moyennes pour séparer les quadrants
+mean_x <- mean(data$taux_visites, na.rm = TRUE)
+mean_y <- mean(data$taux_voisins, na.rm = TRUE)
+
+# Attribution des quadrants
+data <- data %>%
+  mutate(quadrant = case_when(
+    taux_visites >= mean_x & taux_voisins >= mean_y ~ "HH",
+    taux_visites >= mean_x & taux_voisins < mean_y ~ "HL",
+    taux_visites < mean_x & taux_voisins >= mean_y ~ "LH",
+    taux_visites < mean_x & taux_voisins < mean_y ~ "LL"
+  ))
+
+# Sélection de 4 communes atypiques par quadrant
+set.seed(123)  # Pour la reproductibilité
+communes_atypiques <- data %>%
+  group_by(quadrant) %>%
+  slice_sample(n = 4)
+
+# Création du Moran Plot avec labels améliorés
+ggplot(data, aes(x = taux_visites, y = taux_voisins)) +
+  geom_point(color = "blue", alpha = 0.6) + 
+  geom_vline(xintercept = mean_x, linetype = "dashed") +
+  geom_hline(yintercept = mean_y, linetype = "dashed") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  geom_text_repel(data = communes_atypiques, 
+                  aes(label = libelle_x, color = quadrant), 
+                  size = 3, max.overlaps = 100, fontface = "bold") +
+  labs(
+       x = "Taux de consultations par commune",
+       y = "Taux de consultation moyen des communes voisines") +
   theme_minimal() +
-  labs(x = "Distance", y = "Densité")
+  scale_color_manual(values = c("HH" = "red", "HL" = "purple", "LH" = "green", "LL" = "orange"))
+```
+
+### Autocorélation locale
+
+En se basant sur l'analyse par cluster fourni pour le LISA (local Indicator of Spatial Association), nous pouvons remarquer que le cluster HH est celui regroupant le plus de communes suivi du cluster LH. Ainsi, une grande partie des communes ont des taux élevées et entourées par des communes avec des taux élevés ou encore des taux bas et entourées par des communes ayant des taux élevés. 
+
+```{r , fig.cap="Clusters sur la base du LISA", fig.align='center'}
+# Calcul du LISA (Moran Local)
+lisa_results <- localmoran(data$taux_visites, dist.w)
+
+# Ajouter les résultats aux données
+data$LISA_I <- lisa_results[,1]  # Indice de Moran local<
+data$p_value <- lisa_results[,5] # Valeur p
+
+# Moyenne des taux de consultation
+mean_consult <- mean(data$taux_visites)
+
+# Quadrants de LISA
+data$quadrant <- with(data, ifelse(taux_visites > mean_consult & LISA_I > 0, "HH",
+                                   ifelse(taux_visites < mean_consult & LISA_I > 0, "LH",
+                                   ifelse(taux_visites > mean_consult & LISA_I < 0, "HL",
+                                   "LL"))))
+
+ggplot(data, aes(x = taux_visites, y = LISA_I, color = quadrant)) +
+  geom_point(alpha = 0.6, size = 3) +
+  scale_color_manual(values = c("HH" = "red", "LH" = "green", "HL" = "purple", "LL" = "orange")) +
+  geom_text_repel(aes(label = ifelse(p_value < 0.1, as.character(libelle_x), "")), size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = mean_consult, linetype = "dashed") +
+  ggtitle("Analyse LISA (Moran Local) des taux de consultation") +
+  theme_minimal()
 
 ```
 
-### Construction de la matrice de poids
-
-\
-Pour construire la matrice de poids, nous avons alors suivi ces étapes.
-\
-
-1.  Calculer les distances de Haversine entre chaque paire d’entités.
-2.  Définir un seuil de distance maximale ($d_{max}$) :
-    -   Si $d_{ij} < d_{max}$, $w_{ij} = \frac{1}{d_{ij}}$.
-    -   Sinon, $w_{ij} = 0$.
-3.  Normaliser les poids pour que chaque ligne de la matrice ait une
-    somme égale à 1 : $$
-     w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
-    $$
-
-```{r}
-# Créer la matrice de poids (inverse des distances)
-weight_matrix <- 1 / dist_matrix
-diag(weight_matrix) <- 0  # Aucun poids pour soi-même
-
-# Gérer les cas où les distances sont nulles ou infinies
-weight_matrix[is.infinite(weight_matrix)] <- 0
-
-# Créer l'objet spatial de pondération
-W <- mat2listw(weight_matrix, style = "W")
-
-# Vérifier que la variable à analyser existe et ne contient pas de NA
-if (!("taux_visites_19_ans_ou_plus" %in% names(data))) {
-  stop("La colonne 'taux_visites_19_ans_ou_plus' doit exister dans la base de données.")
-}
-values <- data$taux_visites_19_ans_ou_plus
-
-if (anyNA(values)) {
-  stop("La colonne 'taux_visites_19_ans_ou_plus' ne doit pas contenir de valeurs manquantes.")
-}
-
-# Calcul de l'indice de Moran
-moran_result <- moran.test(values, W, zero.policy = TRUE)
-
-# Génération du tableau en LaTeX
-moran_result[["estimate"]] %>% kable(format = "latex", 
-                     booktabs = TRUE,
-                     caption = "Résultats du test de Moran") %>%
-  kable_styling(latex_options = c("striped",
-                                  "HOLD_position"))
-```
 
 
-Ainsi dans notre étude, nous avons trouvé un indice de Moran égale à
-`r moran_result[["estimate"]][["Moran I statistic"]]`. Le test nous a
-permi d'obtenir une p-value de `r moran_result[["p.value"]]`. Ce qui
-permet de conclure qu'il y a effectivement une autocorrélation positive
-et significative entre les communes selon leur taux de consultations.
+

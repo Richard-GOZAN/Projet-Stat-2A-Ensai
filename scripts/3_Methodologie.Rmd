@@ -3,151 +3,243 @@ output:
   pdf_document: 
     keep_tex: true
 ---
+
 # Méthodologie
 
-Dans le cadre de cette étude, nous cherchons à modéliser le nombre de consultations médicales en prenant en compte les caractéristiques socio-économiques et spatiales des communes. La littérature suggère que les modèles de régression de Poisson et ses variantes avec effets aléatoires sont particulièrement adaptés aux données de comptage, tout en tenant compte de l’hétérogénéité locale et des dépendances spatiales. Ainsi, nous proposons une approche combinant les modèles de régression de Poisson standard et les modèles mixtes généralisés pour mieux comprendre les dynamiques d’accès aux soins.
+## Source des données
 
-#################################################################
-#################################################################
+L’étude repose sur des données issues du Système National des Données de Santé (SNDS), couvrant la période 2018-2022 et portant sur environ 5000 communes. Ces données permettent d’analyser le nombre de consultations en médecine de ville en tenant compte des disparités territoriales et des caractéristiques locales. Nous avons trois bases essentielles. La première source est une base démographique contenant des données détaillées sur la répartition de la population par sexe et par tranche d’âge, ainsi que des indicateurs généraux tels que la population municipale et la structure des ménages. La deuxième source est une base généralisée intégrant des informations socio-économiques, notamment sur les statuts matrimoniaux, les catégories socioprofessionnelles et le marché de l’emploi. Cette base permet d’étudier la composition sociale des communes et d’évaluer certains phénomènes tels que le taux d’activité ou la prévalence des unions libres. Enfin, une troisième base a été utilisée pour compléter les données géographiques, en particulier pour renseigner les latitudes et longitudes manquantes de certaines communes.
 
-## Modélisation du nombre de visites de médécins généralistes
+Les informations utilisées concernent principalement le volume des consultations médicales et leur répartition géographique. Des données complémentaires sur le contexte communal, telles que la densité de population et l’accessibilité aux soins, permettent d’affiner l’analyse. L’intégration de ces éléments facilite une approche spatiale de la modélisation, essentielle pour détecter d’éventuelles inégalités d’accès aux soins.
 
-### Modèle de régression de Poisson
-
-La régression de Poisson est un type de modèle linéaire généralisé (GLM) utilisé pour modéliser des données de comptage. La distribution de Poisson suppose que la variance est égale à la moyenne, ce qui est souvent approprié pour des données de comptage. Le modèle de base est :
-
-$$
-\log(\mu_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \dots + \beta_p X_{ip} = (X\beta)_i
-$$
-
-où $\mu_i$ est le nombre attendu de cas pour l'observation $i$, $X_{ij}$ sont les variables explicatives, et $\beta_j$ sont les coefficients à estimer. Toutefois, ce modèle suppose une indépendance entre observations, ce qui peut ne pas être réaliste en présence de corrélation spatiale ou d’hétérogénéité non observée.
-
-### Modèles de Régression de Poisson avec effets aléatoires
-
-Afin de mieux capter l’hétérogénéité entre les communes, nous introduisons des modèles avec effets aléatoires. Ces modèles permettent de prendre en compte des facteurs non observés qui influencent le nombre de consultations.
-
-Un effet aléatoire $v_i$ capture l'effet d'hétérogénéité non mesurable qui influence les résultats dans chaque agglomération. Il peut être considéré comme une variation spécifique à l'agglomération qui n'est pas expliquée par les covariables observées dans le modèle (comme les facteurs socio-économiques).
-
-#### Régression de Poisson avec effets aléatoires non spatiaux
-
-La formulation générale de ce modèle peut être écrite comme suit :
-
-$$
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i
-$$
-
-où :
-
-- $\mu_i$ est la moyenne du nombre de visites pour l'agglomération $i$,
-- $E_i$ est la taille de la population de l'agglomération $i$ (terme d'ajustement de l'exposition),
-- $X$ est la matrice de conception pour les facteurs socio-économiques,
-- $\beta$ est le vecteur des coefficients à estimer,
-- $u_i$ est l'effet aléatoire spécifique à l'agglomération $i$, supposé indépendant et suivant une distribution normale.
-
-#### Régression Poisson avec effets aléatoires spatiaux
+L’ensemble des données a été anonymisé et traité conformément aux normes en vigueur, garantissant ainsi la confidentialité des informations exploitées. Cette base constitue une ressource précieuse pour mieux comprendre les dynamiques d’accès aux soins en médecine de ville et proposer des modèles adaptés aux spécificités territoriales.
 
 
-Deux approches sont utilisées pour modéliser la structure spatiale des données :
+## Traitement réalisés sur la base de données
 
-- Effets aléatoires basés sur la distance : ajout d’un effet spatial $v_i$ capturant la corrélation entre communes distantes.
+Après la fusion des bases de données, un ensemble de traitements a été réalisé afin de structurer les informations et garantir la cohérence des analyses. La première étape a consisté à nettoyer et harmoniser les noms des variables pour faciliter leur manipulation. Ce travail a inclus la suppression des accents, le remplacement des espaces et caractères spéciaux par des underscores et la conversion en minuscules. De plus, certaines incohérences ont été corrigées, notamment des erreurs typographiques dans les intitulés des tranches d’âge.
 
-- Effets aléatoires basés sur le voisinage : utilisation d’un terme $w_i$ représentant les influences des communes voisines à travers un modèle autorégressif conditionnel (CAR).
+Une fois cette normalisation effectuée, les différentes bases ont été fusionnées. Une jointure interne a été réalisée entre les bases démographiques et socio-économiques en utilisant le code unique des communes, ce qui a permis de conserver uniquement les communes présentes dans les deux sources. Ensuite, une jointure gauche avec la base des coordonnées géographiques a été effectuée pour compléter les informations manquantes sur la latitude et la longitude des communes concernées. Lors de cette étape, une attention particulière a été portée pour éviter la duplication des données et sélectionner les valeurs les plus pertinentes en cas de conflit entre plusieurs sources.
 
-Ce modèle prend en compte l'autocorrélation spatiale par l'introduction d'effets aléatoires spatiaux :
+L’étape suivante a consisté à structurer et créer de nouvelles variables analytiques. En ce qui concerne la répartition de la population, les différentes tranches d’âge disponibles ont été regroupées en trois grandes catégories : 0-24 ans, 25-64 ans et 65 ans et plus. Ce regroupement permet d’obtenir une vision synthétique de la structure démographique tout en conservant des distinctions essentielles entre les jeunes, les actifs et les seniors. Pour chacune de ces nouvelles catégories, un indicateur de proportion a été calculé en rapportant la population de chaque groupe à la population totale de la commune.
 
-$$
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + w_i
-$$
-où $w_i$ suit une distribution conditionnelle dépendant des voisins.
+Un travail spécifique a été réalisé pour enrichir l’analyse socio-économique. Le pourcentage des personnes en union libre a été calculé à partir des données disponibles sur les statuts matrimoniaux, et la part des ouvriers a été estimée en rapportant cette catégorie à la population totale. Le pourcentage des personnes sans emploi a été évalué en prenant comme référence la population âgée de 0 à 64 ans, excluant ainsi les retraités pour obtenir un indicateur plus pertinent sur la population active. De plus, un indicateur mesurant la proportion des familles avec trois enfants ou plus a été créé afin d’étudier la dynamique familiale dans les communes étudiées.
 
-Le modèle CAR peut être spécifié comme suit :
+Un des traitements majeurs effectués a été la création d’une variable inédite : le taux de consultation. Cette variable, qui n’existait pas initialement dans la base, a été construite en rapportant le nombre total de consultations enregistrées dans chaque commune à la population municipale. Cette mesure permet d’évaluer la fréquence des consultations médicales ou administratives en fonction de la taille de la population et constitue un indicateur clé pour analyser l’accessibilité et l’utilisation des services sur le territoire étudié. Une version spécifique de cet indicateur a également été calculée pour la population de 19 ans et plus, en excluant les plus jeunes afin de mieux capter les tendances de consultation chez les adultes.
 
-$$
-w_i \mid w_j, j \neq i \sim N \left( \frac{1}{n_i} \sum_{j \in \delta_i} w_j, \sigma^2 \right)
-$$
+Enfin, un effort particulier a été porté sur la visualisation des données, notamment avec la construction d’une pyramide des âges. Pour cela, les effectifs masculins et féminins ont été extraits et réorganisés par tranche d’âge afin de respecter la convention des pyramides démographiques, affichant les populations masculines en valeurs négatives et les populations féminines en valeurs positives. Cette représentation permet d’identifier les déséquilibres entre les classes d’âge et de mieux comprendre la structure démographique des communes analysées.
 
-où :
+Une fois ces traitements finalisés, la base de données enrichie a été exportée sous un format exploitable, intégrant l’ensemble des nouvelles variables créées ainsi que les indicateurs de taux de natalité et de mortalité. Ce travail de préparation assure une qualité optimale des données et permet de mener des analyses détaillées sur la dynamique démographique et socio-économique des communes étudiées.
 
-- $n_i$ est le nombre de voisins pour l'agglomération $i$,
-- $\delta_i$ est l'ensemble des voisins de l'agglomération $i$,
-- $\sigma^2$ est la variance de l'effet aléatoire.
+## Concepts fondamentaux en statistique spatiale
 
-Ce modèle suppose que la valeur de $w_i$ dépend en moyenne des valeurs observées dans les zones voisines, ce qui permet de modéliser la corrélation spatiale.
+### Autocorrélation spatiale
 
-#################################################################
-#################################################################
+L'autocorrélation spatiale désigne la dépendance statistique entre des observations géographiquement proches. En d'autres termes, les valeurs prises par une variable en un lieu donné sont influencées par les valeurs observées dans les localisations voisines. Cette dépendance peut être positive, lorsque des valeurs similaires se regroupent, ou négative, lorsqu’une valeur élevée en un point est associée à une valeur faible dans les zones environnantes.
 
-## Estimation des paramètres
+Trois (03) formes d'interaction spatiale se dégagent du modèle spatial de base :
 
-### Structure de variance des effets aléatoires
+\begin{itemize}
+  \item une interaction endogène : la décision économique d’un agent ou d’une zone géographique va dépendre de la décision de ses voisins;
+  \item une interaction exogène : la décision économique d’un agent va dépendre des caractéristiques observables de ses voisins;
+  \item une corrélation spatiale des effets : liée à de mêmes caractéristiques inobservées entre les agents.
+\end{itemize}
 
-Dans le cadre d'un modèle mixte, les effets aléatoires $v_i$ et $w_i$ sont supposés suivre une distribution normale centrée avec une variance $\sigma_v^2$ et $\sigma_w^2$ respectivement.
+### Diagramme de Moran
 
-### Méthodes d'estimation
+Le diagramme de Moran est un outil permettant d’analyser la structure spatiale d’une variable. Il représente un nuage de points où :  
 
-Deux principales méthodes sont utilisées pour estimer les paramètres des modèles
+- L’axe des abscisses affiche les valeurs centrées de la variable d’intérêt \( y \).  
+- L’axe des ordonnées affiche les valeurs moyennes de cette variable pour les observations voisines \( W y \), où \( W \) est la matrice de poids normalisée.  
 
-*Approche de Maximum de Vraisemblance (ML)*
+\underline{\textbf{Utilité du Diagramme de Moran}}  \\
 
-Une fois que le modèle est ajusté, les effets aléatoires sont souvent estimés comme partie intégrante du processus d'optimisation de la vraisemblance. Cela se fait généralement en maximisant la vraisemblance marginale des données en tenant compte des effets aléatoires.
+Le diagramme de Moran permet d’identifier les structures spatiales dominantes en observant la répartition des points dans des quadrants. Il aide également à détecter les observations atypiques qui s’écartent du modèle spatial général et à confirmer l’existence d’une autocorrélation spatiale en complément de l’indice de Moran, qui quantifie cette relation. Cet outil visuel est ainsi essentiel pour explorer la dépendance spatiale et comprendre les structures spatiales sous-jacentes d’une variable d'intérêt. 
 
-Après avoir obtenu les estimations des paramètres du modèle, on peut dériver les estimations de $v_i$ à partir des résidus du modèle.
 
-*Approche Empirique*
+### Matrice des poids spatiaux
 
-Après l'ajustement du modèle, les valeurs de $v_i$ peuvent être calculées à partir des résidus du modèle pour chaque agglomération. Cela implique de comparer les cas observés dans chaque agglomération à ceux prédits par le modèle, en tenant compte de l'effet des covariables.
+Pour quantifier la proximité spatiale entre unités géographiques, on utilise une matrice de poids spatiaux notée $W$. Cette matrice représente les relations de voisinage et permet d’introduire la structure spatiale dans les modèles économétriques. La matrice de poids peut être une matrice de contiguïté binaire ou peut tenir compte de la distance entre les zones géographiques. Cette étude utilise une matrice de poids basée sur la distance et contient des pondérations inversément proportionnelles à la distance entre les régions.
 
-### Étapes d'Estimation
+### Mesure de la corrélation spatiale
 
-Pour estimer les paramètres de ces modèles (y compris $v_i$ et $w_i$), une approche courante consiste à utiliser des méthodes spécifiques dans le cadre de la **maximum de vraisemblance** ou des **approches bayésiennes**.
+#### Indices de corrélation spatiale
 
-1. **Pseudo-vraisemblance**
-   - On utilise la vraisemblance conditionnelle de $Y$ étant donné les effets aléatoires, pour améliorer l'estimation des paramètres.
-   - Cette approche permet de simplifier l'estimation en contournant certaines intégrations complexes dans les modèles à effets aléatoires.
-2. **Optimisation**
-   - Les algorithmes d'optimisation, tels que **Newton-Raphson**, sont utilisés pour maximiser la vraisemblance.
-   - Pour des approches bayésiennes, des méthodes de simulation comme **MCMC (Markov Chain Monte Carlo)** sont couramment appliquées pour estimer $v_i$ et $w_i$.
-   
-
-Ce modèle est similaire au précédent, mais $v_i$ est remplacé par un effet aléatoire basé sur le voisinage :
+L’un des indicateurs les plus utilisés est l’indice de Moran. Il évalue la similitude des valeurs d’une variable entre différentes entités géographiques (par exemple, des communes) en
+fonction de leur proximité spatiale. Il se base sur la matrice spatiale de poids ($W$), qui définit les relations entre ces entités. Il se calcule comme suit :
 
 $$
-\log(\mu_i) = \log(E_i) + (X\beta)_i + u_i + w_i
+I = \frac{N}{\sum_{i} \sum_{j} W_{ij}} \times \frac{\sum_{i} \sum_{j} W_{ij} (y_i - \bar{y})(y_j - \bar{y})}{\sum_{i} (y_i - \bar{y})^2}
+$$
+
+où $y_i$ est la valeur de la variable d’intérêt en un point $i$, $\bar{y}$ est la moyenne empirique de cette variable et $W_{ij}$ représente l’élément $(i, j)$ de la matrice de poids.
+
+D'autres indices existent, comme la \textbf{statistique de Geary}, qui est moins sensible aux valeurs extrêmes, et les \textbf{indicateurs locaux d'autocorrélation spatiale (LISA)}, qui permettent d'identifier des clusters spatiaux spécifiques.
+
+#### Construction de la matrice de poids
+
+\
+Pour construire la matrice de poids, nous avons suivi ces étapes.
+\
+
+1.  Calculer les distances de Haversine entre chaque paire d’entités.
+2.  Définir un seuil de distance maximale ($d_{max}$) :
+    -   Si $d_{ij} < d_{max}$, $w_{ij} = \frac{1}{d_{ij}}$;
+    -   Sinon, $w_{ij} = 0$.
+3.  Normaliser les poids pour que chaque ligne de la matrice ait une
+    somme égale à 1 : $$
+     w_{ij}^{norm} = \frac{w_{ij}}{\sum_{j} w_{ij}}.
+    $$
+
+#### Test significativité de l'indice de Moran :
+
+Le test de significativité de l’indice de Moran permet d’évaluer si une variable présente une autocorrélation spatiale significative, c’est-à-dire si les valeurs observées dans des zones proches ont tendance à être similaires ou non.
+
+\underline{\textbf{Hypothèses du test}}
+
+\begin{itemize}
+    \item \textbf{Hypothèse nulle} \( (H_0) \) : Il n’y a \textbf{pas d’autocorrélation spatiale} significative. Les valeurs observées sont distribuées de manière aléatoire dans l’espace.
+    \item \textbf{Hypothèse alternative} \( (H_1) \) : Il existe une \textbf{autocorrélation spatiale} significative (positive ou négative).
+\end{itemize}
+
+\underline{\textbf{Statistique de test}}
+
+
+L’Indice de Moran standardisé suit approximativement une distribution normale sous \( H_0 \). La statistique de test est donnée par :
+
+$$
+    Z = \frac{I - E(I)}{\text{Var}(I)}
 $$
 
 où :
+\begin{itemize}
+    \item \( I \) est l’Indice de Moran calculé sur les données;
+    \item \( E(I) \) est l’espérance théorique de \( I \) sous \( H_0 \);
+    \item \( \text{Var}(I) \) est la variance théorique de \( I \).
+\end{itemize}
 
-- $w_i$ représente l'effet aléatoire spatial basé sur le voisinage (par exemple, un **modèle autoregressif conditionnel (CAR)** qui capture l'influence des agglomérations voisines).
-
-#################################################################
-#################################################################
-
-## Modèle de régression logistique
-
-Elle modélise une réponse binaire ($y \sim B(n, p)$), où $p$ est la probabilité de succès :
-$$
-P(y | n, p) = \binom{n}{y} p^y (1-p)^{n-y}
-$$
-La probabilité $p$ est reliée au prédicteur par la fonction logistique :
+L’espérance sous \( H_0 \) pour un échantillon de taille \( n \) est donnée par :
 
 $$
-p = \frac{1}{1 + e^{-\eta}} \quad \text{où} \quad \eta = \beta_0 + \sum_{i=1}^m \beta_i x_i.
-$$
-La log-vraisemblance est exprimée comme :
-
-$$
-\ell(\boldsymbol{\beta}) = \sum_{i=1}^n \left[ y_i \log{p_i} + (1-y_i) \log{(1-p_i)} \right].
+    E(I) = -\frac{1}{n - 1}
 $$
 
-## Note sur l'Estimation
+\underline{\textbf{Règle de décision}}
 
-Pour tous ces modèles, l'estimation des paramètres est réalisée à l'aide de la **méthode de pseudo-vraisemblance**, qui prend en compte les structures autocorrélées.
+On compare la statistique \( Z \) à une loi normale centrée réduite \( \mathcal{N}(0,1) \). Pour un seuil de significativité \( \alpha \) (en général 5 \%), on utilise les quantiles de la loi normale :
 
-De plus, pour la comparaison des modèles, on utilise les critères suivants :
+\begin{itemize}
+    \item Si \( Z > z_{1-\alpha/2} \) ou \( Z < -z_{1-\alpha/2} \), on \textbf{rejette \( H_0 \)} et on conclut qu’il existe une autocorrélation spatiale significative.
+    \item Si \( Z \in [-z_{1-\alpha/2}, z_{1-\alpha/2}] \), on \textbf{ne rejette pas \( H_0 \)}, et on considère que la distribution spatiale est aléatoire.
+\end{itemize}
 
-- **AIC (Akaike Information Criterion)** : évalue la qualité du modèle en pénalisant les modèles trop complexes.
-- **BIC (Bayesian Information Criterion)** : similaire à l'AIC, mais avec une pénalisation plus forte sur la complexité du modèle.
+\underline{\textbf{Interprétation de l’Indice de Moran}}
 
-Ces critères permettent de choisir le modèle le plus adapté en fonction des données disponibles.
+\begin{itemize}
+    \item \( I > 0 \) et significatif : Autocorrélation spatiale \textbf{positive} (les zones proches ont des valeurs similaires).
+    \item \( I < 0 \) et significatif : Autocorrélation spatiale \textbf{négative} (les zones proches ont des valeurs éloignées).
+    \item \( I \approx 0 \) significativement : Absence d’autocorrélation spatiale, les valeurs sont distribuées de manière aléatoire.
+\end{itemize}
 
-Cette méthodologie propose une modélisation rigoureuse du nombre de consultations en combinant régression de Poisson et modèles mixtes. L’ajout d’effets aléatoires et de structures spatiales permet d’améliorer la précision des estimations et d’obtenir une meilleure compréhension des disparités géographiques dans l’accès aux soins. La comparaison des modèles permettra d’identifier la structure la plus adaptée aux données étudiées.
+Ce test est couramment utilisé en analyse spatiale pour identifier des regroupements de valeurs similaires, par exemple dans les études de santé publique, d’aménagement du territoire ou d’économie régionale.
+
+## Modélisation en économétrie spatiale
+
+Voici un rappel des différents éléments utilisés dans l'ensemble des modèles d'économétrie spatiale :
+
+\begin{itemize}
+\item[\(Y\)] : Il s'agit du vecteur des observations de la variable dépendante, c'est-à-dire la variable que l'on cherche à expliquer (par exemple, le taux de visites, le taux de chômage, etc).
+\item[\(X\)] : C'est la matrice des variables explicatives ou indépendantes. Elle regroupe toutes les caractéristiques observées qui sont supposées influencer \textbf{Y} (comme des variables socio-économiques, démographiques ou structurelles).
+\item[\(\beta\)] : Ce vecteur de coefficients mesure l'effet direct des variables \textbf{X} sur la variable dépendante \textbf{Y}. Chaque coefficient indique l'impact d'une unité de variation dans la variable correspondante sur \textbf{Y}, en l'absence d'effets spatiaux.
+\item[\(W\)] : La matrice des poids spatiaux définit la structure de voisinage entre les unités géographiques. Chaque élément \(W_{ij}\) quantifie l'influence ou la proximité de l'unité \(j\) par rapport à l'unité \(i\). Le choix de cette matrice (par contiguïté, distance, ou K plus proches voisins) est crucial car il détermine la manière dont l'information spatiale est intégrée dans le modèle.
+\item[\(WY\)] : Le terme de décalage spatial de \textbf{Y}, obtenu par le produit de la matrice \textbf{W} par le vecteur \textbf{Y}. Il représente l'influence moyenne pondérée des valeurs de \textbf{Y} dans les zones voisines et permet de capturer la dépendance spatiale directe de la variable dépendante.
+\item[\(WX\)] : Il s'agit du terme de décalage spatial des variables explicatives. Concrètement, il représente une version pondérée des variables \textbf{X} dans les zones voisines, où les pondérations sont définies par la matrice \textbf{W}. Ce terme permet de mesurer l'effet indirect (ou spillover) des caractéristiques des voisins sur \textbf{Y}.
+\item[\(\varepsilon\)] : C'est le terme d'erreur classique, qui capture les influences non observées ou aléatoires sur \textbf{Y}. Il est généralement supposé être indépendant et identiquement distribué (iid).
+\item[\(\rho\)] : Utilisé dans les modèles qui intègrent directement l'effet des valeurs voisines de \textbf{Y} (comme dans les modèles SAR et SDM). Ce paramètre mesure la force de l'interaction entre la valeur de \textbf{Y} d'une unité et les valeurs de \textbf{Y} des unités voisines. Un \(\rho\) positif indique une autocorrélation positive (les zones avec des valeurs élevées de \textbf{Y} tendent à être entourées de zones à valeurs élevées, et inversement).
+\item[\(\lambda\)] : Spécifique au modèle SEM (Spatial Error Model), ce paramètre quantifie la corrélation spatiale présente dans le terme d'erreur. Il mesure l'influence des erreurs des unités voisines sur l'erreur de l'unité considérée, suggérant que des facteurs non observés présentent une structure spatiale.
+\item[\(\theta\)] : Ce vecteur de coefficients est associé au terme \textbf{WX} et apparaît dans les modèles SDM et SLX. Il mesure l'effet des variables explicatives des zones voisines sur la variable dépendante \textbf{Y}, c'est-à-dire l'impact indirect des caractéristiques locales via leur diffusion spatiale.
+\end{itemize}
+
+### Modèles principaux
+
+Le modèle général est défini comme suit :
+
+$$
+Y = \rho W Y + X \beta + \theta W X + u, \quad u = \lambda W u + \varepsilon
+$$
+
+\textbf{SAR (Spatial AutoRegressive Model)} :
+
+Le modèle SAR introduit une dépendance spatiale directement sur la variable dépendante \( Y \). L'idée est que la valeur de \( Y \) en un lieu donné dépend des valeurs observées dans les zones voisines. Mathématiquement, il s'écrit :
+$$
+Y = \rho W Y + X \beta + \varepsilon
+$$
+
+\underline{\textbf{Interprétation :}}
+\begin{itemize}
+\item Si \( \rho > 0 \), les valeurs de \( Y \) ont tendance à être similaires entre voisins (autocorrélation positive).
+\item Si \( \rho < 0 \), on observe un effet de dispersion, où les valeurs de \( Y \) sont opposées dans les zones voisines (autocorrélation négative).
+\item Si \( \rho = 0 \), il n’y a pas de dépendance spatiale, et le modèle classique de régression linéaire est suffisant.
+\end{itemize}
+
+\textbf{SEM (Spatial Error Model)} :
+
+Le modèle SEM est utilisé lorsque la dépendance spatiale affecte les erreurs du modèle plutôt que la variable dépendante elle-même. Il est défini par :
+$$
+Y = X \beta + u, \quad u = \lambda W u + \varepsilon
+$$
+\underline{\textbf{Interprétation :}}
+\begin{itemize}
+\item Contrairement au modèle SAR, le modèle SEM suppose que la dépendance spatiale est un effet de perturbation, provenant d’omissions de variables pertinentes qui suivent une structure spatiale.
+\item Il est utilisé lorsque la corrélation spatiale détectée dans un modèle classique provient d’erreurs spatialement autocorrélées, plutôt que d’une interaction directe entre observations.
+\end{itemize}
+
+\textbf{SLX (Spatial Lag of X Model)} :
+
+Le modèle SLX est plus facile à estimer, car il suppose que la variable dépendante \( Y \) n’est pas directement influencée par les valeurs voisines, mais uniquement par les variables explicatives des zones voisines. Il est écrit comme suit :
+$$
+Y = X \beta + \theta W X + \varepsilon
+$$
+où \( W X \) capture l'effet des variables explicatives des unités voisines.
+
+\underline{\textbf{Interprétation :}}
+\begin{itemize}
+\item Il n’y a pas d’effet direct des valeurs voisines de \( Y \).
+\item Il mesure uniquement l'effet de "spillover" (d'effet de débordement) des facteurs explicatifs.
+\end{itemize}
+
+\textbf{SDM (Spatial Durbin Model)} :
+
+Le modèle SDM est une extension du modèle SAR. Il prend en compte non seulement la dépendance de \( Y \) aux observations voisines, mais aussi l'effet des variables explicatives des régions voisines. Il est défini par :
+$$
+Y = \rho W Y + X \beta + \theta W X + \varepsilon
+$$
+
+\underline{\textbf{Interprétation :}} 
+
+\begin{itemize}
+\item Si \( \theta = 0 \), le modèle SDM devient un SAR classique.
+\item Si \( \rho = 0 \), il devient un modèle SLX (voir ci-dessous).
+\item Il permet de tester si des variables exogènes influencent \( Y \) au-delà des frontières administratives.
+\end{itemize}
+
+\textbf{Comparaison des modèles}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Modèle} & \textbf{Dépendance spatiale sur \( Y \)} & \textbf{Effet des \( X \) des voisins} & \textbf{Effet des erreurs} \\
+        \hline
+        \textbf{SAR}  & Oui  & Non  & Non \\
+        \hline
+        \textbf{SEM}  & Non  & Non  & Oui \\
+        \hline
+        \textbf{SLX}  & Non  & Oui  & Non \\
+        \hline
+        \textbf{SDM}  & Oui  & Oui  & Non \\
+        \hline
+    \end{tabular}
+    \caption{Comparaison des modèles spatiaux}
+    \label{tab:comparaison_modeles}
+\end{table}

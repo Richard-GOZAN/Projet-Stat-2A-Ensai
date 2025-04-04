@@ -8,6 +8,7 @@ library(gridExtra)
 library(purrr)
 library(skimr)
 
+
 # Importation des données de démonstration
 
 demo <- read.csv("data/demof2.csv", sep = ";", dec=",")
@@ -289,3 +290,214 @@ p4 <- ggplot(df) +
 # 📌 Affichage de tous les graphiques ensemble
 library(gridExtra)
 grid.arrange(p1, p2, p3, p4, ncol = 2)
+
+
+################################################
+### DISTANCES ########################
+
+
+# Charger les bibliothèques nécessaires
+
+#  (latitude, longitude)
+library(spdep)     # Pour les fonctions de pondération spatiale et test de Moran
+library(geosphere) # Pour les calculs de distances géodésiques
+
+# Vérification que les colonnes latitude et longitude existent dans `data`
+if (!("latitude" %in% names(data)) || !("longitude" %in% names(data))) {
+  stop("Les colonnes 'latitude' et 'longitude' doivent exister dans la base de données.")
+}
+
+# Vérification des valeurs manquantes dans les coordonnées
+if (anyNA(data$latitude) || anyNA(data$longitude)) {
+  stop("Les colonnes 'latitude' et 'longitude' ne doivent pas contenir de valeurs manquantes.")
+}
+
+dist_df <- data.frame(Distance = as.vector(dist_matrix))
+# Tracer la densité
+ggplot(dist_df, aes(x = Distance)) +
+  geom_density(fill = "blue", alpha = 0.4) +
+  theme_minimal() +
+  labs(x = "Distance", y = "Densité")
+
+
+# Création de la matrice des coordonnées
+coords <- data.frame(
+  lat = data$latitude,
+  lon = data$longitude
+)
+
+# Calcul des distances géodésiques (en mètres) avec la méthode de Vincenty
+dist_matrix <- distm(coords, fun = distVincentySphere)/1000
+
+# Gérer les distances nulles ou infinies
+if (any(diag(dist_matrix) != 0)) {
+  diag(dist_matrix) <- 0  # Auto-distance définie comme 0
+}
+if (any(is.infinite(dist_matrix))) {
+  stop("La matrice des distances contient des valeurs infinies, vérifiez les coordonnées.")
+}
+
+# Résumé statistique de toutes les distances
+distance_values <- as.vector(dist_matrix)
+summary(distance_values)
+
+
+# Identification des paires de communes où la distance dépasse 2000 km
+indices <- which(dist_matrix > 2000, arr.ind = TRUE)
+# Extraire la colonne des indices des lignes
+ligne_indices <- indices[, 1]
+
+# Supprimer les doublons
+ligne_indices_unique <- unique(ligne_indices)
+
+# Afficher les lignes uniques
+print(ligne_indices_unique[1:7])
+
+for (i in 1:nrow(indices)) {
+  print(paste("Commune A: Commune", indices[i, 1], 
+              "et Commune B: Commune", indices[i, 2], 
+              "- Distance:", dist_matrix[indices[i, 1], indices[i, 2]], "km"))
+}
+# Affichage des résultats
+print(communes_lointaines)
+
+https://datascienceplus.com/spatial-regression-in-r-part-1-spamm-vs-glmmtmb/
+
+  
+set.seed(123)
+
+# Nombre de communes
+n_communes <- 50  
+
+# Variables explicatives (exemple réaliste)
+TauxNatalite <- runif(n_communes, 10, 40)  # Taux de natalité entre 10 et 40 pour 1000
+TauxMortalite <- runif(n_communes, 5, 15)  # Taux de mortalité entre 5 et 15 pour 1000
+PctFamille1Enfant <- runif(n_communes, 20, 60)  # % de familles avec 1 enfant
+PctFemmes_15_24 <- runif(n_communes, 5, 20)  
+PctFemmes_25_34 <- runif(n_communes, 10, 30)  
+PctHommes_15_24 <- runif(n_communes, 5, 20)  
+PctHommes_25_34 <- runif(n_communes, 10, 30)  
+
+# Effet spatial : Position des communes (latitude, longitude)
+Latitude <- runif(n_communes, 14.5, 15.5)  
+Longitude <- runif(n_communes, -17.5, -16.5)  
+
+# Génération du nombre total de consultations (modèle de Poisson)
+lambda <- exp(0.05 * TauxNatalite - 0.02 * TauxMortalite + 
+                0.01 * PctFamille1Enfant + 
+                0.005 * (PctFemmes_15_24 + PctFemmes_25_34) + 
+                0.005 * (PctHommes_15_24 + PctHommes_25_34) + 
+                rnorm(n_communes, mean = 0, sd = 0.3))  
+
+Consultations <- rpois(n_communes, lambda * 1000)  # Multiplié pour obtenir des valeurs réalistes
+
+# Création du DataFrame
+df <- data.frame(Commune = 1:n_communes, Consultations, TauxNatalite, TauxMortalite,
+                   PctFamille1Enfant, PctFemmes_15_24, PctFemmes_25_34,
+                   PctHommes_15_24, PctHommes_25_34, Latitude, Longitude)
+
+head(df)  # Aperçu des données
+
+library(glmmTMB)
+
+model_glmmTMB <- glmmTMB(Consultations ~ TauxNatalite + TauxMortalite + 
+                           PctFamille1Enfant + PctFemmes_15_24 + PctFemmes_25_34 + 
+                           PctHommes_15_24 + PctHommes_25_34,
+                         family = poisson, data = data)
+
+summary(model_glmmTMB)
+
+library(nlme)
+
+model_nlme <- lme(fixed = Consultations ~ TauxNatalite + TauxMortalite + 
+                    PctFamille1Enfant + PctFemmes_15_24 + PctFemmes_25_34 + 
+                    PctHommes_15_24 + PctHommes_25_34, 
+                  random = ~ 1 | Commune, 
+                  data = data, 
+                  correlation = corExp(form = ~ Longitude + Latitude))
+
+summary(model_nlme)
+
+
+library(INLA)
+
+# Création d'une matrice d’adjacence fictive
+communes <- unique(df$Commune)
+adjacency_matrix <- matrix(0, length(communes), length(communes)) 
+diag(adjacency_matrix) <- 1  # Connexions basiques (modifiable selon le vrai réseau)
+
+# Modèle spatial bayésien
+model_inla <- inla(Consultations ~ TauxNatalite + TauxMortalite + 
+                     PctFamille1Enfant + PctFemmes_15_24 + PctFemmes_25_34 + 
+                     PctHommes_15_24 + PctHommes_25_34 +
+                     f(Commune, model = "besag", graph = adjacency_matrix), 
+                   family = "poisson", 
+                   data = data)
+
+summary(model_inla)
+
+selected_variables = [
+  'population_municipale_2021_x',  
+  'nb_de_pers_agees_de_25_a_64_ans_2021_x', 
+  'nb_de_pers_agees_de_65_ans_ou_2021', 
+  'hommes_5_9', 
+  'femmes_5-9', 
+  'taux_de_mortalite_annuel_moyen_2015_2021', 
+  'taux_de_natalite_annuel_moyen_2015_2021',
+  'part_des_pers_agees_de_75_ans_ou_2021',
+  'population_de_15_ans_ou_selon_la_csp_2021_cadres_et_professions_intellectuelles_superieures',
+  'population_de_15_ans_ou_selon_la_csp_2021_employes', 
+  'population_de_15_ans_ou_selon_la_csp_2021_ouvriers',  
+  'part_des_familles_sans_enf_de_de_25_ans_2021', 
+  'part_des_familles_avec_1_enf_de_de_25_ans_2021', 
+  'part_des_familles_avec_3_enf_ou_plus_de_de_25_ans_2021', 
+  'longitude', 'latitude' 
+]
+
+data = df
+
+# Charger les données
+data <- read.csv("data.csv")
+
+# Vérifier le type de la colonne cible
+str(data$taux_visites)
+
+# Nettoyer le nom des colonnes au cas où il y aurait des espaces cachés
+colnames(data) <- trimws(colnames(data))
+
+# Convertir taux_visites en numérique si nécessaire
+data$taux_visites <- as.numeric(as.character(data$taux_visites))
+
+# Vérifier après conversion
+str(data$taux_visites)
+
+# Sélectionner uniquement les colonnes numériques
+
+numeric_vars <- data[sapply(data, is.numeric)]
+
+colnames(numeric_vars)
+data$taux_visites <- as.numeric(as.character(data$taux_visites))
+# Initialiser un dataframe pour stocker les résultats
+results <- data.frame(Variable = character(), Correlation = numeric(), P_value = numeric(), Significance = character())
+
+# Effectuer le test de corrélation pour chaque variable
+for (var in colnames(data)) {
+  if (var != "taux_visites") {  # Exclure la variable cible elle-même
+    test <- cor.test(data[[var]], data$taux_visites, use = "pairwise.complete.obs", method = "pearson")
+    significance <- ifelse(test$p.value < 0.01, "***", 
+                           ifelse(test$p.value < 0.05, "**", 
+                                  ifelse(test$p.value < 0.1, "*", "ns")))
+    
+    # Ajouter les résultats au tableau
+    results <- rbind(results, data.frame(Variable = var, 
+                                         Correlation = test$estimate, 
+                                         P_value = test$p.value, 
+                                         Significance = significance))
+  }
+}
+
+# Trier par ordre de corrélation absolue
+results <- results[order(abs(results$Correlation), decreasing = TRUE), ]
+
+# Afficher le tableau
+print(results)

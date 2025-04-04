@@ -54,6 +54,39 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
@@ -71,189 +104,234 @@
 
 \section{Présentation du contexte}\label{pruxe9sentation-du-contexte}
 
-\subsection{Intérêt de l'étude}\label{intuxe9ruxeat-de-luxe9tude}
-
 \subsection{Cadre conceptuel de
 l'étude}\label{cadre-conceptuel-de-luxe9tude}
 
-Dans cette partie, nous allons définir certainses notions clés qui
-apparaissent dans notre étude entre autres, le nombre de visites, le
-nombre de visites espérés ainsi que le taux de visite.
+Dans cette partie, nous allons définir certaines notions clés qui
+apparaissent dans notre étude : le taux de visites et la notion de
+voisin.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Nombre de visites espérés
-\end{enumerate}
+\subsubsection{Taux de visites}\label{taux-de-visites}
 
-Le nombre de visite espérés, terme qui apparaitra dans notre
-modélisation est le nombre de visite qu'il y aurait eu dans chaque
-commune si le taux de visite était le même dans dans ces dernières. En
-d'autres terme si \(r\) est le taux moyen de visite alors, le nombre de
-visite escompté noté \(\mu\) est calculé par :
-
-\[ \mu_i = r * P_i\]
-
-où \(P_i\) est le nombre d'habitants dans la commune \(i\)
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Taux de visite
-\end{enumerate}
-
-Le taux de visite n'est rien d'autre que le nombre moyen de visite dans
-chaque commune. IL est calculé en divisant le nombre de visite par la
-population de la commune en question. En d'autres termes, il s'agit du
-nombre de visites que chaque habitant de la commune a effectué en
+Le taux de visites n'est rien d'autre que le nombre moyen de visites
+dans chaque commune. Il est calculé en divisant le nombre de visites par
+la population de la commune en question. En d'autres termes, il s'agit
+du nombre de visites que chaque habitant de la commune a effectué en
 moyenne.
 
 \[\tau_i = \frac{n_i}{P_i}\]
 
 où \(\tau_i\) et \(n_i\) sont respectivement le taux et le nombre de
-visite de la commune \(i\).
+visites de la commune \(i\).
+
+\subsubsection{La notion de voisin}\label{la-notion-de-voisin}
+
+Il est indispensable de définir le voisinage d'un objet spatial pour
+quantifier l'influence réciproque entre entités. La définition formelle
+se traduit par la détermination d'un ensemble de couples \((i,j)\)
+d'objets spatiaux, avec la contrainte qu'un objet ne peut être voisin de
+lui-même, c'est-à-dire que pour tout \(i\), \((i,i)\) n'est pas
+considéré.
+
+Une méthode classique consiste à construire une matrice de voisinage
+binaire \(W\) définie par : \[
+W_{ij} = \begin{cases} 
+1, & \text{si } i \text{ et } j \text{ sont considérés comme voisins} \\
+0, & \text{sinon}
+\end{cases}
+\] Les méthodes pour définir les voisins sont diverses :
+
+\begin{itemize}
+  \item \textbf{Basée sur la distance :}  
+  On utilise par exemple la distance euclidienne,
+  $$
+  d(i,j) = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2},
+  $$
+pour définir deux objets comme voisins si \(d(i,j)\) est inférieure à un seuil prédéfini, ou en pondérant cette distance par une fonction décroissante. Dans le cadre de cette étude, nous utiliserons la distance de Haversine, compte tenu des données utilisées (longitude et latitude).
+
+\item \textbf{Basée sur la contiguïté :}  
+  Pour des données surfaciques (comme des zones administratives), les voisins sont définis en fonction du partage d'une frontière commune. On distingue par exemple la contiguïté \emph{Rook} (deux zones sont voisines si elles partagent un segment de frontière) et la contiguïté \emph{Queen} (elles sont voisines si elles partagent au moins un point).
+  
+  \item \textbf{Basée sur l'optimisation d'une trajectoire :}  
+  Une autre approche consiste à ordonner les points selon un chemin optimisé (par exemple, le plus court chemin ou le cycle hamiltonien dans le problème du voyageur de commerce). Les voisins d'un point sont alors définis comme les points qui se suivent immédiatement dans cet ordre.
+\end{itemize}
+
+\subsubsection{Distance de Haversine}\label{distance-de-haversine}
+
+La distance de Haversine est une mesure de la distance entre deux points
+sur une sphère, basée sur leurs coordonnées géographiques (\(latitude\)
+et \(longitude\)). Elle est particulièrement utile pour les données
+géographiques projetées sur une surface sphérique, comme la Terre.
+
+Si l'on considère deux points (\(i\)) et (\(j\)), la distance
+(\(d_{ij}\)) entre ces deux points sur la surface d'une sphère de rayon
+(\(r\)) est donnée par :
+
+\[
+ d_{ij} = 2r \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_j - \phi_i}{2}\right) + \cos(\phi_i)\cos(\phi_j)\sin^2\left(\frac{\lambda_j - \lambda_i}{2}\right)}\right)
+\]
+
+Avec :
+
+\begin{itemize}
+\item
+  \(r\) : le rayon de la terre (environ 6371 km).
+\item
+  \(\phi_i, \phi_j\) : les latitudes des points \(i\) et \(j\) (en
+  radians).
+\item
+  \(\lambda_i, \lambda_j\) : les longitudes des points \(i\) et \(j\)
+  (en radians).
+\end{itemize}
 
 \subsection{Revue de littérature}\label{revue-de-littuxe9rature}
 
 La modélisation des visites dans les hôpitaux est cruciale pour
-comprendre les dynamiques de la santé publique et pour optimiser la
-gestion des ressources médicales. Dans ce contexte, les modèles de
-régression de type Poisson généraux, en particulier les modèles mixtes
-généralisés (GLMM), sont souvent utilisés pour gérer les données de
-comptage, en tenant compte des spécificités démographiques et
-géographiques des agglomérations, ici définies par les communes.
+comprendre les dynamiques de la santé publique et optimiser la gestion
+des ressources médicales. En 2023, les services d'urgences en France ont
+enregistré environ 20,9 millions de passages, marquant une légère
+diminution par rapport à 2022 (Egora 2023). Parallèlement, l'accès aux
+consultations médicales spécialisées demeure préoccupant. En 2024, le
+délai moyen pour obtenir un rendez-vous chez un dermatologue était de 36
+jours, l'un des plus longs parmi les spécialités médicales (BFMTV 2024).
+Ces difficultés d'accès aux soins ont conduit un nombre croissant de
+patients à se tourner vers les services d'urgences pour des
+consultations non urgentes, accentuant ainsi la saturation de ces
+services. Dans ce contexte, il est crucial de comprendre les facteurs
+qui influencent le nombre de consultations médicales, afin d'allouer les
+ressources de manière optimale sur le plan matériel, humain et
+financier, tout en prévenant des situations de surcharge des
+établissements de santé.
 
-Les recherches antérieures, comme celles de Mohebbi et al.~(2011),
-montrent l'importance d'intégrer des effets spatiaux dans les modèles de
-comptage, surtout lorsqu'on évalue des phénomènes tels que le cancer
-œsophagien (EC) dans des provinces spécifiques. Leur étude souligne
-comment la non-prise en compte de l'autocorrélation spatiale peut
-conduire à une estimation biaisée des effets des variables
-socio-économiques sur l'incidence des maladies. Ce phénomène pourrait
-également s'appliquer à la modélisation des visites à l'hôpital, où
-certains facteurs ouent un rôle significatif.
-
-Selon l'article, trois structures d'autocorrélation peuvent être
-appliquées dans le cadre de la régression Poisson lorsqu'on traite des
-données de comptage. Ces modèles comprennent :
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  \textbf{Modèle Poisson avec effets aléatoires non spatiaux} : Bien
-  qu'utiles, ces modèles négligent l'autocorrélation spatiale, ce qui
-  peut conduire à une sous-estimation des erreurs standard.
-\item
-  \textbf{Modèle avec effets aléatoires spatiaux basés sur la distance}
-  : Ce modèle prend en compte l'influence des agglomérations voisines,
-  mais peut ne pas capturer efficacement l'hétérogénéité locale.
-\item
-  \textbf{Modèle avec effets aléatoires de type voisinage} : Utilisant
-  la structure conditionnelle autorégressive (CAR), ce modèle est le
-  plus adapté pour les données spatiales en intégrant les interactions
-  entre les communes. Pour notre étude, le modèle avec effets aléatoires
-  de type voisinage est recommandé pour la modélisation du nombre de
-  visites à l'hôpital en France, car il permet de mieux prendre en
-  compte l'effet de proximité entre communes.
-\end{enumerate}
-
-L'application des principes issus de l'article de Mohebbi et al.~peut
-enrichir notre étude sur la fréquentation des hôpitaux en France. En
-intégrant des effets aléatoires spatiaux adaptés à la structure des
-données, nous pouvons réaliser des estimations plus précises et utiles
-pour la planification hospitalière.
-
-En ce qui concerne les facteurs explicatifs du nombre de visite dans les
-hopitaux, plusieurs études se sont penchées sur ce sujet. De nombreuses
-études ont montré que le nombre de consultations médicales est influencé
-par divers facteurs sociodémographiques, allant des caractéristiques
-individuelles aux contextes socio-économiques et territoriaux.
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Influence de l'âge et du sexe
-\end{enumerate}
-
-L'âge constitue un déterminant majeur du recours aux soins. Les
+De nombreuses études ont montré que le nombre de consultations médicales
+est influencé par une multitude de facteurs sociodémographiques, allant
+des caractéristiques individuelles aux contextes socio-économiques et
+territoriaux. L'âge est un déterminant majeur du recours aux soins. Les
 personnes âgées, en particulier celles de 65 à 79 ans, consultent plus
 fréquemment en raison de la prévalence accrue de maladies chroniques et
-du suivi médical nécessaire à leur prise en charge {[}@statcan2022{]}.
-En revanche, la population jeune et en bonne santé présente une
-utilisation plus sporadique des services médicaux. Le sexe est également
-un facteur différenciant important. De manière générale, les femmes
-consultent plus fréquemment que les hommes. Cette différence est
-attribuée aux besoins spécifiques en santé reproductive, mais aussi à
-une plus grande propension à rechercher des soins préventifs
-{[}@bag2024{]}. En revanche, les hommes, notamment dans les catégories
-socio-professionnelles les plus actives, ont tendance à sous-utiliser
-les services de soins, ce qui peut entraîner des diagnostics plus
-tardifs et des complications médicales accrues.
+du suivi médical nécessaire à leur prise en charge. En revanche, les
+jeunes adultes, en bonne santé, présentent une utilisation plus
+sporadique des services médicaux. En d'autres termes, la fréquence de
+consulatations augmentent avec l'âge. (Ministère de la Santé et des
+Services sociaux Québec 2014).
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Impact du statut socio-économique et du niveau d'éducation
-\end{enumerate}
+Le sexe constitue également un facteur différenciant : les femmes
+consultent plus fréquemment que les hommes, en raison de besoins
+spécifiques en santé reproductive et d'une plus grande propension à
+rechercher des soins préventifs. À l'inverse, les hommes, notamment dans
+les catégories socio-professionnelles les plus actives, tendent à
+sous-utiliser les services de soins, ce qui peut entraîner des
+diagnostics plus tardifs et des complications médicales accrues
+(publique 2024).
 
-Le revenu et la précarité économique influencent considérablement
-l'accès aux soins. Les individus à revenu élevé bénéficient généralement
-d'un meilleur accès aux consultations médicales, notamment grâce à une
-plus grande couverture sociale et des assurances complémentaires leur
-permettant de réduire les coûts associés aux soins {[}@bvs2023{]}. À
+Le statut socio-économique et le niveau d'éducation influencent
+également de manière significative l'accès aux soins. Les individus à
+revenu élevé bénéficient généralement d'un meilleur accès aux
+consultations médicales, grâce à une couverture sociale plus complète et
+des assurances complémentaires qui allègent les coûts des soins. À
 l'inverse, les personnes en situation de précarité rencontrent des
 obstacles financiers, administratifs et culturels qui limitent leur
 recours aux soins, malgré des besoins souvent accrus en raison de
-conditions de vie plus précaires. Le niveau d'éducation joue un rôle clé
-dans la fréquentation des services de santé. Une instruction plus élevée
-est associée à une meilleure connaissance des risques sanitaires et à
-une adoption plus proactive des comportements de prévention, ce qui
-entraîne un recours plus fréquent aux soins médicaux {[}@bvs2023{]}. En
-revanche, un faible niveau d'éducation est souvent corrélé à un moindre
-suivi médical et à une utilisation plus tardive des services de soins,
-notamment en cas de complications.
+conditions de vie plus précaires (Santé 2023).
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{2}
-\tightlist
-\item
-  Influence du contexte familial et de l'environnement social
-\end{enumerate}
+Le niveau d'éducation joue un rôle clé dans la fréquentation des
+services de santé. Une meilleure instruction est associée à une
+meilleure connaissance des risques sanitaires et à une adoption plus
+proactive des comportements de prévention, entraînant un recours plus
+fréquent aux soins médicaux. À l'inverse, un faible niveau d'éducation
+est souvent corrélé à un moindre suivi médical et à une utilisation plus
+tardive des services de soins, notamment en cas de complications (Canada
+2022).
 
-L'état matrimonial influence également la fréquence des consultations
-médicales. Les personnes mariées ou vivant en couple consultent
-davantage, bénéficiant du soutien d'un conjoint qui peut inciter à
-prendre soin de sa santé et à consulter régulièrement un médecin
-{[}@statcan2022{]}. Par ailleurs, l'accès à un médecin traitant ou de
-famille constitue un déterminant important. Les patients disposant d'un
-suivi médical régulier sont plus enclins à effectuer des consultations
-préventives et à être orientés rapidement vers des spécialistes si
-nécessaire {[}@statcan2022{]}.
+La perception de la santé et l'accès géographique aux soins sont
+d'autres facteurs déterminants. Les individus qui jugent leur état de
+santé comme étant excellent ou très bon consultent moins fréquemment,
+tandis que ceux ayant une perception négative de leur état de santé sont
+plus enclins à multiplier les visites médicales (Canada 2022). En ce qui
+concerne l'accès géographique, les inégalités spatiales jouent un rôle
+clé dans la fréquence des consultations. En milieu urbain, la densité
+médicale plus élevée facilite l'accès aux soins, tandis qu'en zones
+rurales ou médicalement sous-dotées, les délais d'attente et la distance
+à parcourir constituent des freins majeurs à l'accès aux soins (Irdes
+2020).
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{3}
-\tightlist
-\item
-  Perception de l'état de santé et accès géographique aux soins
-\end{enumerate}
+L'étude de Nkoua Mbon et al.~(2021) sur les facteurs associés au faible
+niveau de fréquentation du centre de santé intégré de Pondila identifie
+plusieurs obstacles à la fréquentation, notamment le coût des soins, le
+mauvais état des routes, le chômage, le mauvais accueil par le personnel
+soignant et la non-disponibilité de médicaments. Ces facteurs soulignent
+la complexité de l'accès aux soins, notamment dans les zones plus
+rurales ou moins développées.
 
-La perception de la santé est un facteur déterminant du recours aux
-soins. Les individus qui considèrent leur état de santé comme excellent
-ou très bon consultent rarement, tandis que ceux qui ont une perception
-négative de leur état de santé ont tendance à multiplier les visites
-médicales {[}@statcan2022{]}. Enfin, les inégalités spatiales dans
-l'accès aux soins modulent également la fréquence des consultations. En
-milieu urbain, la densité médicale plus élevée facilite l'accès aux
-services de soins, tandis qu'en zones rurales ou médicalement
-sous-dotées, les délais d'attente et les distances à parcourir
-constituent des freins majeurs {[}@irdes2020{]}.
+L'étude de Julie Dumouchel (2012) sur les pratiques des généralistes
+normands face aux urgences médicales met en évidence plusieurs éléments
+clés. Les facteurs organisationnels tels que la disponibilité des
+structures de soins, les horaires d'ouverture des cabinets et la
+collaboration avec d'autres professionnels de santé sont essentiels dans
+la gestion des urgences. Les facteurs personnels, notamment l'expérience
+professionnelle, la formation continue et la confiance en soi des
+médecins, jouent également un rôle crucial dans la prise en charge
+efficace des situations urgentes.
+
+En outre, la présentation des patients, leur niveau d'urgence perçu et
+leurs attentes influencent la façon dont les médecins abordent les cas
+urgents. L'accès aux équipements médicaux, la qualité des
+infrastructures et la disponibilité des services d'urgence jouent aussi
+un rôle important. Cette étude met en lumière la complexité de la
+gestion des urgences en médecine générale, influencée par une série de
+facteurs interconnectés, et souligne la nécessité d'améliorer
+l'organisation des soins, de renforcer la formation des médecins et
+d'optimiser les ressources disponibles pour une gestion plus efficace
+des urgences médicales en Normandie.
+
+L'un des facteurs pouvant influencer le nombre de consultations dans une
+zone est le renoncement aux soins En effet, selon le rapport du DREES
+(Renoncement aux soins : la faible densité médicale est un facteur
+aggravant pour les personnes pauvres), la question du renoncement aux
+soins dans les milieux urbains est influencée par une multitude de
+facteurs socio-économiques et structurels. Selon l'enquête Statistiques
+sur les ressources et conditions de vie (SRCV), une proportion
+significative de la population en France (3,1 \%) renonce à des soins
+médicaux, un phénomène particulièrement prononcé chez les personnes
+pauvres qui vivent dans des zones à faible densité médicale. Ces
+individus sont jusqu'à huit fois plus susceptibles de renoncer aux soins
+en raison de l'accessibilité limitée à des médecins généralistes.
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-bfmtv2024}
+BFMTV. 2024. {``Généraliste, Dermatologue, Pédiatre : Quel Est Le Délai
+Pour Obtenir Un Rendez-Vous Chez Le Médecin En 2024 ?''}
+\url{https://www.bfmtv.com/tech/vie-numerique/sur-doctolib-la-moitie-des-consultations-de-generalistes-sont-obtenues-en-moins-de-3-jours_AD-202404230604.html}.
+
+\bibitem[\citeproctext]{ref-statcan2022}
+Canada, Statistique. 2022. {``Fréquence Des Consultations Médicales Et
+Facteurs Sociodémographiques.''} \url{https://www150.statcan.gc.ca}.
+
+\bibitem[\citeproctext]{ref-egora2023}
+Egora. 2023. {``Hôpital : La Part d'ambulatoire Augmente de 6,5 \% , Les
+Séjours Diminuent.''}
+\url{https://www.egora.fr/actus-pro/hopitaux/hopital-la-part-dambulatoire-augmente-de-65-les-sejours-diminuent}.
+
+\bibitem[\citeproctext]{ref-irdes2020}
+Irdes. 2020. {``Inégalités Spatiales d'accessibilité Aux Soins
+Médicaux.''} \url{https://www.irdes.fr}.
+
+\bibitem[\citeproctext]{ref-msss2013}
+Ministère de la Santé et des Services sociaux Québec. 2014.
+{``Proportion de La Population de 12 Ans Et Plus Ayant Consulté Un
+Médecin1 Au Cours Des 12 Derniers Mois, Selon Le Sexe Et Selon Le Groupe
+d'âge, Québec, 2013-2014.''}
+\url{https://www.msss.gouv.qc.ca/professionnels/statistiques-donnees-sante-bien-etre/statistiques-de-sante-et-de-bien-etre-selon-le-sexe-volet-national/consultation-d-un-medecin/}.
+
+\bibitem[\citeproctext]{ref-bag2024}
+publique, Office fédéral de la santé. 2024. {``Santé Des Femmes Et Accès
+Aux Soins En Suisse.''} \url{https://bag.admin.ch}.
+
+\bibitem[\citeproctext]{ref-bvs2023}
+Santé, BVS. 2023. {``Facteurs Influençant l'accès Aux Soins Médicaux En
+Milieu Défavorisé.''} \url{https://docs.bvsalud.org}.
+
+\end{CSLReferences}
 
 \end{document}
