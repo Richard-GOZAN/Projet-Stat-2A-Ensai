@@ -85,7 +85,7 @@ res_pca <- PCA(df_acp_std, graph = FALSE)
 
 ```{r}
 # Valeurs propres
-fviz_eig(res_pca, addlabels = TRUE)
+fviz_eig(res_pca, addlabels = TRUE) + labs(title = "", y = "Pourcentage de variance expliquée")
 ```
 
 L’analyse en composantes principales (ACP) révèle une structure claire des données, organisée autour de deux dimensions principales qui expliquent 68.5 % de la variance totale (44.2 % pour la première dimension, 24.3 % pour la seconde). Ces axes mettent en lumière des oppositions sociodémographiques marquées entre les communes.
@@ -96,7 +96,7 @@ fviz_pca_var(res_pca,
              col.var = "cos2",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
              repel = TRUE) +
-  labs(title = "Cercle des corrélations")
+  labs(title = "")
 ```
 
 ## 1. Première dimension : Vieillissement vs Dynamisme démographique
@@ -109,8 +109,8 @@ La deuxième dimension oppose, en haut du cercle, les communes marquées par une
 
 ```{r}
 # Contributions des variables
-fviz_contrib(res_pca, choice = "var", axes = 1, top = 10)
-fviz_contrib(res_pca, choice = "var", axes = 2, top = 10)
+fviz_contrib(res_pca, choice = "var", axes = 1, top = 10) + labs(title = "")
+fviz_contrib(res_pca, choice = "var", axes = 2, top = 10) + labs(title = "")
 ```
 
 ## 3. Contributions des variables et corrélations clés
